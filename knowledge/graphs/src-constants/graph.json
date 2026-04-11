@@ -1,0 +1,1702 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "apiLimits.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/apiLimits.ts",
+      "source_location": "L1",
+      "id": "apilimits",
+      "community": 14
+    },
+    {
+      "label": "betas.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/betas.ts",
+      "source_location": "L1",
+      "id": "betas",
+      "community": 15
+    },
+    {
+      "label": "common.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/common.ts",
+      "source_location": "L1",
+      "id": "common",
+      "community": 8
+    },
+    {
+      "label": "getLocalISODate()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/common.ts",
+      "source_location": "L4",
+      "id": "common_getlocalisodate",
+      "community": 8
+    },
+    {
+      "label": "getLocalMonthYear()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/common.ts",
+      "source_location": "L28",
+      "id": "common_getlocalmonthyear",
+      "community": 8
+    },
+    {
+      "label": "cyberRiskInstruction.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/cyberRiskInstruction.ts",
+      "source_location": "L1",
+      "id": "cyberriskinstruction",
+      "community": 16
+    },
+    {
+      "label": "errorIds.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/errorIds.ts",
+      "source_location": "L1",
+      "id": "errorids",
+      "community": 17
+    },
+    {
+      "label": "figures.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/figures.ts",
+      "source_location": "L1",
+      "id": "figures",
+      "community": 4
+    },
+    {
+      "label": "files.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/files.ts",
+      "source_location": "L1",
+      "id": "files",
+      "community": 9
+    },
+    {
+      "label": "hasBinaryExtension()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/files.ts",
+      "source_location": "L117",
+      "id": "files_hasbinaryextension",
+      "community": 9
+    },
+    {
+      "label": "isBinaryContent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/files.ts",
+      "source_location": "L131",
+      "id": "files_isbinarycontent",
+      "community": 9
+    },
+    {
+      "label": "github-app.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/github-app.ts",
+      "source_location": "L1",
+      "id": "github_app",
+      "community": 18
+    },
+    {
+      "label": "keys.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/keys.ts",
+      "source_location": "L1",
+      "id": "keys",
+      "community": 10
+    },
+    {
+      "label": "getGrowthBookClientKey()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/keys.ts",
+      "source_location": "L5",
+      "id": "keys_getgrowthbookclientkey",
+      "community": 10
+    },
+    {
+      "label": "messages.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/messages.ts",
+      "source_location": "L1",
+      "id": "messages",
+      "community": 19
+    },
+    {
+      "label": "oauth.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L1",
+      "id": "oauth",
+      "community": 3
+    },
+    {
+      "label": "getOauthConfigType()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L6",
+      "id": "oauth_getoauthconfigtype",
+      "community": 3
+    },
+    {
+      "label": "fileSuffixForOauthConfig()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L18",
+      "id": "oauth_filesuffixforoauthconfig",
+      "community": 3
+    },
+    {
+      "label": "getLocalOauthConfig()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L148",
+      "id": "oauth_getlocaloauthconfig",
+      "community": 3
+    },
+    {
+      "label": "getOauthConfig()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L186",
+      "id": "oauth_getoauthconfig",
+      "community": 3
+    },
+    {
+      "label": "outputStyles.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L1",
+      "id": "outputstyles",
+      "community": 4
+    },
+    {
+      "label": "clearAllOutputStylesCache()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L177",
+      "id": "outputstyles_clearalloutputstylescache",
+      "community": 4
+    },
+    {
+      "label": "getOutputStyleConfig()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L181",
+      "id": "outputstyles_getoutputstyleconfig",
+      "community": 4
+    },
+    {
+      "label": "hasCustomOutputStyle()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L213",
+      "id": "outputstyles_hascustomoutputstyle",
+      "community": 4
+    },
+    {
+      "label": "product.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L1",
+      "id": "product",
+      "community": 5
+    },
+    {
+      "label": "isRemoteSessionStaging()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L12",
+      "id": "product_isremotesessionstaging",
+      "community": 5
+    },
+    {
+      "label": "isRemoteSessionLocal()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L26",
+      "id": "product_isremotesessionlocal",
+      "community": 5
+    },
+    {
+      "label": "getClaudeAiBaseUrl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L39",
+      "id": "product_getclaudeaibaseurl",
+      "community": 5
+    },
+    {
+      "label": "getRemoteSessionUrl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L65",
+      "id": "product_getremotesessionurl",
+      "community": 5
+    },
+    {
+      "label": "prompts.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L1",
+      "id": "prompts",
+      "community": 0
+    },
+    {
+      "label": "getHooksSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L127",
+      "id": "prompts_gethookssection",
+      "community": 11
+    },
+    {
+      "label": "getSystemRemindersSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L131",
+      "id": "prompts_getsystemreminderssection",
+      "community": 0
+    },
+    {
+      "label": "getAntModelOverrideSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L136",
+      "id": "prompts_getantmodeloverridesection",
+      "community": 0
+    },
+    {
+      "label": "getLanguageSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L142",
+      "id": "prompts_getlanguagesection",
+      "community": 0
+    },
+    {
+      "label": "getOutputStyleSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L151",
+      "id": "prompts_getoutputstylesection",
+      "community": 0
+    },
+    {
+      "label": "getMcpInstructionsSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L160",
+      "id": "prompts_getmcpinstructionssection",
+      "community": 12
+    },
+    {
+      "label": "prependBullets()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L167",
+      "id": "prompts_prependbullets",
+      "community": 2
+    },
+    {
+      "label": "getSimpleIntroSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L175",
+      "id": "prompts_getsimpleintrosection",
+      "community": 0
+    },
+    {
+      "label": "getSimpleSystemSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L186",
+      "id": "prompts_getsimplesystemsection",
+      "community": 11
+    },
+    {
+      "label": "getSimpleDoingTasksSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L199",
+      "id": "prompts_getsimpledoingtaskssection",
+      "community": 2
+    },
+    {
+      "label": "getActionsSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L255",
+      "id": "prompts_getactionssection",
+      "community": 0
+    },
+    {
+      "label": "getUsingYourToolsSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L269",
+      "id": "prompts_getusingyourtoolssection",
+      "community": 2
+    },
+    {
+      "label": "getAgentToolSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L316",
+      "id": "prompts_getagenttoolsection",
+      "community": 2
+    },
+    {
+      "label": "getDiscoverSkillsGuidance()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L333",
+      "id": "prompts_getdiscoverskillsguidance",
+      "community": 1
+    },
+    {
+      "label": "getSessionSpecificGuidanceSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L352",
+      "id": "prompts_getsessionspecificguidancesection",
+      "community": 2
+    },
+    {
+      "label": "getOutputEfficiencySection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L403",
+      "id": "prompts_getoutputefficiencysection",
+      "community": 0
+    },
+    {
+      "label": "getSimpleToneAndStyleSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L430",
+      "id": "prompts_getsimpletoneandstylesection",
+      "community": 2
+    },
+    {
+      "label": "getSystemPrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L444",
+      "id": "prompts_getsystemprompt",
+      "community": 0
+    },
+    {
+      "label": "getMcpInstructions()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L579",
+      "id": "prompts_getmcpinstructions",
+      "community": 12
+    },
+    {
+      "label": "computeEnvInfo()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L606",
+      "id": "prompts_computeenvinfo",
+      "community": 1
+    },
+    {
+      "label": "computeSimpleEnvInfo()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L651",
+      "id": "prompts_computesimpleenvinfo",
+      "community": 1
+    },
+    {
+      "label": "getKnowledgeCutoff()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L713",
+      "id": "prompts_getknowledgecutoff",
+      "community": 1
+    },
+    {
+      "label": "getShellInfoLine()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L732",
+      "id": "prompts_getshellinfoline",
+      "community": 1
+    },
+    {
+      "label": "getUnameSR()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L745",
+      "id": "prompts_getunamesr",
+      "community": 1
+    },
+    {
+      "label": "enhanceSystemPromptWithEnvDetails()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L760",
+      "id": "prompts_enhancesystempromptwithenvdetails",
+      "community": 1
+    },
+    {
+      "label": "getScratchpadInstructions()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L797",
+      "id": "prompts_getscratchpadinstructions",
+      "community": 0
+    },
+    {
+      "label": "getFunctionResultClearingSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L821",
+      "id": "prompts_getfunctionresultclearingsection",
+      "community": 0
+    },
+    {
+      "label": "getBriefSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L843",
+      "id": "prompts_getbriefsection",
+      "community": 0
+    },
+    {
+      "label": "getProactiveSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L860",
+      "id": "prompts_getproactivesection",
+      "community": 0
+    },
+    {
+      "label": "querySource.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/querySource.ts",
+      "source_location": "L1",
+      "id": "querysource",
+      "community": 20
+    },
+    {
+      "label": "spinnerVerbs.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/spinnerVerbs.ts",
+      "source_location": "L1",
+      "id": "spinnerverbs",
+      "community": 13
+    },
+    {
+      "label": "getSpinnerVerbs()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/spinnerVerbs.ts",
+      "source_location": "L3",
+      "id": "spinnerverbs_getspinnerverbs",
+      "community": 13
+    },
+    {
+      "label": "system.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L1",
+      "id": "system",
+      "community": 7
+    },
+    {
+      "label": "getCLISyspromptPrefix()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L30",
+      "id": "system_getclisyspromptprefix",
+      "community": 7
+    },
+    {
+      "label": "isAttributionHeaderEnabled()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L52",
+      "id": "system_isattributionheaderenabled",
+      "community": 7
+    },
+    {
+      "label": "getAttributionHeader()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L73",
+      "id": "system_getattributionheader",
+      "community": 7
+    },
+    {
+      "label": "systemPromptSections.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L1",
+      "id": "systempromptsections",
+      "community": 6
+    },
+    {
+      "label": "systemPromptSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L20",
+      "id": "systempromptsections_systempromptsection",
+      "community": 6
+    },
+    {
+      "label": "DANGEROUS_uncachedSystemPromptSection()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L32",
+      "id": "systempromptsections_dangerous_uncachedsystempromptsection",
+      "community": 6
+    },
+    {
+      "label": "resolveSystemPromptSections()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L43",
+      "id": "systempromptsections_resolvesystempromptsections",
+      "community": 6
+    },
+    {
+      "label": "clearSystemPromptSections()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L65",
+      "id": "systempromptsections_clearsystempromptsections",
+      "community": 6
+    },
+    {
+      "label": "toolLimits.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/toolLimits.ts",
+      "source_location": "L1",
+      "id": "toollimits",
+      "community": 21
+    },
+    {
+      "label": "tools.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/tools.ts",
+      "source_location": "L1",
+      "id": "tools",
+      "community": 22
+    },
+    {
+      "label": "turnCompletionVerbs.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/turnCompletionVerbs.ts",
+      "source_location": "L1",
+      "id": "turncompletionverbs",
+      "community": 23
+    },
+    {
+      "label": "xml.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/xml.ts",
+      "source_location": "L1",
+      "id": "xml",
+      "community": 24
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/common.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "common",
+      "_tgt": "common_getlocalisodate",
+      "source": "common",
+      "target": "common_getlocalisodate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/common.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_src": "common",
+      "_tgt": "common_getlocalmonthyear",
+      "source": "common",
+      "target": "common_getlocalmonthyear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "outputstyles",
+      "_tgt": "figures",
+      "source": "figures",
+      "target": "outputstyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/files.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "_src": "files",
+      "_tgt": "files_hasbinaryextension",
+      "source": "files",
+      "target": "files_hasbinaryextension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/files.ts",
+      "source_location": "L131",
+      "weight": 1.0,
+      "_src": "files",
+      "_tgt": "files_isbinarycontent",
+      "source": "files",
+      "target": "files_isbinarycontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/keys.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "keys",
+      "_tgt": "keys_getgrowthbookclientkey",
+      "source": "keys",
+      "target": "keys_getgrowthbookclientkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "oauth",
+      "_tgt": "oauth_getoauthconfigtype",
+      "source": "oauth",
+      "target": "oauth_getoauthconfigtype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "oauth",
+      "_tgt": "oauth_filesuffixforoauthconfig",
+      "source": "oauth",
+      "target": "oauth_filesuffixforoauthconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L148",
+      "weight": 1.0,
+      "_src": "oauth",
+      "_tgt": "oauth_getlocaloauthconfig",
+      "source": "oauth",
+      "target": "oauth_getlocaloauthconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L186",
+      "weight": 1.0,
+      "_src": "oauth",
+      "_tgt": "oauth_getoauthconfig",
+      "source": "oauth",
+      "target": "oauth_getoauthconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/oauth.ts",
+      "source_location": "L22",
+      "weight": 0.8,
+      "_src": "oauth_filesuffixforoauthconfig",
+      "_tgt": "oauth_getoauthconfigtype",
+      "source": "oauth_getoauthconfigtype",
+      "target": "oauth_filesuffixforoauthconfig",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L177",
+      "weight": 1.0,
+      "_src": "outputstyles",
+      "_tgt": "outputstyles_clearalloutputstylescache",
+      "source": "outputstyles",
+      "target": "outputstyles_clearalloutputstylescache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_src": "outputstyles",
+      "_tgt": "outputstyles_getoutputstyleconfig",
+      "source": "outputstyles",
+      "target": "outputstyles_getoutputstyleconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/outputStyles.ts",
+      "source_location": "L213",
+      "weight": 1.0,
+      "_src": "outputstyles",
+      "_tgt": "outputstyles_hascustomoutputstyle",
+      "source": "outputstyles",
+      "target": "outputstyles_hascustomoutputstyle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "product",
+      "_tgt": "product_isremotesessionstaging",
+      "source": "product",
+      "target": "product_isremotesessionstaging",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "product",
+      "_tgt": "product_isremotesessionlocal",
+      "source": "product",
+      "target": "product_isremotesessionlocal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "product",
+      "_tgt": "product_getclaudeaibaseurl",
+      "source": "product",
+      "target": "product_getclaudeaibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "product",
+      "_tgt": "product_getremotesessionurl",
+      "source": "product",
+      "target": "product_getremotesessionurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L46",
+      "weight": 0.8,
+      "_src": "product_getclaudeaibaseurl",
+      "_tgt": "product_isremotesessionstaging",
+      "source": "product_isremotesessionstaging",
+      "target": "product_getclaudeaibaseurl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L43",
+      "weight": 0.8,
+      "_src": "product_getclaudeaibaseurl",
+      "_tgt": "product_isremotesessionlocal",
+      "source": "product_isremotesessionlocal",
+      "target": "product_getclaudeaibaseurl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/product.ts",
+      "source_location": "L74",
+      "weight": 0.8,
+      "_src": "product_getremotesessionurl",
+      "_tgt": "product_getclaudeaibaseurl",
+      "source": "product_getclaudeaibaseurl",
+      "target": "product_getremotesessionurl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_gethookssection",
+      "source": "prompts",
+      "target": "prompts_gethookssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L131",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsystemreminderssection",
+      "source": "prompts",
+      "target": "prompts_getsystemreminderssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getantmodeloverridesection",
+      "source": "prompts",
+      "target": "prompts_getantmodeloverridesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getlanguagesection",
+      "source": "prompts",
+      "target": "prompts_getlanguagesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getoutputstylesection",
+      "source": "prompts",
+      "target": "prompts_getoutputstylesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getmcpinstructionssection",
+      "source": "prompts",
+      "target": "prompts_getmcpinstructionssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts",
+      "target": "prompts_prependbullets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsimpleintrosection",
+      "source": "prompts",
+      "target": "prompts_getsimpleintrosection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L186",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsimplesystemsection",
+      "source": "prompts",
+      "target": "prompts_getsimplesystemsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsimpledoingtaskssection",
+      "source": "prompts",
+      "target": "prompts_getsimpledoingtaskssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L255",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getactionssection",
+      "source": "prompts",
+      "target": "prompts_getactionssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L269",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getusingyourtoolssection",
+      "source": "prompts",
+      "target": "prompts_getusingyourtoolssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L316",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getagenttoolsection",
+      "source": "prompts",
+      "target": "prompts_getagenttoolsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L333",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getdiscoverskillsguidance",
+      "source": "prompts",
+      "target": "prompts_getdiscoverskillsguidance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L352",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsessionspecificguidancesection",
+      "source": "prompts",
+      "target": "prompts_getsessionspecificguidancesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L403",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getoutputefficiencysection",
+      "source": "prompts",
+      "target": "prompts_getoutputefficiencysection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L430",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsimpletoneandstylesection",
+      "source": "prompts",
+      "target": "prompts_getsimpletoneandstylesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L444",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getsystemprompt",
+      "source": "prompts",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L579",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getmcpinstructions",
+      "source": "prompts",
+      "target": "prompts_getmcpinstructions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L606",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_computeenvinfo",
+      "source": "prompts",
+      "target": "prompts_computeenvinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L651",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_computesimpleenvinfo",
+      "source": "prompts",
+      "target": "prompts_computesimpleenvinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L713",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getknowledgecutoff",
+      "source": "prompts",
+      "target": "prompts_getknowledgecutoff",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L732",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getshellinfoline",
+      "source": "prompts",
+      "target": "prompts_getshellinfoline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L745",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getunamesr",
+      "source": "prompts",
+      "target": "prompts_getunamesr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L760",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_enhancesystempromptwithenvdetails",
+      "source": "prompts",
+      "target": "prompts_enhancesystempromptwithenvdetails",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L797",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getscratchpadinstructions",
+      "source": "prompts",
+      "target": "prompts_getscratchpadinstructions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L821",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getfunctionresultclearingsection",
+      "source": "prompts",
+      "target": "prompts_getfunctionresultclearingsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L843",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getbriefsection",
+      "source": "prompts",
+      "target": "prompts_getbriefsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L860",
+      "weight": 1.0,
+      "_src": "prompts",
+      "_tgt": "prompts_getproactivesection",
+      "source": "prompts",
+      "target": "prompts_getproactivesection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L192",
+      "weight": 0.8,
+      "_src": "prompts_getsimplesystemsection",
+      "_tgt": "prompts_gethookssection",
+      "source": "prompts_gethookssection",
+      "target": "prompts_getsimplesystemsection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L475",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getsystemreminderssection",
+      "source": "prompts_getsystemreminderssection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L478",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getlanguagesection",
+      "source": "prompts_getlanguagesection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L164",
+      "weight": 0.8,
+      "_src": "prompts_getmcpinstructionssection",
+      "_tgt": "prompts_getmcpinstructions",
+      "source": "prompts_getmcpinstructionssection",
+      "target": "prompts_getmcpinstructions",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L483",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getmcpinstructionssection",
+      "source": "prompts_getmcpinstructionssection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L196",
+      "weight": 0.8,
+      "_src": "prompts_getsimplesystemsection",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_getsimplesystemsection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L252",
+      "weight": 0.8,
+      "_src": "prompts_getsimpledoingtaskssection",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_getsimpledoingtaskssection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L284",
+      "weight": 0.8,
+      "_src": "prompts_getusingyourtoolssection",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_getusingyourtoolssection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L399",
+      "weight": 0.8,
+      "_src": "prompts_getsessionspecificguidancesection",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_getsessionspecificguidancesection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L441",
+      "weight": 0.8,
+      "_src": "prompts_getsimpletoneandstylesection",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_getsimpletoneandstylesection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L708",
+      "weight": 0.8,
+      "_src": "prompts_computesimpleenvinfo",
+      "_tgt": "prompts_prependbullets",
+      "source": "prompts_prependbullets",
+      "target": "prompts_computesimpleenvinfo",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L562",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getsimpleintrosection",
+      "source": "prompts_getsimpleintrosection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L563",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getsimplesystemsection",
+      "source": "prompts_getsimplesystemsection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L566",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getsimpledoingtaskssection",
+      "source": "prompts_getsimpledoingtaskssection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L568",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getactionssection",
+      "source": "prompts_getactionssection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L569",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getusingyourtoolssection",
+      "source": "prompts_getusingyourtoolssection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L373",
+      "weight": 0.8,
+      "_src": "prompts_getsessionspecificguidancesection",
+      "_tgt": "prompts_getagenttoolsection",
+      "source": "prompts_getagenttoolsection",
+      "target": "prompts_getsessionspecificguidancesection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L388",
+      "weight": 0.8,
+      "_src": "prompts_getsessionspecificguidancesection",
+      "_tgt": "prompts_getdiscoverskillsguidance",
+      "source": "prompts_getdiscoverskillsguidance",
+      "target": "prompts_getsessionspecificguidancesection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L782",
+      "weight": 0.8,
+      "_src": "prompts_enhancesystempromptwithenvdetails",
+      "_tgt": "prompts_getdiscoverskillsguidance",
+      "source": "prompts_getdiscoverskillsguidance",
+      "target": "prompts_enhancesystempromptwithenvdetails",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L571",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getoutputefficiencysection",
+      "source": "prompts_getoutputefficiencysection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L570",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getsimpletoneandstylesection",
+      "source": "prompts_getsimpletoneandstylesection",
+      "target": "prompts_getsystemprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L460",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_computesimpleenvinfo",
+      "source": "prompts_getsystemprompt",
+      "target": "prompts_computesimpleenvinfo",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L484",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getscratchpadinstructions",
+      "source": "prompts_getsystemprompt",
+      "target": "prompts_getscratchpadinstructions",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L485",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getfunctionresultclearingsection",
+      "source": "prompts_getsystemprompt",
+      "target": "prompts_getfunctionresultclearingsection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L487",
+      "weight": 0.8,
+      "_src": "prompts_getsystemprompt",
+      "_tgt": "prompts_getproactivesection",
+      "source": "prompts_getsystemprompt",
+      "target": "prompts_getproactivesection",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L610",
+      "weight": 0.8,
+      "_src": "prompts_computeenvinfo",
+      "_tgt": "prompts_getunamesr",
+      "source": "prompts_computeenvinfo",
+      "target": "prompts_getunamesr",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L635",
+      "weight": 0.8,
+      "_src": "prompts_computeenvinfo",
+      "_tgt": "prompts_getknowledgecutoff",
+      "source": "prompts_computeenvinfo",
+      "target": "prompts_getknowledgecutoff",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L645",
+      "weight": 0.8,
+      "_src": "prompts_computeenvinfo",
+      "_tgt": "prompts_getshellinfoline",
+      "source": "prompts_computeenvinfo",
+      "target": "prompts_getshellinfoline",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L784",
+      "weight": 0.8,
+      "_src": "prompts_enhancesystempromptwithenvdetails",
+      "_tgt": "prompts_computeenvinfo",
+      "source": "prompts_computeenvinfo",
+      "target": "prompts_enhancesystempromptwithenvdetails",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L655",
+      "weight": 0.8,
+      "_src": "prompts_computesimpleenvinfo",
+      "_tgt": "prompts_getunamesr",
+      "source": "prompts_computesimpleenvinfo",
+      "target": "prompts_getunamesr",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L669",
+      "weight": 0.8,
+      "_src": "prompts_computesimpleenvinfo",
+      "_tgt": "prompts_getknowledgecutoff",
+      "source": "prompts_computesimpleenvinfo",
+      "target": "prompts_getknowledgecutoff",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/prompts.ts",
+      "source_location": "L690",
+      "weight": 0.8,
+      "_src": "prompts_computesimpleenvinfo",
+      "_tgt": "prompts_getshellinfoline",
+      "source": "prompts_computesimpleenvinfo",
+      "target": "prompts_getshellinfoline",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/spinnerVerbs.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "spinnerverbs",
+      "_tgt": "spinnerverbs_getspinnerverbs",
+      "source": "spinnerverbs",
+      "target": "spinnerverbs_getspinnerverbs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "system",
+      "_tgt": "system_getclisyspromptprefix",
+      "source": "system",
+      "target": "system_getclisyspromptprefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "system",
+      "_tgt": "system_isattributionheaderenabled",
+      "source": "system",
+      "target": "system_isattributionheaderenabled",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "system",
+      "_tgt": "system_getattributionheader",
+      "source": "system",
+      "target": "system_getattributionheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/system.ts",
+      "source_location": "L74",
+      "weight": 0.8,
+      "_src": "system_getattributionheader",
+      "_tgt": "system_isattributionheaderenabled",
+      "source": "system_isattributionheaderenabled",
+      "target": "system_getattributionheader",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "systempromptsections",
+      "_tgt": "systempromptsections_systempromptsection",
+      "source": "systempromptsections",
+      "target": "systempromptsections_systempromptsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "systempromptsections",
+      "_tgt": "systempromptsections_dangerous_uncachedsystempromptsection",
+      "source": "systempromptsections",
+      "target": "systempromptsections_dangerous_uncachedsystempromptsection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "systempromptsections",
+      "_tgt": "systempromptsections_resolvesystempromptsections",
+      "source": "systempromptsections",
+      "target": "systempromptsections_resolvesystempromptsections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/constants/systemPromptSections.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "systempromptsections",
+      "_tgt": "systempromptsections_clearsystempromptsections",
+      "source": "systempromptsections",
+      "target": "systempromptsections_clearsystempromptsections",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

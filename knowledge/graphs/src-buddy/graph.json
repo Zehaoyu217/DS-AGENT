@@ -1,0 +1,718 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "CompanionSprite.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L1",
+      "id": "companionsprite",
+      "community": 0
+    },
+    {
+      "label": "wrap()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L28",
+      "id": "companionsprite_wrap",
+      "community": 0
+    },
+    {
+      "label": "SpeechBubble()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L43",
+      "id": "companionsprite_speechbubble",
+      "community": 0
+    },
+    {
+      "label": "spriteColWidth()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L158",
+      "id": "companionsprite_spritecolwidth",
+      "community": 0
+    },
+    {
+      "label": "companionReservedColumns()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L167",
+      "id": "companionsprite_companionreservedcolumns",
+      "community": 0
+    },
+    {
+      "label": "CompanionSprite()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L176",
+      "id": "companionsprite_companionsprite",
+      "community": 0
+    },
+    {
+      "label": "companion.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L1",
+      "id": "companion",
+      "community": 2
+    },
+    {
+      "label": "mulberry32()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L16",
+      "id": "companion_mulberry32",
+      "community": 3
+    },
+    {
+      "label": "hashString()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L27",
+      "id": "companion_hashstring",
+      "community": 3
+    },
+    {
+      "label": "pick()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L39",
+      "id": "companion_pick",
+      "community": 5
+    },
+    {
+      "label": "rollRarity()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L43",
+      "id": "companion_rollrarity",
+      "community": 2
+    },
+    {
+      "label": "rollStats()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L62",
+      "id": "companion_rollstats",
+      "community": 5
+    },
+    {
+      "label": "rollFrom()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L91",
+      "id": "companion_rollfrom",
+      "community": 5
+    },
+    {
+      "label": "roll()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L107",
+      "id": "companion_roll",
+      "community": 3
+    },
+    {
+      "label": "rollWithSeed()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L115",
+      "id": "companion_rollwithseed",
+      "community": 3
+    },
+    {
+      "label": "companionUserId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L119",
+      "id": "companion_companionuserid",
+      "community": 2
+    },
+    {
+      "label": "getCompanion()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L127",
+      "id": "companion_getcompanion",
+      "community": 2
+    },
+    {
+      "label": "prompt.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/prompt.ts",
+      "source_location": "L1",
+      "id": "prompt",
+      "community": 6
+    },
+    {
+      "label": "companionIntroText()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/prompt.ts",
+      "source_location": "L7",
+      "id": "prompt_companionintrotext",
+      "community": 6
+    },
+    {
+      "label": "getCompanionIntroAttachment()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/prompt.ts",
+      "source_location": "L15",
+      "id": "prompt_getcompanionintroattachment",
+      "community": 6
+    },
+    {
+      "label": "sprites.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L1",
+      "id": "sprites",
+      "community": 4
+    },
+    {
+      "label": "renderSprite()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L454",
+      "id": "sprites_rendersprite",
+      "community": 4
+    },
+    {
+      "label": "spriteFrameCount()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L471",
+      "id": "sprites_spriteframecount",
+      "community": 4
+    },
+    {
+      "label": "renderFace()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L475",
+      "id": "sprites_renderface",
+      "community": 4
+    },
+    {
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/types.ts",
+      "source_location": "L1",
+      "id": "types",
+      "community": 7
+    },
+    {
+      "label": "useBuddyNotification.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L1",
+      "id": "usebuddynotification",
+      "community": 1
+    },
+    {
+      "label": "isBuddyTeaserWindow()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L12",
+      "id": "usebuddynotification_isbuddyteaserwindow",
+      "community": 1
+    },
+    {
+      "label": "isBuddyLive()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L17",
+      "id": "usebuddynotification_isbuddylive",
+      "community": 1
+    },
+    {
+      "label": "RainbowText()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L22",
+      "id": "usebuddynotification_rainbowtext",
+      "community": 1
+    },
+    {
+      "label": "findBuddyTriggerPositions()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L79",
+      "id": "usebuddynotification_findbuddytriggerpositions",
+      "community": 1
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_src": "companionsprite",
+      "_tgt": "companionsprite_wrap",
+      "source": "companionsprite",
+      "target": "companionsprite_wrap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "companionsprite",
+      "_tgt": "companionsprite_speechbubble",
+      "source": "companionsprite",
+      "target": "companionsprite_speechbubble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_src": "companionsprite",
+      "_tgt": "companionsprite_spritecolwidth",
+      "source": "companionsprite",
+      "target": "companionsprite_spritecolwidth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_src": "companionsprite",
+      "_tgt": "companionsprite_companionreservedcolumns",
+      "source": "companionsprite",
+      "target": "companionsprite_companionreservedcolumns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L176",
+      "weight": 1.0,
+      "_src": "companionsprite",
+      "_tgt": "companionsprite_companionsprite",
+      "source": "companionsprite",
+      "target": "companionsprite_companionsprite",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L60",
+      "weight": 0.8,
+      "_src": "companionsprite_speechbubble",
+      "_tgt": "companionsprite_wrap",
+      "source": "companionsprite_wrap",
+      "target": "companionsprite_speechbubble",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L174",
+      "weight": 0.8,
+      "_src": "companionsprite_companionreservedcolumns",
+      "_tgt": "companionsprite_spritecolwidth",
+      "source": "companionsprite_spritecolwidth",
+      "target": "companionsprite_companionreservedcolumns",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/CompanionSprite.tsx",
+      "source_location": "L219",
+      "weight": 0.8,
+      "_src": "companionsprite_companionsprite",
+      "_tgt": "companionsprite_spritecolwidth",
+      "source": "companionsprite_spritecolwidth",
+      "target": "companionsprite_companionsprite",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_mulberry32",
+      "source": "companion",
+      "target": "companion_mulberry32",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_hashstring",
+      "source": "companion",
+      "target": "companion_hashstring",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_pick",
+      "source": "companion",
+      "target": "companion_pick",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_rollrarity",
+      "source": "companion",
+      "target": "companion_rollrarity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_rollstats",
+      "source": "companion",
+      "target": "companion_rollstats",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_rollfrom",
+      "source": "companion",
+      "target": "companion_rollfrom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_roll",
+      "source": "companion",
+      "target": "companion_roll",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_rollwithseed",
+      "source": "companion",
+      "target": "companion_rollwithseed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_companionuserid",
+      "source": "companion",
+      "target": "companion_companionuserid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_src": "companion",
+      "_tgt": "companion_getcompanion",
+      "source": "companion",
+      "target": "companion_getcompanion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L110",
+      "weight": 0.8,
+      "_src": "companion_roll",
+      "_tgt": "companion_mulberry32",
+      "source": "companion_mulberry32",
+      "target": "companion_roll",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L116",
+      "weight": 0.8,
+      "_src": "companion_rollwithseed",
+      "_tgt": "companion_mulberry32",
+      "source": "companion_mulberry32",
+      "target": "companion_rollwithseed",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L110",
+      "weight": 0.8,
+      "_src": "companion_roll",
+      "_tgt": "companion_hashstring",
+      "source": "companion_hashstring",
+      "target": "companion_roll",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L116",
+      "weight": 0.8,
+      "_src": "companion_rollwithseed",
+      "_tgt": "companion_hashstring",
+      "source": "companion_hashstring",
+      "target": "companion_rollwithseed",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L67",
+      "weight": 0.8,
+      "_src": "companion_rollstats",
+      "_tgt": "companion_pick",
+      "source": "companion_pick",
+      "target": "companion_rollstats",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L95",
+      "weight": 0.8,
+      "_src": "companion_rollfrom",
+      "_tgt": "companion_pick",
+      "source": "companion_pick",
+      "target": "companion_rollfrom",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L92",
+      "weight": 0.8,
+      "_src": "companion_rollfrom",
+      "_tgt": "companion_rollrarity",
+      "source": "companion_rollrarity",
+      "target": "companion_rollfrom",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L99",
+      "weight": 0.8,
+      "_src": "companion_rollfrom",
+      "_tgt": "companion_rollstats",
+      "source": "companion_rollstats",
+      "target": "companion_rollfrom",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L110",
+      "weight": 0.8,
+      "_src": "companion_roll",
+      "_tgt": "companion_rollfrom",
+      "source": "companion_rollfrom",
+      "target": "companion_roll",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L116",
+      "weight": 0.8,
+      "_src": "companion_rollwithseed",
+      "_tgt": "companion_rollfrom",
+      "source": "companion_rollfrom",
+      "target": "companion_rollwithseed",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L130",
+      "weight": 0.8,
+      "_src": "companion_getcompanion",
+      "_tgt": "companion_roll",
+      "source": "companion_roll",
+      "target": "companion_getcompanion",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/companion.ts",
+      "source_location": "L130",
+      "weight": 0.8,
+      "_src": "companion_getcompanion",
+      "_tgt": "companion_companionuserid",
+      "source": "companion_companionuserid",
+      "target": "companion_getcompanion",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/prompt.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "prompt",
+      "_tgt": "prompt_companionintrotext",
+      "source": "prompt",
+      "target": "prompt_companionintrotext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/prompt.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "prompt",
+      "_tgt": "prompt_getcompanionintroattachment",
+      "source": "prompt",
+      "target": "prompt_getcompanionintroattachment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L454",
+      "weight": 1.0,
+      "_src": "sprites",
+      "_tgt": "sprites_rendersprite",
+      "source": "sprites",
+      "target": "sprites_rendersprite",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L471",
+      "weight": 1.0,
+      "_src": "sprites",
+      "_tgt": "sprites_spriteframecount",
+      "source": "sprites",
+      "target": "sprites_spriteframecount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/sprites.ts",
+      "source_location": "L475",
+      "weight": 1.0,
+      "_src": "sprites",
+      "_tgt": "sprites_renderface",
+      "source": "sprites",
+      "target": "sprites_renderface",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "usebuddynotification",
+      "_tgt": "usebuddynotification_isbuddyteaserwindow",
+      "source": "usebuddynotification",
+      "target": "usebuddynotification_isbuddyteaserwindow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "usebuddynotification",
+      "_tgt": "usebuddynotification_isbuddylive",
+      "source": "usebuddynotification",
+      "target": "usebuddynotification_isbuddylive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "usebuddynotification",
+      "_tgt": "usebuddynotification_rainbowtext",
+      "source": "usebuddynotification",
+      "target": "usebuddynotification_rainbowtext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/buddy/useBuddyNotification.tsx",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "usebuddynotification",
+      "_tgt": "usebuddynotification_findbuddytriggerpositions",
+      "source": "usebuddynotification",
+      "target": "usebuddynotification_findbuddytriggerpositions",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

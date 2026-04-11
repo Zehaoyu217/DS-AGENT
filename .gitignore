@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.egg
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+
+# Build output
+dist/
+out/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Data
+data/
+*.db
+*.duckdb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.vscode/launch.json
+
+# Debug & logs
+*.log
+debug-logs/
+coverage/
+htmlcov/
+.coverage
+
+# Reference material (Claude Code CLI source — local only, not tracked)
+reference/
+
+# Bun
+bun.lockb
+
+# MCP registry
+.mcpregistry_*
+
+# Temporary
+tmp/
+temp/
+
+# Superpowers brainstorm sessions
+.superpowers/
+
+# Sandbox sessions
+data/sandbox_sessions/
+
+# Graphify working files (output lives in knowledge/graphs/)
+**/graphify-out/

@@ -1,0 +1,125 @@
+<h2>Project Structure: 3 Approaches</h2>
+<p class="subtitle">How to organize claude-code-agent as a full-stack analytical platform</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Layered Monorepo</h3>
+      <p>Top-level directories by <strong>technical layer</strong>. Clear separation of concerns. Each layer is independent.</p>
+      <pre style="font-size:12px;line-height:1.4;margin-top:12px;background:rgba(255,255,255,0.05);padding:12px;border-radius:6px;overflow-x:auto">
+claude-code-agent/
+├── reference/              # src/ renamed — read-only CLI source
+│   └── src/                # original 512K TS source
+├── backend/                # Python/FastAPI — YOUR code
+│   ├── agent/              # agent loop, LangGraph, tools
+│   ├── sandbox/            # Python execution sandbox
+│   ├── data/               # ingestion, DuckDB, datasets
+│   ├── api/                # REST + SSE endpoints
+│   ├── models/             # Pydantic models, schemas
+│   └── config/             # settings, env management
+├── frontend/               # React+Vite analytical UI
+│   └── src/
+│       ├── components/     # UI components
+│       ├── panels/         # 4-zone layout panels
+│       ├── devtools/       # developer mode UI
+│       └── stores/         # state management
+├── mcp/                    # MCP server (existing)
+├── infra/                  # docker, helm, grafana, ollama
+├── wiki/                   # LLM wiki (Karpathy pattern)
+├── docs/                   # harness: architecture, ADRs, SOPs
+├── tools/                  # graphify, scripts, dev utilities
+├── tests/                  # cross-cutting test suites
+└── CLAUDE.md               # entry point</pre>
+      <div style="margin-top:12px">
+        <div style="color:#4ade80;font-size:13px">✓ Obvious where everything lives</div>
+        <div style="color:#4ade80;font-size:13px">✓ Easy to navigate for newcomers</div>
+        <div style="color:#f87171;font-size:13px">✗ Backend/frontend coupling hidden</div>
+        <div style="color:#f87171;font-size:13px">✗ Shared types need a convention</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Domain-Driven</h3>
+      <p>Organized by <strong>business domain</strong>. Features grouped by what they DO, not what layer they're in.</p>
+      <pre style="font-size:12px;line-height:1.4;margin-top:12px;background:rgba(255,255,255,0.05);padding:12px;border-radius:6px;overflow-x:auto">
+claude-code-agent/
+├── platform/               # the analytical product
+│   ├── agent/              # agent loop + tools
+│   ├── sandbox/            # execution environment
+│   ├── data/               # ingestion + DuckDB
+│   ├── api/                # REST/SSE layer
+│   └── ui/                 # React+Vite frontend
+├── devtools/               # developer mode
+│   ├── dashboard/          # ops + observability UI
+│   ├── control/            # config management
+│   └── cli/                # dev CLI scripts
+├── knowledge/              # wiki + graphify + docs
+│   ├── wiki/               # LLM wiki
+│   ├── graphs/             # graphify output
+│   └── docs/               # architecture, ADRs, SOPs
+├── reference/              # CLI source (read-only)
+├── infra/                  # docker, helm, grafana
+└── CLAUDE.md</pre>
+      <div style="margin-top:12px">
+        <div style="color:#4ade80;font-size:13px">✓ Features are co-located</div>
+        <div style="color:#4ade80;font-size:13px">✓ Devtools is first-class citizen</div>
+        <div style="color:#f87171;font-size:13px">✗ Deeper nesting</div>
+        <div style="color:#f87171;font-size:13px">✗ "platform" is vague as a name</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid (Recommended)</h3>
+      <p>Layer separation at top level, domain organization within layers. <strong>Best of both worlds.</strong></p>
+      <pre style="font-size:12px;line-height:1.4;margin-top:12px;background:rgba(255,255,255,0.05);padding:12px;border-radius:6px;overflow-x:auto">
+claude-code-agent/
+├── backend/                # Python/FastAPI
+│   ├── app/
+│   │   ├── agent/          # LangGraph agent, tools, prompts
+│   │   ├── sandbox/        # Python code execution
+│   │   ├── data/           # ingestion, DuckDB, datasets
+│   │   ├── api/            # endpoints (REST + SSE)
+│   │   ├── wiki/           # LLM wiki engine
+│   │   └── config/         # settings, model registry
+│   ├── tests/
+│   └── pyproject.toml
+├── frontend/               # React+Vite
+│   └── src/
+│       ├── panels/         # chat, artifacts, trace, left
+│       ├── devtools/       # developer mode (ops + config)
+│       ├── components/     # shared UI
+│       └── stores/         # zustand/jotai state
+├── reference/              # read-only CLI source
+│   └── src/
+├── mcp/                    # MCP server
+├── infra/                  # docker, helm, grafana, ollama
+├── knowledge/              # project intelligence
+│   ├── wiki/               # LLM wiki pages
+│   ├── graphs/             # graphify output
+│   └── adr/                # architecture decisions
+├── docs/                   # SOPs, guides, gotchas
+│   ├── architecture.md
+│   ├── testing.md
+│   ├── deployment.md
+│   └── gotchas.md
+├── scripts/                # dev tooling
+├── CLAUDE.md               # harness entry point
+└── docker-compose.yml</pre>
+      <div style="margin-top:12px">
+        <div style="color:#4ade80;font-size:13px">✓ Clear layers at top level</div>
+        <div style="color:#4ade80;font-size:13px">✓ Domain organization within each layer</div>
+        <div style="color:#4ade80;font-size:13px">✓ Knowledge is first-class (wiki + graphs + ADRs)</div>
+        <div style="color:#4ade80;font-size:13px">✓ Devtools embedded in frontend (where it renders)</div>
+        <div style="color:#4ade80;font-size:13px">✓ Backend/frontend independently deployable</div>
+        <div style="color:#fbbf24;font-size:13px">~ Wiki engine in backend, wiki content in knowledge/</div>
+      </div>
+    </div>
+  </div>
+</div>

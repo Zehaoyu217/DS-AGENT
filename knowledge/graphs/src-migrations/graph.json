@@ -1,0 +1,318 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "migrateAutoUpdatesToSettings.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateAutoUpdatesToSettings.ts",
+      "source_location": "L1",
+      "id": "migrateautoupdatestosettings",
+      "community": 0
+    },
+    {
+      "label": "migrateAutoUpdatesToSettings()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateAutoUpdatesToSettings.ts",
+      "source_location": "L13",
+      "id": "migrateautoupdatestosettings_migrateautoupdatestosettings",
+      "community": 0
+    },
+    {
+      "label": "migrateBypassPermissionsAcceptedToSettings.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateBypassPermissionsAcceptedToSettings.ts",
+      "source_location": "L1",
+      "id": "migratebypasspermissionsacceptedtosettings",
+      "community": 1
+    },
+    {
+      "label": "migrateBypassPermissionsAcceptedToSettings()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateBypassPermissionsAcceptedToSettings.ts",
+      "source_location": "L14",
+      "id": "migratebypasspermissionsacceptedtosettings_migratebypasspermissionsacceptedtosettings",
+      "community": 1
+    },
+    {
+      "label": "migrateEnableAllProjectMcpServersToSettings.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateEnableAllProjectMcpServersToSettings.ts",
+      "source_location": "L1",
+      "id": "migrateenableallprojectmcpserverstosettings",
+      "community": 2
+    },
+    {
+      "label": "migrateEnableAllProjectMcpServersToSettings()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateEnableAllProjectMcpServersToSettings.ts",
+      "source_location": "L17",
+      "id": "migrateenableallprojectmcpserverstosettings_migrateenableallprojectmcpserverstosettings",
+      "community": 2
+    },
+    {
+      "label": "migrateFennecToOpus.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateFennecToOpus.ts",
+      "source_location": "L1",
+      "id": "migratefennectoopus",
+      "community": 3
+    },
+    {
+      "label": "migrateFennecToOpus()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateFennecToOpus.ts",
+      "source_location": "L18",
+      "id": "migratefennectoopus_migratefennectoopus",
+      "community": 3
+    },
+    {
+      "label": "migrateLegacyOpusToCurrent.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateLegacyOpusToCurrent.ts",
+      "source_location": "L1",
+      "id": "migratelegacyopustocurrent",
+      "community": 4
+    },
+    {
+      "label": "migrateLegacyOpusToCurrent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateLegacyOpusToCurrent.ts",
+      "source_location": "L29",
+      "id": "migratelegacyopustocurrent_migratelegacyopustocurrent",
+      "community": 4
+    },
+    {
+      "label": "migrateOpusToOpus1m.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateOpusToOpus1m.ts",
+      "source_location": "L1",
+      "id": "migrateopustoopus1m",
+      "community": 5
+    },
+    {
+      "label": "migrateOpusToOpus1m()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateOpusToOpus1m.ts",
+      "source_location": "L24",
+      "id": "migrateopustoopus1m_migrateopustoopus1m",
+      "community": 5
+    },
+    {
+      "label": "migrateReplBridgeEnabledToRemoteControlAtStartup.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateReplBridgeEnabledToRemoteControlAtStartup.ts",
+      "source_location": "L1",
+      "id": "migratereplbridgeenabledtoremotecontrolatstartup",
+      "community": 6
+    },
+    {
+      "label": "migrateReplBridgeEnabledToRemoteControlAtStartup()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateReplBridgeEnabledToRemoteControlAtStartup.ts",
+      "source_location": "L10",
+      "id": "migratereplbridgeenabledtoremotecontrolatstartup_migratereplbridgeenabledtoremotecontrolatstartup",
+      "community": 6
+    },
+    {
+      "label": "migrateSonnet1mToSonnet45.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet1mToSonnet45.ts",
+      "source_location": "L1",
+      "id": "migratesonnet1mtosonnet45",
+      "community": 7
+    },
+    {
+      "label": "migrateSonnet1mToSonnet45()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet1mToSonnet45.ts",
+      "source_location": "L25",
+      "id": "migratesonnet1mtosonnet45_migratesonnet1mtosonnet45",
+      "community": 7
+    },
+    {
+      "label": "migrateSonnet45ToSonnet46.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet45ToSonnet46.ts",
+      "source_location": "L1",
+      "id": "migratesonnet45tosonnet46",
+      "community": 8
+    },
+    {
+      "label": "migrateSonnet45ToSonnet46()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet45ToSonnet46.ts",
+      "source_location": "L29",
+      "id": "migratesonnet45tosonnet46_migratesonnet45tosonnet46",
+      "community": 8
+    },
+    {
+      "label": "resetAutoModeOptInForDefaultOffer.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetAutoModeOptInForDefaultOffer.ts",
+      "source_location": "L1",
+      "id": "resetautomodeoptinfordefaultoffer",
+      "community": 9
+    },
+    {
+      "label": "resetAutoModeOptInForDefaultOffer()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetAutoModeOptInForDefaultOffer.ts",
+      "source_location": "L25",
+      "id": "resetautomodeoptinfordefaultoffer_resetautomodeoptinfordefaultoffer",
+      "community": 9
+    },
+    {
+      "label": "resetProToOpusDefault.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetProToOpusDefault.ts",
+      "source_location": "L1",
+      "id": "resetprotoopusdefault",
+      "community": 10
+    },
+    {
+      "label": "resetProToOpusDefault()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetProToOpusDefault.ts",
+      "source_location": "L7",
+      "id": "resetprotoopusdefault_resetprotoopusdefault",
+      "community": 10
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateAutoUpdatesToSettings.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "migrateautoupdatestosettings",
+      "_tgt": "migrateautoupdatestosettings_migrateautoupdatestosettings",
+      "source": "migrateautoupdatestosettings",
+      "target": "migrateautoupdatestosettings_migrateautoupdatestosettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateBypassPermissionsAcceptedToSettings.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "migratebypasspermissionsacceptedtosettings",
+      "_tgt": "migratebypasspermissionsacceptedtosettings_migratebypasspermissionsacceptedtosettings",
+      "source": "migratebypasspermissionsacceptedtosettings",
+      "target": "migratebypasspermissionsacceptedtosettings_migratebypasspermissionsacceptedtosettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateEnableAllProjectMcpServersToSettings.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "migrateenableallprojectmcpserverstosettings",
+      "_tgt": "migrateenableallprojectmcpserverstosettings_migrateenableallprojectmcpserverstosettings",
+      "source": "migrateenableallprojectmcpserverstosettings",
+      "target": "migrateenableallprojectmcpserverstosettings_migrateenableallprojectmcpserverstosettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateFennecToOpus.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "migratefennectoopus",
+      "_tgt": "migratefennectoopus_migratefennectoopus",
+      "source": "migratefennectoopus",
+      "target": "migratefennectoopus_migratefennectoopus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateLegacyOpusToCurrent.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "migratelegacyopustocurrent",
+      "_tgt": "migratelegacyopustocurrent_migratelegacyopustocurrent",
+      "source": "migratelegacyopustocurrent",
+      "target": "migratelegacyopustocurrent_migratelegacyopustocurrent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateOpusToOpus1m.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "migrateopustoopus1m",
+      "_tgt": "migrateopustoopus1m_migrateopustoopus1m",
+      "source": "migrateopustoopus1m",
+      "target": "migrateopustoopus1m_migrateopustoopus1m",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateReplBridgeEnabledToRemoteControlAtStartup.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "migratereplbridgeenabledtoremotecontrolatstartup",
+      "_tgt": "migratereplbridgeenabledtoremotecontrolatstartup_migratereplbridgeenabledtoremotecontrolatstartup",
+      "source": "migratereplbridgeenabledtoremotecontrolatstartup",
+      "target": "migratereplbridgeenabledtoremotecontrolatstartup_migratereplbridgeenabledtoremotecontrolatstartup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet1mToSonnet45.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "migratesonnet1mtosonnet45",
+      "_tgt": "migratesonnet1mtosonnet45_migratesonnet1mtosonnet45",
+      "source": "migratesonnet1mtosonnet45",
+      "target": "migratesonnet1mtosonnet45_migratesonnet1mtosonnet45",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/migrateSonnet45ToSonnet46.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "migratesonnet45tosonnet46",
+      "_tgt": "migratesonnet45tosonnet46_migratesonnet45tosonnet46",
+      "source": "migratesonnet45tosonnet46",
+      "target": "migratesonnet45tosonnet46_migratesonnet45tosonnet46",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetAutoModeOptInForDefaultOffer.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "resetautomodeoptinfordefaultoffer",
+      "_tgt": "resetautomodeoptinfordefaultoffer_resetautomodeoptinfordefaultoffer",
+      "source": "resetautomodeoptinfordefaultoffer",
+      "target": "resetautomodeoptinfordefaultoffer_resetautomodeoptinfordefaultoffer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/migrations/resetProToOpusDefault.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "resetprotoopusdefault",
+      "_tgt": "resetprotoopusdefault_resetprotoopusdefault",
+      "source": "resetprotoopusdefault",
+      "target": "resetprotoopusdefault_resetprotoopusdefault",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

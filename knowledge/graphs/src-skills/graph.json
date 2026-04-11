@@ -1,0 +1,1878 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "batch.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/batch.ts",
+      "source_location": "L1",
+      "id": "batch",
+      "community": 7
+    },
+    {
+      "label": "buildPrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/batch.ts",
+      "source_location": "L19",
+      "id": "batch_buildprompt",
+      "community": 7
+    },
+    {
+      "label": "registerBatchSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/batch.ts",
+      "source_location": "L100",
+      "id": "batch_registerbatchskill",
+      "community": 7
+    },
+    {
+      "label": "claudeApi.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L1",
+      "id": "claudeapi",
+      "community": 3
+    },
+    {
+      "label": "detectLanguage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L30",
+      "id": "claudeapi_detectlanguage",
+      "community": 3
+    },
+    {
+      "label": "getFilesForLanguage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L55",
+      "id": "claudeapi_getfilesforlanguage",
+      "community": 3
+    },
+    {
+      "label": "processContent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L64",
+      "id": "claudeapi_processcontent",
+      "community": 3
+    },
+    {
+      "label": "buildInlineReference()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L81",
+      "id": "claudeapi_buildinlinereference",
+      "community": 3
+    },
+    {
+      "label": "buildPrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L132",
+      "id": "claudeapi_buildprompt",
+      "community": 3
+    },
+    {
+      "label": "registerClaudeApiSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L180",
+      "id": "claudeapi_registerclaudeapiskill",
+      "community": 3
+    },
+    {
+      "label": "claudeApiContent.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApiContent.ts",
+      "source_location": "L1",
+      "id": "claudeapicontent",
+      "community": 20
+    },
+    {
+      "label": "claudeInChrome.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeInChrome.ts",
+      "source_location": "L1",
+      "id": "claudeinchrome",
+      "community": 13
+    },
+    {
+      "label": "registerClaudeInChromeSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeInChrome.ts",
+      "source_location": "L16",
+      "id": "claudeinchrome_registerclaudeinchromeskill",
+      "community": 13
+    },
+    {
+      "label": "debug.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/debug.ts",
+      "source_location": "L1",
+      "id": "debug",
+      "community": 14
+    },
+    {
+      "label": "registerDebugSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/debug.ts",
+      "source_location": "L12",
+      "id": "debug_registerdebugskill",
+      "community": 14
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/index.ts",
+      "source_location": "L1",
+      "id": "index",
+      "community": 15
+    },
+    {
+      "label": "initBundledSkills()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/index.ts",
+      "source_location": "L24",
+      "id": "index_initbundledskills",
+      "community": 15
+    },
+    {
+      "label": "keybindings.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L1",
+      "id": "keybindings",
+      "community": 4
+    },
+    {
+      "label": "generateContextsTable()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L20",
+      "id": "keybindings_generatecontextstable",
+      "community": 4
+    },
+    {
+      "label": "generateActionsTable()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L33",
+      "id": "keybindings_generateactionstable",
+      "community": 4
+    },
+    {
+      "label": "inferContextFromAction()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L61",
+      "id": "keybindings_infercontextfromaction",
+      "community": 4
+    },
+    {
+      "label": "generateReservedShortcuts()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L89",
+      "id": "keybindings_generatereservedshortcuts",
+      "community": 4
+    },
+    {
+      "label": "registerKeybindingsSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L292",
+      "id": "keybindings_registerkeybindingsskill",
+      "community": 4
+    },
+    {
+      "label": "markdownTable()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L332",
+      "id": "keybindings_markdowntable",
+      "community": 4
+    },
+    {
+      "label": "loop.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loop.ts",
+      "source_location": "L1",
+      "id": "loop",
+      "community": 8
+    },
+    {
+      "label": "buildPrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loop.ts",
+      "source_location": "L25",
+      "id": "loop_buildprompt",
+      "community": 8
+    },
+    {
+      "label": "registerLoopSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loop.ts",
+      "source_location": "L74",
+      "id": "loop_registerloopskill",
+      "community": 8
+    },
+    {
+      "label": "loremIpsum.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loremIpsum.ts",
+      "source_location": "L1",
+      "id": "loremipsum",
+      "community": 9
+    },
+    {
+      "label": "generateLoremIpsum()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loremIpsum.ts",
+      "source_location": "L202",
+      "id": "loremipsum_generateloremipsum",
+      "community": 9
+    },
+    {
+      "label": "registerLoremIpsumSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loremIpsum.ts",
+      "source_location": "L234",
+      "id": "loremipsum_registerloremipsumskill",
+      "community": 9
+    },
+    {
+      "label": "remember.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/remember.ts",
+      "source_location": "L1",
+      "id": "remember",
+      "community": 16
+    },
+    {
+      "label": "registerRememberSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/remember.ts",
+      "source_location": "L4",
+      "id": "remember_registerrememberskill",
+      "community": 16
+    },
+    {
+      "label": "scheduleRemoteAgents.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L1",
+      "id": "scheduleremoteagents",
+      "community": 2
+    },
+    {
+      "label": "taggedIdToUUID()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L35",
+      "id": "scheduleremoteagents_taggedidtouuid",
+      "community": 2
+    },
+    {
+      "label": "getConnectedClaudeAIConnectors()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L65",
+      "id": "scheduleremoteagents_getconnectedclaudeaiconnectors",
+      "community": 2
+    },
+    {
+      "label": "sanitizeConnectorName()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L89",
+      "id": "scheduleremoteagents_sanitizeconnectorname",
+      "community": 2
+    },
+    {
+      "label": "formatConnectorsInfo()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L97",
+      "id": "scheduleremoteagents_formatconnectorsinfo",
+      "community": 2
+    },
+    {
+      "label": "formatSetupNotes()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L118",
+      "id": "scheduleremoteagents_formatsetupnotes",
+      "community": 2
+    },
+    {
+      "label": "getCurrentRepoHttpsUrl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L123",
+      "id": "scheduleremoteagents_getcurrentrepohttpsurl",
+      "community": 2
+    },
+    {
+      "label": "buildPrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L135",
+      "id": "scheduleremoteagents_buildprompt",
+      "community": 2
+    },
+    {
+      "label": "registerScheduleRemoteAgentsSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L324",
+      "id": "scheduleremoteagents_registerscheduleremoteagentsskill",
+      "community": 2
+    },
+    {
+      "label": "simplify.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/simplify.ts",
+      "source_location": "L1",
+      "id": "simplify",
+      "community": 17
+    },
+    {
+      "label": "registerSimplifySkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/simplify.ts",
+      "source_location": "L55",
+      "id": "simplify_registersimplifyskill",
+      "community": 17
+    },
+    {
+      "label": "skillify.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/skillify.ts",
+      "source_location": "L1",
+      "id": "skillify",
+      "community": 10
+    },
+    {
+      "label": "extractUserMessages()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/skillify.ts",
+      "source_location": "L6",
+      "id": "skillify_extractusermessages",
+      "community": 10
+    },
+    {
+      "label": "registerSkillifySkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/skillify.ts",
+      "source_location": "L158",
+      "id": "skillify_registerskillifyskill",
+      "community": 10
+    },
+    {
+      "label": "stuck.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/stuck.ts",
+      "source_location": "L1",
+      "id": "stuck",
+      "community": 18
+    },
+    {
+      "label": "registerStuckSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/stuck.ts",
+      "source_location": "L61",
+      "id": "stuck_registerstuckskill",
+      "community": 18
+    },
+    {
+      "label": "updateConfig.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/updateConfig.ts",
+      "source_location": "L1",
+      "id": "updateconfig",
+      "community": 11
+    },
+    {
+      "label": "generateSettingsSchema()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/updateConfig.ts",
+      "source_location": "L10",
+      "id": "updateconfig_generatesettingsschema",
+      "community": 11
+    },
+    {
+      "label": "registerUpdateConfigSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/updateConfig.ts",
+      "source_location": "L445",
+      "id": "updateconfig_registerupdateconfigskill",
+      "community": 11
+    },
+    {
+      "label": "verify.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/verify.ts",
+      "source_location": "L1",
+      "id": "verify",
+      "community": 19
+    },
+    {
+      "label": "registerVerifySkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/verify.ts",
+      "source_location": "L12",
+      "id": "verify_registerverifyskill",
+      "community": 19
+    },
+    {
+      "label": "verifyContent.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/verifyContent.ts",
+      "source_location": "L1",
+      "id": "verifycontent",
+      "community": 21
+    },
+    {
+      "label": "bundledSkills.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L1",
+      "id": "bundledskills",
+      "community": 1
+    },
+    {
+      "label": "registerBundledSkill()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L53",
+      "id": "bundledskills_registerbundledskill",
+      "community": 1
+    },
+    {
+      "label": "getBundledSkills()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L106",
+      "id": "bundledskills_getbundledskills",
+      "community": 1
+    },
+    {
+      "label": "clearBundledSkills()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L113",
+      "id": "bundledskills_clearbundledskills",
+      "community": 1
+    },
+    {
+      "label": "getBundledSkillExtractDir()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L120",
+      "id": "bundledskills_getbundledskillextractdir",
+      "community": 1
+    },
+    {
+      "label": "extractBundledSkillFiles()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L131",
+      "id": "bundledskills_extractbundledskillfiles",
+      "community": 1
+    },
+    {
+      "label": "writeSkillFiles()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L147",
+      "id": "bundledskills_writeskillfiles",
+      "community": 1
+    },
+    {
+      "label": "safeWriteFile()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L186",
+      "id": "bundledskills_safewritefile",
+      "community": 1
+    },
+    {
+      "label": "resolveSkillFilePath()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L196",
+      "id": "bundledskills_resolveskillfilepath",
+      "community": 1
+    },
+    {
+      "label": "prependBaseDir()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L208",
+      "id": "bundledskills_prependbasedir",
+      "community": 1
+    },
+    {
+      "label": "loadSkillsDir.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L1",
+      "id": "loadskillsdir",
+      "community": 0
+    },
+    {
+      "label": "getSkillsPath()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L78",
+      "id": "loadskillsdir_getskillspath",
+      "community": 0
+    },
+    {
+      "label": "estimateSkillFrontmatterTokens()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L100",
+      "id": "loadskillsdir_estimateskillfrontmattertokens",
+      "community": 0
+    },
+    {
+      "label": "getFileIdentity()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L118",
+      "id": "loadskillsdir_getfileidentity",
+      "community": 0
+    },
+    {
+      "label": "parseHooksFromFrontmatter()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L136",
+      "id": "loadskillsdir_parsehooksfromfrontmatter",
+      "community": 5
+    },
+    {
+      "label": "parseSkillPaths()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L159",
+      "id": "loadskillsdir_parseskillpaths",
+      "community": 0
+    },
+    {
+      "label": "parseSkillFrontmatterFields()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L185",
+      "id": "loadskillsdir_parseskillfrontmatterfields",
+      "community": 5
+    },
+    {
+      "label": "createSkillCommand()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L270",
+      "id": "loadskillsdir_createskillcommand",
+      "community": 5
+    },
+    {
+      "label": "loadSkillsFromSkillsDir()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L407",
+      "id": "loadskillsdir_loadskillsfromskillsdir",
+      "community": 0
+    },
+    {
+      "label": "isSkillFile()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L484",
+      "id": "loadskillsdir_isskillfile",
+      "community": 5
+    },
+    {
+      "label": "transformSkillFiles()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L493",
+      "id": "loadskillsdir_transformskillfiles",
+      "community": 5
+    },
+    {
+      "label": "buildNamespace()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L523",
+      "id": "loadskillsdir_buildnamespace",
+      "community": 6
+    },
+    {
+      "label": "getSkillCommandName()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L536",
+      "id": "loadskillsdir_getskillcommandname",
+      "community": 6
+    },
+    {
+      "label": "getRegularCommandName()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L545",
+      "id": "loadskillsdir_getregularcommandname",
+      "community": 6
+    },
+    {
+      "label": "getCommandName()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L554",
+      "id": "loadskillsdir_getcommandname",
+      "community": 6
+    },
+    {
+      "label": "loadSkillsFromCommandsDir()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L566",
+      "id": "loadskillsdir_loadskillsfromcommandsdir",
+      "community": 5
+    },
+    {
+      "label": "clearSkillCaches()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L806",
+      "id": "loadskillsdir_clearskillcaches",
+      "community": 0
+    },
+    {
+      "label": "onDynamicSkillsLoaded()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L839",
+      "id": "loadskillsdir_ondynamicskillsloaded",
+      "community": 0
+    },
+    {
+      "label": "discoverSkillDirsForPaths()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L861",
+      "id": "loadskillsdir_discoverskilldirsforpaths",
+      "community": 0
+    },
+    {
+      "label": "addSkillDirectories()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L923",
+      "id": "loadskillsdir_addskilldirectories",
+      "community": 0
+    },
+    {
+      "label": "getDynamicSkills()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L981",
+      "id": "loadskillsdir_getdynamicskills",
+      "community": 0
+    },
+    {
+      "label": "activateConditionalSkillsForPaths()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L997",
+      "id": "loadskillsdir_activateconditionalskillsforpaths",
+      "community": 0
+    },
+    {
+      "label": "getConditionalSkillCount()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L1063",
+      "id": "loadskillsdir_getconditionalskillcount",
+      "community": 0
+    },
+    {
+      "label": "clearDynamicSkills()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L1070",
+      "id": "loadskillsdir_cleardynamicskills",
+      "community": 0
+    },
+    {
+      "label": "mcpSkillBuilders.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/mcpSkillBuilders.ts",
+      "source_location": "L1",
+      "id": "mcpskillbuilders",
+      "community": 12
+    },
+    {
+      "label": "registerMCPSkillBuilders()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/mcpSkillBuilders.ts",
+      "source_location": "L33",
+      "id": "mcpskillbuilders_registermcpskillbuilders",
+      "community": 12
+    },
+    {
+      "label": "getMCPSkillBuilders()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/mcpSkillBuilders.ts",
+      "source_location": "L37",
+      "id": "mcpskillbuilders_getmcpskillbuilders",
+      "community": 12
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/batch.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "batch",
+      "_tgt": "batch_buildprompt",
+      "source": "batch",
+      "target": "batch_buildprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/batch.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_src": "batch",
+      "_tgt": "batch_registerbatchskill",
+      "source": "batch",
+      "target": "batch_registerbatchskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_detectlanguage",
+      "source": "claudeapi",
+      "target": "claudeapi_detectlanguage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_getfilesforlanguage",
+      "source": "claudeapi",
+      "target": "claudeapi_getfilesforlanguage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_processcontent",
+      "source": "claudeapi",
+      "target": "claudeapi_processcontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_buildinlinereference",
+      "source": "claudeapi",
+      "target": "claudeapi_buildinlinereference",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_buildprompt",
+      "source": "claudeapi",
+      "target": "claudeapi_buildprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L180",
+      "weight": 1.0,
+      "_src": "claudeapi",
+      "_tgt": "claudeapi_registerclaudeapiskill",
+      "source": "claudeapi",
+      "target": "claudeapi_registerclaudeapiskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L148",
+      "weight": 0.8,
+      "_src": "claudeapi_buildprompt",
+      "_tgt": "claudeapi_getfilesforlanguage",
+      "source": "claudeapi_getfilesforlanguage",
+      "target": "claudeapi_buildprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L90",
+      "weight": 0.8,
+      "_src": "claudeapi_buildinlinereference",
+      "_tgt": "claudeapi_processcontent",
+      "source": "claudeapi_processcontent",
+      "target": "claudeapi_buildinlinereference",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L138",
+      "weight": 0.8,
+      "_src": "claudeapi_buildprompt",
+      "_tgt": "claudeapi_processcontent",
+      "source": "claudeapi_processcontent",
+      "target": "claudeapi_buildprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeApi.ts",
+      "source_location": "L153",
+      "weight": 0.8,
+      "_src": "claudeapi_buildprompt",
+      "_tgt": "claudeapi_buildinlinereference",
+      "source": "claudeapi_buildinlinereference",
+      "target": "claudeapi_buildprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/claudeInChrome.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "claudeinchrome",
+      "_tgt": "claudeinchrome_registerclaudeinchromeskill",
+      "source": "claudeinchrome",
+      "target": "claudeinchrome_registerclaudeinchromeskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/debug.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "debug",
+      "_tgt": "debug_registerdebugskill",
+      "source": "debug",
+      "target": "debug_registerdebugskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/index.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "index",
+      "_tgt": "index_initbundledskills",
+      "source": "index",
+      "target": "index_initbundledskills",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_generatecontextstable",
+      "source": "keybindings",
+      "target": "keybindings_generatecontextstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_generateactionstable",
+      "source": "keybindings",
+      "target": "keybindings_generateactionstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_infercontextfromaction",
+      "source": "keybindings",
+      "target": "keybindings_infercontextfromaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_generatereservedshortcuts",
+      "source": "keybindings",
+      "target": "keybindings_generatereservedshortcuts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L292",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_registerkeybindingsskill",
+      "source": "keybindings",
+      "target": "keybindings_registerkeybindingsskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L332",
+      "weight": 1.0,
+      "_src": "keybindings",
+      "_tgt": "keybindings_markdowntable",
+      "source": "keybindings",
+      "target": "keybindings_markdowntable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_src": "keybindings_generatecontextstable",
+      "_tgt": "keybindings_markdowntable",
+      "source": "keybindings_generatecontextstable",
+      "target": "keybindings_markdowntable",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/keybindings.ts",
+      "source_location": "L47",
+      "weight": 0.8,
+      "_src": "keybindings_generateactionstable",
+      "_tgt": "keybindings_markdowntable",
+      "source": "keybindings_generateactionstable",
+      "target": "keybindings_markdowntable",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loop.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "loop",
+      "_tgt": "loop_buildprompt",
+      "source": "loop",
+      "target": "loop_buildprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loop.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "loop",
+      "_tgt": "loop_registerloopskill",
+      "source": "loop",
+      "target": "loop_registerloopskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loremIpsum.ts",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_src": "loremipsum",
+      "_tgt": "loremipsum_generateloremipsum",
+      "source": "loremipsum",
+      "target": "loremipsum_generateloremipsum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/loremIpsum.ts",
+      "source_location": "L234",
+      "weight": 1.0,
+      "_src": "loremipsum",
+      "_tgt": "loremipsum_registerloremipsumskill",
+      "source": "loremipsum",
+      "target": "loremipsum_registerloremipsumskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/remember.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "remember",
+      "_tgt": "remember_registerrememberskill",
+      "source": "remember",
+      "target": "remember_registerrememberskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_taggedidtouuid",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_taggedidtouuid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_getconnectedclaudeaiconnectors",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_getconnectedclaudeaiconnectors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_sanitizeconnectorname",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_sanitizeconnectorname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_formatconnectorsinfo",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_formatconnectorsinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_formatsetupnotes",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_formatsetupnotes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_getcurrentrepohttpsurl",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_getcurrentrepohttpsurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L135",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_buildprompt",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_buildprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L324",
+      "weight": 1.0,
+      "_src": "scheduleremoteagents",
+      "_tgt": "scheduleremoteagents_registerscheduleremoteagentsskill",
+      "source": "scheduleremoteagents",
+      "target": "scheduleremoteagents_registerscheduleremoteagentsskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "scheduleremoteagents_getconnectedclaudeaiconnectors",
+      "_tgt": "scheduleremoteagents_taggedidtouuid",
+      "source": "scheduleremoteagents_taggedidtouuid",
+      "target": "scheduleremoteagents_getconnectedclaudeaiconnectors",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L103",
+      "weight": 0.8,
+      "_src": "scheduleremoteagents_formatconnectorsinfo",
+      "_tgt": "scheduleremoteagents_sanitizeconnectorname",
+      "source": "scheduleremoteagents_sanitizeconnectorname",
+      "target": "scheduleremoteagents_formatconnectorsinfo",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/scheduleRemoteAgents.ts",
+      "source_location": "L160",
+      "weight": 0.8,
+      "_src": "scheduleremoteagents_buildprompt",
+      "_tgt": "scheduleremoteagents_formatsetupnotes",
+      "source": "scheduleremoteagents_formatsetupnotes",
+      "target": "scheduleremoteagents_buildprompt",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/simplify.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "simplify",
+      "_tgt": "simplify_registersimplifyskill",
+      "source": "simplify",
+      "target": "simplify_registersimplifyskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/skillify.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "skillify",
+      "_tgt": "skillify_extractusermessages",
+      "source": "skillify",
+      "target": "skillify_extractusermessages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/skillify.ts",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_src": "skillify",
+      "_tgt": "skillify_registerskillifyskill",
+      "source": "skillify",
+      "target": "skillify_registerskillifyskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/stuck.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_src": "stuck",
+      "_tgt": "stuck_registerstuckskill",
+      "source": "stuck",
+      "target": "stuck_registerstuckskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/updateConfig.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "updateconfig",
+      "_tgt": "updateconfig_generatesettingsschema",
+      "source": "updateconfig",
+      "target": "updateconfig_generatesettingsschema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/updateConfig.ts",
+      "source_location": "L445",
+      "weight": 1.0,
+      "_src": "updateconfig",
+      "_tgt": "updateconfig_registerupdateconfigskill",
+      "source": "updateconfig",
+      "target": "updateconfig_registerupdateconfigskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundled/verify.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "verify",
+      "_tgt": "verify_registerverifyskill",
+      "source": "verify",
+      "target": "verify_registerverifyskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_registerbundledskill",
+      "source": "bundledskills",
+      "target": "bundledskills_registerbundledskill",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_getbundledskills",
+      "source": "bundledskills",
+      "target": "bundledskills_getbundledskills",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_clearbundledskills",
+      "source": "bundledskills",
+      "target": "bundledskills_clearbundledskills",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_getbundledskillextractdir",
+      "source": "bundledskills",
+      "target": "bundledskills_getbundledskillextractdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L131",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_extractbundledskillfiles",
+      "source": "bundledskills",
+      "target": "bundledskills_extractbundledskillfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L147",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_writeskillfiles",
+      "source": "bundledskills",
+      "target": "bundledskills_writeskillfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L186",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_safewritefile",
+      "source": "bundledskills",
+      "target": "bundledskills_safewritefile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L196",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_resolveskillfilepath",
+      "source": "bundledskills",
+      "target": "bundledskills_resolveskillfilepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L208",
+      "weight": 1.0,
+      "_src": "bundledskills",
+      "_tgt": "bundledskills_prependbasedir",
+      "source": "bundledskills",
+      "target": "bundledskills_prependbasedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L60",
+      "weight": 0.8,
+      "_src": "bundledskills_registerbundledskill",
+      "_tgt": "bundledskills_getbundledskillextractdir",
+      "source": "bundledskills_registerbundledskill",
+      "target": "bundledskills_getbundledskillextractdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L135",
+      "weight": 0.8,
+      "_src": "bundledskills_extractbundledskillfiles",
+      "_tgt": "bundledskills_getbundledskillextractdir",
+      "source": "bundledskills_getbundledskillextractdir",
+      "target": "bundledskills_extractbundledskillfiles",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L137",
+      "weight": 0.8,
+      "_src": "bundledskills_extractbundledskillfiles",
+      "_tgt": "bundledskills_writeskillfiles",
+      "source": "bundledskills_extractbundledskillfiles",
+      "target": "bundledskills_writeskillfiles",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/bundledSkills.ts",
+      "source_location": "L154",
+      "weight": 0.8,
+      "_src": "bundledskills_writeskillfiles",
+      "_tgt": "bundledskills_resolveskillfilepath",
+      "source": "bundledskills_writeskillfiles",
+      "target": "bundledskills_resolveskillfilepath",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getskillspath",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getskillspath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_estimateskillfrontmattertokens",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_estimateskillfrontmattertokens",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getfileidentity",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getfileidentity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_parsehooksfromfrontmatter",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_parsehooksfromfrontmatter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_parseskillpaths",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_parseskillpaths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L185",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_parseskillfrontmatterfields",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_parseskillfrontmatterfields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L270",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_createskillcommand",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_createskillcommand",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L407",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_loadskillsfromskillsdir",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_loadskillsfromskillsdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L484",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_isskillfile",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_isskillfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L493",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_transformskillfiles",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_transformskillfiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L523",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_buildnamespace",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_buildnamespace",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L536",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getskillcommandname",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getskillcommandname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L545",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getregularcommandname",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getregularcommandname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L554",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getcommandname",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getcommandname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L566",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_loadskillsfromcommandsdir",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L806",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_clearskillcaches",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_clearskillcaches",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L839",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_ondynamicskillsloaded",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_ondynamicskillsloaded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L861",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_discoverskilldirsforpaths",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_discoverskilldirsforpaths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L923",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_addskilldirectories",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_addskilldirectories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L981",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getdynamicskills",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getdynamicskills",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L997",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_activateconditionalskillsforpaths",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_activateconditionalskillsforpaths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L1063",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_getconditionalskillcount",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_getconditionalskillcount",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L1070",
+      "weight": 1.0,
+      "_src": "loadskillsdir",
+      "_tgt": "loadskillsdir_cleardynamicskills",
+      "source": "loadskillsdir",
+      "target": "loadskillsdir_cleardynamicskills",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L259",
+      "weight": 0.8,
+      "_src": "loadskillsdir_parseskillfrontmatterfields",
+      "_tgt": "loadskillsdir_parsehooksfromfrontmatter",
+      "source": "loadskillsdir_parsehooksfromfrontmatter",
+      "target": "loadskillsdir_parseskillfrontmatterfields",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L593",
+      "weight": 0.8,
+      "_src": "loadskillsdir_loadskillsfromcommandsdir",
+      "_tgt": "loadskillsdir_parseskillfrontmatterfields",
+      "source": "loadskillsdir_parseskillfrontmatterfields",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L601",
+      "weight": 0.8,
+      "_src": "loadskillsdir_loadskillsfromcommandsdir",
+      "_tgt": "loadskillsdir_createskillcommand",
+      "source": "loadskillsdir_createskillcommand",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L555",
+      "weight": 0.8,
+      "_src": "loadskillsdir_getcommandname",
+      "_tgt": "loadskillsdir_isskillfile",
+      "source": "loadskillsdir_isskillfile",
+      "target": "loadskillsdir_getcommandname",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L583",
+      "weight": 0.8,
+      "_src": "loadskillsdir_loadskillsfromcommandsdir",
+      "_tgt": "loadskillsdir_isskillfile",
+      "source": "loadskillsdir_isskillfile",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L571",
+      "weight": 0.8,
+      "_src": "loadskillsdir_loadskillsfromcommandsdir",
+      "_tgt": "loadskillsdir_transformskillfiles",
+      "source": "loadskillsdir_transformskillfiles",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L541",
+      "weight": 0.8,
+      "_src": "loadskillsdir_getskillcommandname",
+      "_tgt": "loadskillsdir_buildnamespace",
+      "source": "loadskillsdir_buildnamespace",
+      "target": "loadskillsdir_getskillcommandname",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L550",
+      "weight": 0.8,
+      "_src": "loadskillsdir_getregularcommandname",
+      "_tgt": "loadskillsdir_buildnamespace",
+      "source": "loadskillsdir_buildnamespace",
+      "target": "loadskillsdir_getregularcommandname",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L557",
+      "weight": 0.8,
+      "_src": "loadskillsdir_getcommandname",
+      "_tgt": "loadskillsdir_getskillcommandname",
+      "source": "loadskillsdir_getskillcommandname",
+      "target": "loadskillsdir_getcommandname",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L558",
+      "weight": 0.8,
+      "_src": "loadskillsdir_getcommandname",
+      "_tgt": "loadskillsdir_getregularcommandname",
+      "source": "loadskillsdir_getregularcommandname",
+      "target": "loadskillsdir_getcommandname",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/loadSkillsDir.ts",
+      "source_location": "L585",
+      "weight": 0.8,
+      "_src": "loadskillsdir_loadskillsfromcommandsdir",
+      "_tgt": "loadskillsdir_getcommandname",
+      "source": "loadskillsdir_getcommandname",
+      "target": "loadskillsdir_loadskillsfromcommandsdir",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/mcpSkillBuilders.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "mcpskillbuilders",
+      "_tgt": "mcpskillbuilders_registermcpskillbuilders",
+      "source": "mcpskillbuilders",
+      "target": "mcpskillbuilders_registermcpskillbuilders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/skills/mcpSkillBuilders.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "mcpskillbuilders",
+      "_tgt": "mcpskillbuilders_getmcpskillbuilders",
+      "source": "mcpskillbuilders",
+      "target": "mcpskillbuilders_getmcpskillbuilders",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

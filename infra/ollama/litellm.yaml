@@ -1,0 +1,35 @@
+model_list:
+  # Fast/small model — for quick tool calls and lightweight tasks
+  - model_name: qwen3.5:9b
+    litellm_params:
+      model: ollama/qwen3.5:9b
+      api_base: http://localhost:11434
+
+  # Mid-range
+  - model_name: gemma4:e4b
+    litellm_params:
+      model: ollama/gemma4:e4b
+      api_base: http://localhost:11434
+
+  # Large models
+  - model_name: gemma4:31b
+    litellm_params:
+      model: ollama/gemma4:31b
+      api_base: http://localhost:11434
+
+  - model_name: gemma2:27b-instruct-q6_K
+    litellm_params:
+      model: ollama/gemma2:27b-instruct-q6_K
+      api_base: http://localhost:11434
+
+litellm_settings:
+  # Return Anthropic-format responses (required for @anthropic-ai/sdk)
+  success_callback: []
+  failure_callback: []
+  request_timeout: 600
+
+general_settings:
+  master_key: "sk-ollama-local"
+  # Disable auth since this is local only
+  disable_spend_logs: true
+  store_model_in_db: false

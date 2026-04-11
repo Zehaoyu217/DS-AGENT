@@ -1,0 +1,542 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "agentSdkTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L1",
+      "id": "agentsdktypes",
+      "community": 0
+    },
+    {
+      "label": "tool()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L73",
+      "id": "agentsdktypes_tool",
+      "community": 0
+    },
+    {
+      "label": "createSdkMcpServer()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L103",
+      "id": "agentsdktypes_createsdkmcpserver",
+      "community": 0
+    },
+    {
+      "label": "AbortError",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L109",
+      "id": "agentsdktypes_aborterror",
+      "community": 0
+    },
+    {
+      "label": "query()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L120",
+      "id": "agentsdktypes_query",
+      "community": 0
+    },
+    {
+      "label": "unstable_v2_createSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L129",
+      "id": "agentsdktypes_unstable_v2_createsession",
+      "community": 0
+    },
+    {
+      "label": "unstable_v2_resumeSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L140",
+      "id": "agentsdktypes_unstable_v2_resumesession",
+      "community": 0
+    },
+    {
+      "label": "unstable_v2_prompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L160",
+      "id": "agentsdktypes_unstable_v2_prompt",
+      "community": 0
+    },
+    {
+      "label": "getSessionMessages()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L178",
+      "id": "agentsdktypes_getsessionmessages",
+      "community": 0
+    },
+    {
+      "label": "listSessions()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L204",
+      "id": "agentsdktypes_listsessions",
+      "community": 0
+    },
+    {
+      "label": "getSessionInfo()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L219",
+      "id": "agentsdktypes_getsessioninfo",
+      "community": 0
+    },
+    {
+      "label": "renameSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L232",
+      "id": "agentsdktypes_renamesession",
+      "community": 0
+    },
+    {
+      "label": "tagSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L246",
+      "id": "agentsdktypes_tagsession",
+      "community": 0
+    },
+    {
+      "label": "forkSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L268",
+      "id": "agentsdktypes_forksession",
+      "community": 0
+    },
+    {
+      "label": "watchScheduledTasks()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L350",
+      "id": "agentsdktypes_watchscheduledtasks",
+      "community": 0
+    },
+    {
+      "label": "buildMissedTaskNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L363",
+      "id": "agentsdktypes_buildmissedtasknotification",
+      "community": 0
+    },
+    {
+      "label": "connectRemoteControl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L439",
+      "id": "agentsdktypes_connectremotecontrol",
+      "community": 0
+    },
+    {
+      "label": "cli.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/cli.tsx",
+      "source_location": "L1",
+      "id": "cli",
+      "community": 2
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/cli.tsx",
+      "source_location": "L33",
+      "id": "cli_main",
+      "community": 2
+    },
+    {
+      "label": "init.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L1",
+      "id": "init",
+      "community": 1
+    },
+    {
+      "label": "initializeTelemetryAfterTrust()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L247",
+      "id": "init_initializetelemetryaftertrust",
+      "community": 1
+    },
+    {
+      "label": "doInitializeTelemetry()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L288",
+      "id": "init_doinitializetelemetry",
+      "community": 1
+    },
+    {
+      "label": "setMeterState()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L305",
+      "id": "init_setmeterstate",
+      "community": 1
+    },
+    {
+      "label": "mcp.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/mcp.ts",
+      "source_location": "L1",
+      "id": "mcp",
+      "community": 3
+    },
+    {
+      "label": "startMCPServer()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/mcp.ts",
+      "source_location": "L35",
+      "id": "mcp_startmcpserver",
+      "community": 3
+    },
+    {
+      "label": "sandboxTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sandboxTypes.ts",
+      "source_location": "L1",
+      "id": "sandboxtypes",
+      "community": 4
+    },
+    {
+      "label": "controlSchemas.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/controlSchemas.ts",
+      "source_location": "L1",
+      "id": "controlschemas",
+      "community": 5
+    },
+    {
+      "label": "coreSchemas.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/coreSchemas.ts",
+      "source_location": "L1",
+      "id": "coreschemas",
+      "community": 6
+    },
+    {
+      "label": "coreTypes.generated.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/coreTypes.generated.ts",
+      "source_location": "L1",
+      "id": "coretypes_generated",
+      "community": 7
+    },
+    {
+      "label": "coreTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/coreTypes.ts",
+      "source_location": "L1",
+      "id": "coretypes",
+      "community": 8
+    },
+    {
+      "label": "runtimeTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/runtimeTypes.ts",
+      "source_location": "L1",
+      "id": "runtimetypes",
+      "community": 9
+    },
+    {
+      "label": "toolTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/sdk/toolTypes.ts",
+      "source_location": "L1",
+      "id": "tooltypes",
+      "community": 10
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_tool",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_tool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_createsdkmcpserver",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_createsdkmcpserver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_aborterror",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_aborterror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_query",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L129",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_unstable_v2_createsession",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_unstable_v2_createsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_unstable_v2_resumesession",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_unstable_v2_resumesession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_unstable_v2_prompt",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_unstable_v2_prompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_getsessionmessages",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_getsessionmessages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L204",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_listsessions",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_listsessions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L219",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_getsessioninfo",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_getsessioninfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L232",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_renamesession",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_renamesession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L246",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_tagsession",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_tagsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L268",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_forksession",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_forksession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L350",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_watchscheduledtasks",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_watchscheduledtasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L363",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_buildmissedtasknotification",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_buildmissedtasknotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/agentSdkTypes.ts",
+      "source_location": "L439",
+      "weight": 1.0,
+      "_src": "agentsdktypes",
+      "_tgt": "agentsdktypes_connectremotecontrol",
+      "source": "agentsdktypes",
+      "target": "agentsdktypes_connectremotecontrol",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/cli.tsx",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "cli",
+      "_tgt": "cli_main",
+      "source": "cli",
+      "target": "cli_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L247",
+      "weight": 1.0,
+      "_src": "init",
+      "_tgt": "init_initializetelemetryaftertrust",
+      "source": "init",
+      "target": "init_initializetelemetryaftertrust",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L288",
+      "weight": 1.0,
+      "_src": "init",
+      "_tgt": "init_doinitializetelemetry",
+      "source": "init",
+      "target": "init_doinitializetelemetry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L305",
+      "weight": 1.0,
+      "_src": "init",
+      "_tgt": "init_setmeterstate",
+      "source": "init",
+      "target": "init_setmeterstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L253",
+      "weight": 0.8,
+      "_src": "init_initializetelemetryaftertrust",
+      "_tgt": "init_doinitializetelemetry",
+      "source": "init_initializetelemetryaftertrust",
+      "target": "init_doinitializetelemetry",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/init.ts",
+      "source_location": "L297",
+      "weight": 0.8,
+      "_src": "init_doinitializetelemetry",
+      "_tgt": "init_setmeterstate",
+      "source": "init_doinitializetelemetry",
+      "target": "init_setmeterstate",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/entrypoints/mcp.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "mcp",
+      "_tgt": "mcp_startmcpserver",
+      "source": "mcp",
+      "target": "mcp_startmcpserver",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

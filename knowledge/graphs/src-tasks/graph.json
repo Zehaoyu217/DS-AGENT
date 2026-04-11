@@ -1,0 +1,2058 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "DreamTask.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L1",
+      "id": "dreamtask",
+      "community": 5
+    },
+    {
+      "label": "isDreamTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L43",
+      "id": "dreamtask_isdreamtask",
+      "community": 5
+    },
+    {
+      "label": "registerDreamTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L52",
+      "id": "dreamtask_registerdreamtask",
+      "community": 5
+    },
+    {
+      "label": "addDreamTurn()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L76",
+      "id": "dreamtask_adddreamturn",
+      "community": 5
+    },
+    {
+      "label": "completeDreamTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L106",
+      "id": "dreamtask_completedreamtask",
+      "community": 5
+    },
+    {
+      "label": "failDreamTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L122",
+      "id": "dreamtask_faildreamtask",
+      "community": 5
+    },
+    {
+      "label": "InProcessTeammateTask.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L1",
+      "id": "inprocessteammatetask",
+      "community": 4
+    },
+    {
+      "label": "requestTeammateShutdown()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L35",
+      "id": "inprocessteammatetask_requestteammateshutdown",
+      "community": 4
+    },
+    {
+      "label": "appendTeammateMessage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L51",
+      "id": "inprocessteammatetask_appendteammatemessage",
+      "community": 4
+    },
+    {
+      "label": "injectUserMessageToTeammate()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L68",
+      "id": "inprocessteammatetask_injectusermessagetoteammate",
+      "community": 4
+    },
+    {
+      "label": "findTeammateTaskByAgentId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L92",
+      "id": "inprocessteammatetask_findteammatetaskbyagentid",
+      "community": 4
+    },
+    {
+      "label": "getAllInProcessTeammateTasks()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L113",
+      "id": "inprocessteammatetask_getallinprocessteammatetasks",
+      "community": 4
+    },
+    {
+      "label": "getRunningTeammatesSorted()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L123",
+      "id": "inprocessteammatetask_getrunningteammatessorted",
+      "community": 4
+    },
+    {
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/types.ts",
+      "source_location": "L1",
+      "id": "types",
+      "community": 6
+    },
+    {
+      "label": "isInProcessTeammateTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/types.ts",
+      "source_location": "L78",
+      "id": "types_isinprocessteammatetask",
+      "community": 6
+    },
+    {
+      "label": "appendCappedMessage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/types.ts",
+      "source_location": "L108",
+      "id": "types_appendcappedmessage",
+      "community": 6
+    },
+    {
+      "label": "LocalAgentTask.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L1",
+      "id": "localagenttask",
+      "community": 0
+    },
+    {
+      "label": "createProgressTracker()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L50",
+      "id": "localagenttask_createprogresstracker",
+      "community": 0
+    },
+    {
+      "label": "getTokenCountFromTracker()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L58",
+      "id": "localagenttask_gettokencountfromtracker",
+      "community": 0
+    },
+    {
+      "label": "updateProgressFromMessage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L68",
+      "id": "localagenttask_updateprogressfrommessage",
+      "community": 0
+    },
+    {
+      "label": "getProgressUpdate()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L97",
+      "id": "localagenttask_getprogressupdate",
+      "community": 0
+    },
+    {
+      "label": "createActivityDescriptionResolver()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L110",
+      "id": "localagenttask_createactivitydescriptionresolver",
+      "community": 0
+    },
+    {
+      "label": "isLocalAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L149",
+      "id": "localagenttask_islocalagenttask",
+      "community": 0
+    },
+    {
+      "label": "isPanelAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L159",
+      "id": "localagenttask_ispanelagenttask",
+      "community": 0
+    },
+    {
+      "label": "queuePendingMessage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L162",
+      "id": "localagenttask_queuependingmessage",
+      "community": 0
+    },
+    {
+      "label": "appendMessageToLocalAgent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L175",
+      "id": "localagenttask_appendmessagetolocalagent",
+      "community": 0
+    },
+    {
+      "label": "drainPendingMessages()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L181",
+      "id": "localagenttask_drainpendingmessages",
+      "community": 0
+    },
+    {
+      "label": "enqueueAgentNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L197",
+      "id": "localagenttask_enqueueagentnotification",
+      "community": 0
+    },
+    {
+      "label": "killAsyncAgent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L281",
+      "id": "localagenttask_killasyncagent",
+      "community": 0
+    },
+    {
+      "label": "killAllRunningAgentTasks()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L309",
+      "id": "localagenttask_killallrunningagenttasks",
+      "community": 0
+    },
+    {
+      "label": "markAgentsNotified()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L322",
+      "id": "localagenttask_markagentsnotified",
+      "community": 0
+    },
+    {
+      "label": "updateAgentProgress()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L339",
+      "id": "localagenttask_updateagentprogress",
+      "community": 0
+    },
+    {
+      "label": "updateAgentSummary()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L359",
+      "id": "localagenttask_updateagentsummary",
+      "community": 0
+    },
+    {
+      "label": "completeAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L412",
+      "id": "localagenttask_completeagenttask",
+      "community": 0
+    },
+    {
+      "label": "failAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L437",
+      "id": "localagenttask_failagenttask",
+      "community": 0
+    },
+    {
+      "label": "registerAsyncAgent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L466",
+      "id": "localagenttask_registerasyncagent",
+      "community": 0
+    },
+    {
+      "label": "registerAgentForeground()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L526",
+      "id": "localagenttask_registeragentforeground",
+      "community": 0
+    },
+    {
+      "label": "backgroundAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L620",
+      "id": "localagenttask_backgroundagenttask",
+      "community": 0
+    },
+    {
+      "label": "unregisterAgentForeground()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L657",
+      "id": "localagenttask_unregisteragentforeground",
+      "community": 0
+    },
+    {
+      "label": "LocalMainSessionTask.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L1",
+      "id": "localmainsessiontask",
+      "community": 3
+    },
+    {
+      "label": "generateMainSessionTaskId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L75",
+      "id": "localmainsessiontask_generatemainsessiontaskid",
+      "community": 3
+    },
+    {
+      "label": "registerMainSessionTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L94",
+      "id": "localmainsessiontask_registermainsessiontask",
+      "community": 3
+    },
+    {
+      "label": "completeMainSessionTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L168",
+      "id": "localmainsessiontask_completemainsessiontask",
+      "community": 3
+    },
+    {
+      "label": "enqueueMainSessionNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L224",
+      "id": "localmainsessiontask_enqueuemainsessionnotification",
+      "community": 3
+    },
+    {
+      "label": "foregroundMainSessionTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L270",
+      "id": "localmainsessiontask_foregroundmainsessiontask",
+      "community": 3
+    },
+    {
+      "label": "isMainSessionTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L307",
+      "id": "localmainsessiontask_ismainsessiontask",
+      "community": 3
+    },
+    {
+      "label": "startBackgroundSession()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L338",
+      "id": "localmainsessiontask_startbackgroundsession",
+      "community": 3
+    },
+    {
+      "label": "LocalShellTask.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L1",
+      "id": "localshelltask",
+      "community": 2
+    },
+    {
+      "label": "looksLikePrompt()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L39",
+      "id": "localshelltask_lookslikeprompt",
+      "community": 2
+    },
+    {
+      "label": "startStallWatchdog()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L46",
+      "id": "localshelltask_startstallwatchdog",
+      "community": 2
+    },
+    {
+      "label": "enqueueShellNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L105",
+      "id": "localshelltask_enqueueshellnotification",
+      "community": 2
+    },
+    {
+      "label": "spawnShellTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L180",
+      "id": "localshelltask_spawnshelltask",
+      "community": 2
+    },
+    {
+      "label": "registerForeground()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L259",
+      "id": "localshelltask_registerforeground",
+      "community": 2
+    },
+    {
+      "label": "backgroundTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L293",
+      "id": "localshelltask_backgroundtask",
+      "community": 2
+    },
+    {
+      "label": "hasForegroundTasks()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L378",
+      "id": "localshelltask_hasforegroundtasks",
+      "community": 2
+    },
+    {
+      "label": "backgroundAll()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L390",
+      "id": "localshelltask_backgroundall",
+      "community": 2
+    },
+    {
+      "label": "backgroundExistingForegroundTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L420",
+      "id": "localshelltask_backgroundexistingforegroundtask",
+      "community": 2
+    },
+    {
+      "label": "markTaskNotified()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L481",
+      "id": "localshelltask_marktasknotified",
+      "community": 2
+    },
+    {
+      "label": "unregisterForeground()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L491",
+      "id": "localshelltask_unregisterforeground",
+      "community": 2
+    },
+    {
+      "label": "flushAndCleanup()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L515",
+      "id": "localshelltask_flushandcleanup",
+      "community": 2
+    },
+    {
+      "label": "guards.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/guards.ts",
+      "source_location": "L1",
+      "id": "guards",
+      "community": 10
+    },
+    {
+      "label": "isLocalShellTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/guards.ts",
+      "source_location": "L34",
+      "id": "guards_islocalshelltask",
+      "community": 10
+    },
+    {
+      "label": "killShellTasks.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L1",
+      "id": "killshelltasks",
+      "community": 8
+    },
+    {
+      "label": "killTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L16",
+      "id": "killshelltasks_killtask",
+      "community": 8
+    },
+    {
+      "label": "killShellTasksForAgent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L53",
+      "id": "killshelltasks_killshelltasksforagent",
+      "community": 8
+    },
+    {
+      "label": "RemoteAgentTask.tsx",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L1",
+      "id": "remoteagenttask",
+      "community": 1
+    },
+    {
+      "label": "isRemoteTaskType()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L62",
+      "id": "remoteagenttask_isremotetasktype",
+      "community": 1
+    },
+    {
+      "label": "registerCompletionChecker()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L84",
+      "id": "remoteagenttask_registercompletionchecker",
+      "community": 1
+    },
+    {
+      "label": "persistRemoteAgentMetadata()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L92",
+      "id": "remoteagenttask_persistremoteagentmetadata",
+      "community": 1
+    },
+    {
+      "label": "removeRemoteAgentMetadata()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L105",
+      "id": "remoteagenttask_removeremoteagentmetadata",
+      "community": 1
+    },
+    {
+      "label": "checkRemoteAgentEligibility()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L124",
+      "id": "remoteagenttask_checkremoteagenteligibility",
+      "community": 1
+    },
+    {
+      "label": "formatPreconditionError()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L146",
+      "id": "remoteagenttask_formatpreconditionerror",
+      "community": 1
+    },
+    {
+      "label": "enqueueRemoteNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L166",
+      "id": "remoteagenttask_enqueueremotenotification",
+      "community": 1
+    },
+    {
+      "label": "markTaskNotified()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L189",
+      "id": "remoteagenttask_marktasknotified",
+      "community": 1
+    },
+    {
+      "label": "extractPlanFromLog()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L208",
+      "id": "remoteagenttask_extractplanfromlog",
+      "community": 1
+    },
+    {
+      "label": "enqueueUltraplanFailureNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L225",
+      "id": "remoteagenttask_enqueueultraplanfailurenotification",
+      "community": 1
+    },
+    {
+      "label": "extractReviewFromLog()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L254",
+      "id": "remoteagenttask_extractreviewfromlog",
+      "community": 1
+    },
+    {
+      "label": "extractReviewTagFromLog()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L295",
+      "id": "remoteagenttask_extractreviewtagfromlog",
+      "community": 1
+    },
+    {
+      "label": "enqueueRemoteReviewNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L327",
+      "id": "remoteagenttask_enqueueremotereviewnotification",
+      "community": 1
+    },
+    {
+      "label": "enqueueRemoteReviewFailureNotification()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L347",
+      "id": "remoteagenttask_enqueueremotereviewfailurenotification",
+      "community": 1
+    },
+    {
+      "label": "extractTodoListFromLog()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L365",
+      "id": "remoteagenttask_extracttodolistfromlog",
+      "community": 1
+    },
+    {
+      "label": "registerRemoteAgentTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L386",
+      "id": "remoteagenttask_registerremoteagenttask",
+      "community": 1
+    },
+    {
+      "label": "restoreRemoteAgentTasks()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L477",
+      "id": "remoteagenttask_restoreremoteagenttasks",
+      "community": 1
+    },
+    {
+      "label": "restoreRemoteAgentTasksImpl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L484",
+      "id": "remoteagenttask_restoreremoteagenttasksimpl",
+      "community": 1
+    },
+    {
+      "label": "startRemoteSessionPolling()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L538",
+      "id": "remoteagenttask_startremotesessionpolling",
+      "community": 1
+    },
+    {
+      "label": "getRemoteTaskSessionUrl()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L853",
+      "id": "remoteagenttask_getremotetasksessionurl",
+      "community": 1
+    },
+    {
+      "label": "pillLabel.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/pillLabel.ts",
+      "source_location": "L1",
+      "id": "pilllabel",
+      "community": 9
+    },
+    {
+      "label": "getPillLabel()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/pillLabel.ts",
+      "source_location": "L10",
+      "id": "pilllabel_getpilllabel",
+      "community": 9
+    },
+    {
+      "label": "pillNeedsCta()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/pillLabel.ts",
+      "source_location": "L74",
+      "id": "pilllabel_pillneedscta",
+      "community": 9
+    },
+    {
+      "label": "stopTask.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L1",
+      "id": "stoptask",
+      "community": 7
+    },
+    {
+      "label": "StopTaskError",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L10",
+      "id": "stoptask_stoptaskerror",
+      "community": 7
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L11",
+      "id": "stoptask_stoptaskerror_constructor",
+      "community": 7
+    },
+    {
+      "label": "stopTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L38",
+      "id": "stoptask_stoptask",
+      "community": 7
+    },
+    {
+      "label": "isBackgroundTask()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/types.ts",
+      "source_location": "L37",
+      "id": "types_isbackgroundtask",
+      "community": 6
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "dreamtask",
+      "_tgt": "dreamtask_isdreamtask",
+      "source": "dreamtask",
+      "target": "dreamtask_isdreamtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "dreamtask",
+      "_tgt": "dreamtask_registerdreamtask",
+      "source": "dreamtask",
+      "target": "dreamtask_registerdreamtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_src": "dreamtask",
+      "_tgt": "dreamtask_adddreamturn",
+      "source": "dreamtask",
+      "target": "dreamtask_adddreamturn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_src": "dreamtask",
+      "_tgt": "dreamtask_completedreamtask",
+      "source": "dreamtask",
+      "target": "dreamtask_completedreamtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/DreamTask/DreamTask.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_src": "dreamtask",
+      "_tgt": "dreamtask_faildreamtask",
+      "source": "dreamtask",
+      "target": "dreamtask_faildreamtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_requestteammateshutdown",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_requestteammateshutdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_appendteammatemessage",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_appendteammatemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_injectusermessagetoteammate",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_injectusermessagetoteammate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_findteammatetaskbyagentid",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_findteammatetaskbyagentid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_getallinprocessteammatetasks",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_getallinprocessteammatetasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "inprocessteammatetask",
+      "_tgt": "inprocessteammatetask_getrunningteammatessorted",
+      "source": "inprocessteammatetask",
+      "target": "inprocessteammatetask_getrunningteammatessorted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/InProcessTeammateTask.tsx",
+      "source_location": "L124",
+      "weight": 0.8,
+      "_src": "inprocessteammatetask_getrunningteammatessorted",
+      "_tgt": "inprocessteammatetask_getallinprocessteammatetasks",
+      "source": "inprocessteammatetask_getallinprocessteammatetasks",
+      "target": "inprocessteammatetask_getrunningteammatessorted",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/types.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "types",
+      "_tgt": "types_isinprocessteammatetask",
+      "source": "types",
+      "target": "types_isinprocessteammatetask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/InProcessTeammateTask/types.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_src": "types",
+      "_tgt": "types_appendcappedmessage",
+      "source": "types",
+      "target": "types_appendcappedmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/types.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "types",
+      "_tgt": "types_isbackgroundtask",
+      "source": "types",
+      "target": "types_isbackgroundtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_createprogresstracker",
+      "source": "localagenttask",
+      "target": "localagenttask_createprogresstracker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_gettokencountfromtracker",
+      "source": "localagenttask",
+      "target": "localagenttask_gettokencountfromtracker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_updateprogressfrommessage",
+      "source": "localagenttask",
+      "target": "localagenttask_updateprogressfrommessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_getprogressupdate",
+      "source": "localagenttask",
+      "target": "localagenttask_getprogressupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_createactivitydescriptionresolver",
+      "source": "localagenttask",
+      "target": "localagenttask_createactivitydescriptionresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_islocalagenttask",
+      "source": "localagenttask",
+      "target": "localagenttask_islocalagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_ispanelagenttask",
+      "source": "localagenttask",
+      "target": "localagenttask_ispanelagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L162",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_queuependingmessage",
+      "source": "localagenttask",
+      "target": "localagenttask_queuependingmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_appendmessagetolocalagent",
+      "source": "localagenttask",
+      "target": "localagenttask_appendmessagetolocalagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_drainpendingmessages",
+      "source": "localagenttask",
+      "target": "localagenttask_drainpendingmessages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L197",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_enqueueagentnotification",
+      "source": "localagenttask",
+      "target": "localagenttask_enqueueagentnotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L281",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_killasyncagent",
+      "source": "localagenttask",
+      "target": "localagenttask_killasyncagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L309",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_killallrunningagenttasks",
+      "source": "localagenttask",
+      "target": "localagenttask_killallrunningagenttasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L322",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_markagentsnotified",
+      "source": "localagenttask",
+      "target": "localagenttask_markagentsnotified",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L339",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_updateagentprogress",
+      "source": "localagenttask",
+      "target": "localagenttask_updateagentprogress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L359",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_updateagentsummary",
+      "source": "localagenttask",
+      "target": "localagenttask_updateagentsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L412",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_completeagenttask",
+      "source": "localagenttask",
+      "target": "localagenttask_completeagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L437",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_failagenttask",
+      "source": "localagenttask",
+      "target": "localagenttask_failagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L466",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_registerasyncagent",
+      "source": "localagenttask",
+      "target": "localagenttask_registerasyncagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L526",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_registeragentforeground",
+      "source": "localagenttask",
+      "target": "localagenttask_registeragentforeground",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L620",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_backgroundagenttask",
+      "source": "localagenttask",
+      "target": "localagenttask_backgroundagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L657",
+      "weight": 1.0,
+      "_src": "localagenttask",
+      "_tgt": "localagenttask_unregisteragentforeground",
+      "source": "localagenttask",
+      "target": "localagenttask_unregisteragentforeground",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L100",
+      "weight": 0.8,
+      "_src": "localagenttask_getprogressupdate",
+      "_tgt": "localagenttask_gettokencountfromtracker",
+      "source": "localagenttask_gettokencountfromtracker",
+      "target": "localagenttask_getprogressupdate",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L160",
+      "weight": 0.8,
+      "_src": "localagenttask_ispanelagenttask",
+      "_tgt": "localagenttask_islocalagenttask",
+      "source": "localagenttask_islocalagenttask",
+      "target": "localagenttask_ispanelagenttask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L183",
+      "weight": 0.8,
+      "_src": "localagenttask_drainpendingmessages",
+      "_tgt": "localagenttask_islocalagenttask",
+      "source": "localagenttask_islocalagenttask",
+      "target": "localagenttask_drainpendingmessages",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L623",
+      "weight": 0.8,
+      "_src": "localagenttask_backgroundagenttask",
+      "_tgt": "localagenttask_islocalagenttask",
+      "source": "localagenttask_islocalagenttask",
+      "target": "localagenttask_backgroundagenttask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalAgentTask/LocalAgentTask.tsx",
+      "source_location": "L312",
+      "weight": 0.8,
+      "_src": "localagenttask_killallrunningagenttasks",
+      "_tgt": "localagenttask_killasyncagent",
+      "source": "localagenttask_killasyncagent",
+      "target": "localagenttask_killallrunningagenttasks",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_generatemainsessiontaskid",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_generatemainsessiontaskid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_registermainsessiontask",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_registermainsessiontask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L168",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_completemainsessiontask",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_completemainsessiontask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L224",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_enqueuemainsessionnotification",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_enqueuemainsessionnotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L270",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_foregroundmainsessiontask",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_foregroundmainsessiontask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L307",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_ismainsessiontask",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_ismainsessiontask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L338",
+      "weight": 1.0,
+      "_src": "localmainsessiontask",
+      "_tgt": "localmainsessiontask_startbackgroundsession",
+      "source": "localmainsessiontask",
+      "target": "localmainsessiontask_startbackgroundsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L100",
+      "weight": 0.8,
+      "_src": "localmainsessiontask_registermainsessiontask",
+      "_tgt": "localmainsessiontask_generatemainsessiontaskid",
+      "source": "localmainsessiontask_generatemainsessiontaskid",
+      "target": "localmainsessiontask_registermainsessiontask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L351",
+      "weight": 0.8,
+      "_src": "localmainsessiontask_startbackgroundsession",
+      "_tgt": "localmainsessiontask_registermainsessiontask",
+      "source": "localmainsessiontask_registermainsessiontask",
+      "target": "localmainsessiontask_startbackgroundsession",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalMainSessionTask.ts",
+      "source_location": "L200",
+      "weight": 0.8,
+      "_src": "localmainsessiontask_completemainsessiontask",
+      "_tgt": "localmainsessiontask_enqueuemainsessionnotification",
+      "source": "localmainsessiontask_completemainsessiontask",
+      "target": "localmainsessiontask_enqueuemainsessionnotification",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_lookslikeprompt",
+      "source": "localshelltask",
+      "target": "localshelltask_lookslikeprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_startstallwatchdog",
+      "source": "localshelltask",
+      "target": "localshelltask_startstallwatchdog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_enqueueshellnotification",
+      "source": "localshelltask",
+      "target": "localshelltask_enqueueshellnotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L180",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_spawnshelltask",
+      "source": "localshelltask",
+      "target": "localshelltask_spawnshelltask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L259",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_registerforeground",
+      "source": "localshelltask",
+      "target": "localshelltask_registerforeground",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L293",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_backgroundtask",
+      "source": "localshelltask",
+      "target": "localshelltask_backgroundtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L378",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_hasforegroundtasks",
+      "source": "localshelltask",
+      "target": "localshelltask_hasforegroundtasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L390",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_backgroundall",
+      "source": "localshelltask",
+      "target": "localshelltask_backgroundall",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L420",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_backgroundexistingforegroundtask",
+      "source": "localshelltask",
+      "target": "localshelltask_backgroundexistingforegroundtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L481",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_marktasknotified",
+      "source": "localshelltask",
+      "target": "localshelltask_marktasknotified",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L491",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_unregisterforeground",
+      "source": "localshelltask",
+      "target": "localshelltask_unregisterforeground",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L515",
+      "weight": 1.0,
+      "_src": "localshelltask",
+      "_tgt": "localshelltask_flushandcleanup",
+      "source": "localshelltask",
+      "target": "localshelltask_flushandcleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L221",
+      "weight": 0.8,
+      "_src": "localshelltask_spawnshelltask",
+      "_tgt": "localshelltask_startstallwatchdog",
+      "source": "localshelltask_startstallwatchdog",
+      "target": "localshelltask_spawnshelltask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L328",
+      "weight": 0.8,
+      "_src": "localshelltask_backgroundtask",
+      "_tgt": "localshelltask_startstallwatchdog",
+      "source": "localshelltask_startstallwatchdog",
+      "target": "localshelltask_backgroundtask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L442",
+      "weight": 0.8,
+      "_src": "localshelltask_backgroundexistingforegroundtask",
+      "_tgt": "localshelltask_startstallwatchdog",
+      "source": "localshelltask_startstallwatchdog",
+      "target": "localshelltask_backgroundexistingforegroundtask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/LocalShellTask.tsx",
+      "source_location": "L399",
+      "weight": 0.8,
+      "_src": "localshelltask_backgroundall",
+      "_tgt": "localshelltask_backgroundtask",
+      "source": "localshelltask_backgroundtask",
+      "target": "localshelltask_backgroundall",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/guards.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "guards",
+      "_tgt": "guards_islocalshelltask",
+      "source": "guards",
+      "target": "guards_islocalshelltask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "killshelltasks",
+      "_tgt": "killshelltasks_killtask",
+      "source": "killshelltasks",
+      "target": "killshelltasks_killtask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "killshelltasks",
+      "_tgt": "killshelltasks_killshelltasksforagent",
+      "source": "killshelltasks",
+      "target": "killshelltasks_killshelltasksforagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/LocalShellTask/killShellTasks.ts",
+      "source_location": "L68",
+      "weight": 0.8,
+      "_src": "killshelltasks_killshelltasksforagent",
+      "_tgt": "killshelltasks_killtask",
+      "source": "killshelltasks_killtask",
+      "target": "killshelltasks_killshelltasksforagent",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_isremotetasktype",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_isremotetasktype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_registercompletionchecker",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_registercompletionchecker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_persistremoteagentmetadata",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_persistremoteagentmetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_removeremoteagentmetadata",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_removeremoteagentmetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L124",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_checkremoteagenteligibility",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_checkremoteagenteligibility",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L146",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_formatpreconditionerror",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_formatpreconditionerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L166",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_enqueueremotenotification",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_enqueueremotenotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L189",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_marktasknotified",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_marktasknotified",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L208",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_extractplanfromlog",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_extractplanfromlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L225",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_enqueueultraplanfailurenotification",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_enqueueultraplanfailurenotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L254",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_extractreviewfromlog",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_extractreviewfromlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_extractreviewtagfromlog",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_extractreviewtagfromlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L327",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_enqueueremotereviewnotification",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_enqueueremotereviewnotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L347",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_enqueueremotereviewfailurenotification",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_enqueueremotereviewfailurenotification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L365",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_extracttodolistfromlog",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_extracttodolistfromlog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L386",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_registerremoteagenttask",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_registerremoteagenttask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L477",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_restoreremoteagenttasks",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_restoreremoteagenttasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L484",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_restoreremoteagenttasksimpl",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_restoreremoteagenttasksimpl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L538",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_startremotesessionpolling",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_startremotesessionpolling",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L853",
+      "weight": 1.0,
+      "_src": "remoteagenttask",
+      "_tgt": "remoteagenttask_getremotetasksessionurl",
+      "source": "remoteagenttask",
+      "target": "remoteagenttask_getremotetasksessionurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L514",
+      "weight": 0.8,
+      "_src": "remoteagenttask_restoreremoteagenttasksimpl",
+      "_tgt": "remoteagenttask_isremotetasktype",
+      "source": "remoteagenttask_isremotetasktype",
+      "target": "remoteagenttask_restoreremoteagenttasksimpl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L442",
+      "weight": 0.8,
+      "_src": "remoteagenttask_registerremoteagenttask",
+      "_tgt": "remoteagenttask_persistremoteagentmetadata",
+      "source": "remoteagenttask_persistremoteagentmetadata",
+      "target": "remoteagenttask_registerremoteagenttask",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L500",
+      "weight": 0.8,
+      "_src": "remoteagenttask_restoreremoteagenttasksimpl",
+      "_tgt": "remoteagenttask_removeremoteagentmetadata",
+      "source": "remoteagenttask_removeremoteagentmetadata",
+      "target": "remoteagenttask_restoreremoteagenttasksimpl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L168",
+      "weight": 0.8,
+      "_src": "remoteagenttask_enqueueremotenotification",
+      "_tgt": "remoteagenttask_marktasknotified",
+      "source": "remoteagenttask_enqueueremotenotification",
+      "target": "remoteagenttask_marktasknotified",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L226",
+      "weight": 0.8,
+      "_src": "remoteagenttask_enqueueultraplanfailurenotification",
+      "_tgt": "remoteagenttask_marktasknotified",
+      "source": "remoteagenttask_marktasknotified",
+      "target": "remoteagenttask_enqueueultraplanfailurenotification",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L328",
+      "weight": 0.8,
+      "_src": "remoteagenttask_enqueueremotereviewnotification",
+      "_tgt": "remoteagenttask_marktasknotified",
+      "source": "remoteagenttask_marktasknotified",
+      "target": "remoteagenttask_enqueueremotereviewnotification",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L348",
+      "weight": 0.8,
+      "_src": "remoteagenttask_enqueueremotereviewfailurenotification",
+      "_tgt": "remoteagenttask_marktasknotified",
+      "source": "remoteagenttask_marktasknotified",
+      "target": "remoteagenttask_enqueueremotereviewfailurenotification",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L227",
+      "weight": 0.8,
+      "_src": "remoteagenttask_enqueueultraplanfailurenotification",
+      "_tgt": "remoteagenttask_getremotetasksessionurl",
+      "source": "remoteagenttask_enqueueultraplanfailurenotification",
+      "target": "remoteagenttask_getremotetasksessionurl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L460",
+      "weight": 0.8,
+      "_src": "remoteagenttask_registerremoteagenttask",
+      "_tgt": "remoteagenttask_startremotesessionpolling",
+      "source": "remoteagenttask_registerremoteagenttask",
+      "target": "remoteagenttask_startremotesessionpolling",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L479",
+      "weight": 0.8,
+      "_src": "remoteagenttask_restoreremoteagenttasks",
+      "_tgt": "remoteagenttask_restoreremoteagenttasksimpl",
+      "source": "remoteagenttask_restoreremoteagenttasks",
+      "target": "remoteagenttask_restoreremoteagenttasksimpl",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/RemoteAgentTask/RemoteAgentTask.tsx",
+      "source_location": "L530",
+      "weight": 0.8,
+      "_src": "remoteagenttask_restoreremoteagenttasksimpl",
+      "_tgt": "remoteagenttask_startremotesessionpolling",
+      "source": "remoteagenttask_restoreremoteagenttasksimpl",
+      "target": "remoteagenttask_startremotesessionpolling",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/pillLabel.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "pilllabel",
+      "_tgt": "pilllabel_getpilllabel",
+      "source": "pilllabel",
+      "target": "pilllabel_getpilllabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/pillLabel.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "pilllabel",
+      "_tgt": "pilllabel_pillneedscta",
+      "source": "pilllabel",
+      "target": "pilllabel_pillneedscta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "stoptask",
+      "_tgt": "stoptask_stoptaskerror",
+      "source": "stoptask",
+      "target": "stoptask_stoptaskerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "stoptask",
+      "_tgt": "stoptask_stoptask",
+      "source": "stoptask",
+      "target": "stoptask_stoptask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/tasks/stopTask.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "stoptask_stoptaskerror",
+      "_tgt": "stoptask_stoptaskerror_constructor",
+      "source": "stoptask_stoptaskerror",
+      "target": "stoptask_stoptaskerror_constructor",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

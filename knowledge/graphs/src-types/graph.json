@@ -1,0 +1,730 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "bun-bundle.d.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/bun-bundle.d.ts",
+      "source_location": "L1",
+      "id": "bun_bundle_d",
+      "community": 11
+    },
+    {
+      "label": "bun-globals.d.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/bun-globals.d.ts",
+      "source_location": "L1",
+      "id": "bun_globals_d",
+      "community": 12
+    },
+    {
+      "label": "command.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/command.ts",
+      "source_location": "L1",
+      "id": "command",
+      "community": 4
+    },
+    {
+      "label": "getCommandName()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/command.ts",
+      "source_location": "L209",
+      "id": "command_getcommandname",
+      "community": 4
+    },
+    {
+      "label": "isCommandEnabled()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/command.ts",
+      "source_location": "L214",
+      "id": "command_iscommandenabled",
+      "community": 4
+    },
+    {
+      "label": "connectorText.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/connectorText.ts",
+      "source_location": "L1",
+      "id": "connectortext",
+      "community": 8
+    },
+    {
+      "label": "isConnectorTextBlock()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/connectorText.ts",
+      "source_location": "L15",
+      "id": "connectortext_isconnectortextblock",
+      "community": 8
+    },
+    {
+      "label": "express.d.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/express.d.ts",
+      "source_location": "L1",
+      "id": "express_d",
+      "community": 13
+    },
+    {
+      "label": "claude_code_internal_event.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L1",
+      "id": "claude_code_internal_event",
+      "community": 0
+    },
+    {
+      "label": "createBaseGitHubActionsMetadata()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L132",
+      "id": "claude_code_internal_event_createbasegithubactionsmetadata",
+      "community": 0
+    },
+    {
+      "label": "createBaseEnvironmentMetadata()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L181",
+      "id": "claude_code_internal_event_createbaseenvironmentmetadata",
+      "community": 0
+    },
+    {
+      "label": "createBaseSlackContext()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L493",
+      "id": "claude_code_internal_event_createbaseslackcontext",
+      "community": 0
+    },
+    {
+      "label": "createBaseClaudeCodeInternalEvent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L552",
+      "id": "claude_code_internal_event_createbaseclaudecodeinternalevent",
+      "community": 0
+    },
+    {
+      "label": "fromTimestamp()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L840",
+      "id": "claude_code_internal_event_fromtimestamp",
+      "community": 0
+    },
+    {
+      "label": "fromJsonTimestamp()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L846",
+      "id": "claude_code_internal_event_fromjsontimestamp",
+      "community": 0
+    },
+    {
+      "label": "isSet()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L856",
+      "id": "claude_code_internal_event_isset",
+      "community": 0
+    },
+    {
+      "label": "auth.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/common/v1/auth.ts",
+      "source_location": "L1",
+      "id": "auth",
+      "community": 5
+    },
+    {
+      "label": "createBasePublicApiAuth()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/common/v1/auth.ts",
+      "source_location": "L16",
+      "id": "auth_createbasepublicapiauth",
+      "community": 5
+    },
+    {
+      "label": "isSet()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/common/v1/auth.ts",
+      "source_location": "L91",
+      "id": "auth_isset",
+      "community": 5
+    },
+    {
+      "label": "growthbook_experiment_event.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L1",
+      "id": "growthbook_experiment_event",
+      "community": 1
+    },
+    {
+      "label": "createBaseGrowthbookExperimentEvent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L43",
+      "id": "growthbook_experiment_event_createbasegrowthbookexperimentevent",
+      "community": 1
+    },
+    {
+      "label": "fromTimestamp()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L198",
+      "id": "growthbook_experiment_event_fromtimestamp",
+      "community": 1
+    },
+    {
+      "label": "fromJsonTimestamp()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L204",
+      "id": "growthbook_experiment_event_fromjsontimestamp",
+      "community": 1
+    },
+    {
+      "label": "isSet()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L214",
+      "id": "growthbook_experiment_event_isset",
+      "community": 1
+    },
+    {
+      "label": "timestamp.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/google/protobuf/timestamp.ts",
+      "source_location": "L1",
+      "id": "timestamp",
+      "community": 6
+    },
+    {
+      "label": "createBaseTimestamp()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/google/protobuf/timestamp.ts",
+      "source_location": "L116",
+      "id": "timestamp_createbasetimestamp",
+      "community": 6
+    },
+    {
+      "label": "isSet()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/google/protobuf/timestamp.ts",
+      "source_location": "L178",
+      "id": "timestamp_isset",
+      "community": 6
+    },
+    {
+      "label": "hooks.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L1",
+      "id": "hooks",
+      "community": 2
+    },
+    {
+      "label": "isHookEvent()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L22",
+      "id": "hooks_ishookevent",
+      "community": 2
+    },
+    {
+      "label": "isSyncHookJSONOutput()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L182",
+      "id": "hooks_issynchookjsonoutput",
+      "community": 2
+    },
+    {
+      "label": "isAsyncHookJSONOutput()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L189",
+      "id": "hooks_isasynchookjsonoutput",
+      "community": 2
+    },
+    {
+      "label": "ids.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L1",
+      "id": "ids",
+      "community": 3
+    },
+    {
+      "label": "asSessionId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L23",
+      "id": "ids_assessionid",
+      "community": 3
+    },
+    {
+      "label": "asAgentId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L31",
+      "id": "ids_asagentid",
+      "community": 3
+    },
+    {
+      "label": "toAgentId()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L42",
+      "id": "ids_toagentid",
+      "community": 3
+    },
+    {
+      "label": "logs.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/logs.ts",
+      "source_location": "L1",
+      "id": "logs",
+      "community": 9
+    },
+    {
+      "label": "sortLogs()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/logs.ts",
+      "source_location": "L319",
+      "id": "logs_sortlogs",
+      "community": 9
+    },
+    {
+      "label": "macro.d.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/macro.d.ts",
+      "source_location": "L1",
+      "id": "macro_d",
+      "community": 14
+    },
+    {
+      "label": "message.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/message.ts",
+      "source_location": "L1",
+      "id": "message",
+      "community": 15
+    },
+    {
+      "label": "permissions.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/permissions.ts",
+      "source_location": "L1",
+      "id": "permissions",
+      "community": 16
+    },
+    {
+      "label": "plugin.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/plugin.ts",
+      "source_location": "L1",
+      "id": "plugin",
+      "community": 10
+    },
+    {
+      "label": "getPluginErrorMessage()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/plugin.ts",
+      "source_location": "L295",
+      "id": "plugin_getpluginerrormessage",
+      "community": 10
+    },
+    {
+      "label": "textInputTypes.ts",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/textInputTypes.ts",
+      "source_location": "L1",
+      "id": "textinputtypes",
+      "community": 7
+    },
+    {
+      "label": "isValidImagePaste()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/textInputTypes.ts",
+      "source_location": "L367",
+      "id": "textinputtypes_isvalidimagepaste",
+      "community": 7
+    },
+    {
+      "label": "getImagePasteIds()",
+      "file_type": "code",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/textInputTypes.ts",
+      "source_location": "L372",
+      "id": "textinputtypes_getimagepasteids",
+      "community": 7
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/command.ts",
+      "source_location": "L209",
+      "weight": 1.0,
+      "_src": "command",
+      "_tgt": "command_getcommandname",
+      "source": "command",
+      "target": "command_getcommandname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/command.ts",
+      "source_location": "L214",
+      "weight": 1.0,
+      "_src": "command",
+      "_tgt": "command_iscommandenabled",
+      "source": "command",
+      "target": "command_iscommandenabled",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/connectorText.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_src": "connectortext",
+      "_tgt": "connectortext_isconnectortextblock",
+      "source": "connectortext",
+      "target": "connectortext_isconnectortextblock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L132",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_createbasegithubactionsmetadata",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_createbasegithubactionsmetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_createbaseenvironmentmetadata",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_createbaseenvironmentmetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L493",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_createbaseslackcontext",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_createbaseslackcontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L552",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_createbaseclaudecodeinternalevent",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_createbaseclaudecodeinternalevent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L840",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_fromtimestamp",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_fromtimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L846",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_fromjsontimestamp",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_fromjsontimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L856",
+      "weight": 1.0,
+      "_src": "claude_code_internal_event",
+      "_tgt": "claude_code_internal_event_isset",
+      "source": "claude_code_internal_event",
+      "target": "claude_code_internal_event_isset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts",
+      "source_location": "L852",
+      "weight": 0.8,
+      "_src": "claude_code_internal_event_fromjsontimestamp",
+      "_tgt": "claude_code_internal_event_fromtimestamp",
+      "source": "claude_code_internal_event_fromtimestamp",
+      "target": "claude_code_internal_event_fromjsontimestamp",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/common/v1/auth.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "auth",
+      "_tgt": "auth_createbasepublicapiauth",
+      "source": "auth",
+      "target": "auth_createbasepublicapiauth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/common/v1/auth.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "auth",
+      "_tgt": "auth_isset",
+      "source": "auth",
+      "target": "auth_isset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "growthbook_experiment_event",
+      "_tgt": "growthbook_experiment_event_createbasegrowthbookexperimentevent",
+      "source": "growthbook_experiment_event",
+      "target": "growthbook_experiment_event_createbasegrowthbookexperimentevent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "_src": "growthbook_experiment_event",
+      "_tgt": "growthbook_experiment_event_fromtimestamp",
+      "source": "growthbook_experiment_event",
+      "target": "growthbook_experiment_event_fromtimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L204",
+      "weight": 1.0,
+      "_src": "growthbook_experiment_event",
+      "_tgt": "growthbook_experiment_event_fromjsontimestamp",
+      "source": "growthbook_experiment_event",
+      "target": "growthbook_experiment_event_fromjsontimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L214",
+      "weight": 1.0,
+      "_src": "growthbook_experiment_event",
+      "_tgt": "growthbook_experiment_event_isset",
+      "source": "growthbook_experiment_event",
+      "target": "growthbook_experiment_event_isset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts",
+      "source_location": "L210",
+      "weight": 0.8,
+      "_src": "growthbook_experiment_event_fromjsontimestamp",
+      "_tgt": "growthbook_experiment_event_fromtimestamp",
+      "source": "growthbook_experiment_event_fromtimestamp",
+      "target": "growthbook_experiment_event_fromjsontimestamp",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/google/protobuf/timestamp.ts",
+      "source_location": "L116",
+      "weight": 1.0,
+      "_src": "timestamp",
+      "_tgt": "timestamp_createbasetimestamp",
+      "source": "timestamp",
+      "target": "timestamp_createbasetimestamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/generated/google/protobuf/timestamp.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "_src": "timestamp",
+      "_tgt": "timestamp_isset",
+      "source": "timestamp",
+      "target": "timestamp_isset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "hooks",
+      "_tgt": "hooks_ishookevent",
+      "source": "hooks",
+      "target": "hooks_ishookevent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_src": "hooks",
+      "_tgt": "hooks_issynchookjsonoutput",
+      "source": "hooks",
+      "target": "hooks_issynchookjsonoutput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/hooks.ts",
+      "source_location": "L189",
+      "weight": 1.0,
+      "_src": "hooks",
+      "_tgt": "hooks_isasynchookjsonoutput",
+      "source": "hooks",
+      "target": "hooks_isasynchookjsonoutput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "ids",
+      "_tgt": "ids_assessionid",
+      "source": "ids",
+      "target": "ids_assessionid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "ids",
+      "_tgt": "ids_asagentid",
+      "source": "ids",
+      "target": "ids_asagentid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/ids.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "ids",
+      "_tgt": "ids_toagentid",
+      "source": "ids",
+      "target": "ids_toagentid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/logs.ts",
+      "source_location": "L319",
+      "weight": 1.0,
+      "_src": "logs",
+      "_tgt": "logs_sortlogs",
+      "source": "logs",
+      "target": "logs_sortlogs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/plugin.ts",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_src": "plugin",
+      "_tgt": "plugin_getpluginerrormessage",
+      "source": "plugin",
+      "target": "plugin_getpluginerrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/textInputTypes.ts",
+      "source_location": "L367",
+      "weight": 1.0,
+      "_src": "textinputtypes",
+      "_tgt": "textinputtypes_isvalidimagepaste",
+      "source": "textinputtypes",
+      "target": "textinputtypes_isvalidimagepaste",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/Users/jay/Developer/claude-code-agent/src/types/textInputTypes.ts",
+      "source_location": "L372",
+      "weight": 1.0,
+      "_src": "textinputtypes",
+      "_tgt": "textinputtypes_getimagepasteids",
+      "source": "textinputtypes",
+      "target": "textinputtypes_getimagepasteids",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}
