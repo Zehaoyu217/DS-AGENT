@@ -1,5 +1,6 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
+        seed-eval eval \
         docker-build docker-up
 
 # Development
@@ -61,6 +62,17 @@ graphify:
 # Data
 seed-data:
 	@echo "Seeding sample data..." && echo "Not yet implemented"
+
+# Eval framework
+seed-eval:
+	cd backend && python -m scripts.seed_eval_data
+
+eval:
+ifdef level
+	cd backend && python -m pytest tests/evals/test_level$(level).py -v -s
+else
+	cd backend && python -m pytest tests/evals/ -v -s
+endif
 
 # Infrastructure
 docker-build:
