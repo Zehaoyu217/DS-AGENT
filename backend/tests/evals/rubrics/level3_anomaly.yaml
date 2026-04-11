@@ -1,0 +1,38 @@
+level: 3
+name: "Anomaly Detection"
+prompt: "Run anomaly detection on all transactions from Q3 2025. Flag statistical outliers, then manually review the raw data for each flag to identify false positives. Give me a final list of confirmed anomalies with your reasoning for each inclusion/exclusion."
+dimensions:
+  detection_recall:
+    weight: 0.30
+    type: deterministic
+    criteria:
+      A: "Flags all 3 true anomalies with correct anomaly type classification"
+      B: "Flags all 3 true anomalies"
+      C: "Flags at least 2 of 3 true anomalies"
+  false_positive_handling:
+    weight: 0.30
+    type: hybrid
+    deterministic:
+      - "dismisses at least 2 of 3 false positives with reasoning"
+    criteria:
+      A: "Dismisses all 3 FPs with specific evidence: annual bonus pattern, house purchase, shopping trip"
+      B: "Correctly dismisses at least 2 of 3 FPs with reasoning"
+      C: "Acknowledges some flags might be benign"
+  methodology:
+    weight: 0.20
+    type: llm_judge
+    criteria:
+      A: "Two-pass methodology explicit, documents thresholds, explains statistical method"
+      B: "Statistical detection then inspects raw records"
+      C: "Uses at least one statistical method"
+  final_report:
+    weight: 0.20
+    type: llm_judge
+    criteria:
+      A: "Per-item reasoning, confidence levels, recommended actions"
+      B: "Structured report with flag/dismiss decisions"
+      C: "Lists anomalies"
+grading:
+  A: 0.85
+  B: 0.60
+  C: 0.40

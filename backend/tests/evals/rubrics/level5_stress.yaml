@@ -1,0 +1,47 @@
+level: 5
+name: "Stress Test"
+prompt_sequence:
+  - "Summarize the loans table — count, average principal, default rate by loan_type"
+  - "Edit the result: remove the 'auto' row and add a column for average credit score per loan type"
+  - "Now summarize transactions — monthly total by category for Q4 2025 only"
+  - "Edit: combine the 'atm' and 'merchant' categories into 'cash_and_retail'"
+  - "Combine these two summary tables into one view — loan metrics alongside transaction metrics, joined by month where applicable"
+  - "Calculate a new column: ratio of monthly transaction volume to outstanding loan principal per customer segment"
+  - "Modify the combined table: filter to only segments where that ratio exceeds 0.5"
+  - "Compare this final filtered table to the original loans summary from step 1 — what changed and what does it mean?"
+dimensions:
+  step_completion:
+    weight: 0.25
+    type: deterministic
+    criteria:
+      A: "All 8 steps with correct output at each stage"
+      B: "Completes all 8 steps"
+      C: "Completes at least 6 of 8 steps"
+  state_correctness:
+    weight: 0.30
+    type: hybrid
+    deterministic:
+      - "references correct table versions, no stale data used"
+    criteria:
+      A: "Explicitly labels versions, e.g. loans_summary_v1"
+      B: "All references correct, no stale data"
+      C: "Mostly references correct table versions"
+  efficiency:
+    weight: 0.20
+    type: deterministic
+    criteria:
+      A: "Within 1.2x optimal token budget, no redundant queries"
+      B: "Within 1.5x optimal token budget"
+      C: "Within 2x optimal token budget"
+  final_comparison:
+    weight: 0.25
+    type: llm_judge
+    criteria:
+      A: "Explains why changes matter analytically"
+      B: "Correctly identifies changes between step 1 and 8"
+      C: "Produces some comparison"
+grading:
+  A: 0.85
+  B: 0.60
+  C: 0.40
+token_budget_optimal: 4000

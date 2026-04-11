@@ -1,0 +1,38 @@
+level: 2
+name: "Multi-Step Exploration"
+prompt: "Which customer segment has the highest loan default rate, and is that driven by credit score, loan type, or region? Walk me through your analysis."
+dimensions:
+  logical_chain:
+    weight: 0.25
+    type: llm_judge
+    criteria:
+      A: "Systematic elimination, explicitly rules out confounders"
+      B: "4-5 steps in sensible order, considers multiple factors"
+      C: "At least 3 steps, reaches a conclusion"
+  correctness:
+    weight: 0.30
+    type: hybrid
+    deterministic:
+      - "identifies credit score as primary driver of loan default"
+    criteria:
+      A: "Quantifies effect size, notes interaction with loan type"
+      B: "Correctly identifies credit score as primary driver"
+      C: "Identifies the right segment with highest default rate"
+  error_recovery:
+    weight: 0.20
+    type: llm_judge
+    criteria:
+      A: "Proactively validates intermediate results"
+      B: "Notices and corrects analytical missteps"
+      C: "Completes despite any query errors"
+  communication:
+    weight: 0.25
+    type: llm_judge
+    criteria:
+      A: "Clear narrative arc, caveats noted, actionable summary"
+      B: "Explains reasoning at each step"
+      C: "States a conclusion"
+grading:
+  A: 0.85
+  B: 0.60
+  C: 0.40

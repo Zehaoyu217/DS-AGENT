@@ -1,0 +1,39 @@
+level: 1
+name: "Basic Rendering"
+prompt: "Show me the monthly transaction volume and total amount for 2025 as a bar chart. Also show the top 10 customers by total deposits as a table. Finally, draw the relationship between the 5 tables as a mermaid ERD."
+dimensions:
+  chart_correctness:
+    weight: 0.3
+    type: llm_judge
+    criteria:
+      A: "Formatted amounts, clear title, color-coded volume vs amount"
+      B: "Axes labeled, amounts accurate, months in order"
+      C: "Bar chart renders with 12 months, values roughly correct"
+  table_correctness:
+    weight: 0.3
+    type: hybrid
+    deterministic:
+      - "output contains exactly 10 customer rows"
+      - "rows sorted descending by deposit amount"
+    criteria:
+      A: "Includes account types, percentage of total, clean alignment"
+      B: "Correct ranking order, properly formatted currency"
+      C: "Table with 10 rows, customer names and amounts present"
+  mermaid_erd:
+    weight: 0.2
+    type: deterministic
+    criteria:
+      A: "Column names in entities, PK/FK marked, clean layout"
+      B: "Correct FK relationships, correct cardinality notation"
+      C: "Renders without syntax error, shows 5 tables"
+  process_quality:
+    weight: 0.2
+    type: llm_judge
+    criteria:
+      A: "Efficient queries, no redundant calls"
+      B: "Reasonable query design, not SELECT *"
+      C: "Ran queries and produced output"
+grading:
+  A: 0.85
+  B: 0.60
+  C: 0.40

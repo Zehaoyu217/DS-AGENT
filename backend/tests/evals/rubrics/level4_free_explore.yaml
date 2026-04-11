@@ -1,0 +1,38 @@
+level: 4
+name: "Free Exploration"
+prompt: "Explore this banking dataset freely. Profile the data, find the most interesting correlations and causal relationships, and identify the strongest predictors of loan default. Surprise me with what you find."
+dimensions:
+  breadth:
+    weight: 0.20
+    type: llm_judge
+    criteria:
+      A: "Systematic profiling of all 5 tables, cross-table analysis"
+      B: "Profiles 3+ tables, finds 3+ insights"
+      C: "Profiles at least 2 tables, finds 1 insight"
+  depth:
+    weight: 0.25
+    type: llm_judge
+    criteria:
+      A: "Distinguishes correlation from causation, controls for confounders"
+      B: "Correlation analysis with quantified relationships"
+      C: "Surface-level stats like means and counts"
+  discovery_quality:
+    weight: 0.30
+    type: hybrid
+    deterministic:
+      - "identifies credit score as a predictor of loan default"
+    criteria:
+      A: "Finds planted relationships plus at least 1 non-obvious insight"
+      B: "Finds 2-3 planted relationships"
+      C: "Finds the obvious credit score to default relationship"
+  presentation:
+    weight: 0.25
+    type: llm_judge
+    criteria:
+      A: "Narrative with visualizations, ranked by actionability"
+      B: "Structured by importance with evidence"
+      C: "Lists findings"
+grading:
+  A: 0.85
+  B: 0.60
+  C: 0.40
