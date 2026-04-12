@@ -1,6 +1,6 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
-        seed-eval eval \
+        seed-eval eval sop \
         docker-build docker-up
 
 # Development
@@ -73,6 +73,13 @@ ifdef level
 else
 	cd backend && python -m pytest tests/evals/ -v -s
 endif
+
+# SOP
+sop:
+ifndef level
+	$(error Usage: make sop level=<1..5>)
+endif
+	cd backend && uv run python -m app.sop.cli --level $(level)
 
 # Infrastructure
 docker-build:

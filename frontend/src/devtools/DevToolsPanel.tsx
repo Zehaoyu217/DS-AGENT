@@ -1,8 +1,15 @@
+import { useState } from 'react'
 import { useDevtoolsStore } from '../stores/devtools'
 import { ContextInspector } from './ContextInspector'
 import { SessionReplay } from './sop/SessionReplay'
+import { JudgeVariance } from './sop/JudgeVariance'
+import { PromptInspector } from './sop/PromptInspector'
+import { CompactionTimeline } from './sop/CompactionTimeline'
 
-const TABS = ['events', 'skills', 'config', 'wiki', 'evals', 'context', 'sop'] as const
+const TABS = [
+  'events', 'skills', 'config', 'wiki', 'evals', 'context',
+  'sop-sessions', 'sop-judge', 'sop-prompt', 'sop-timeline',
+] as const
 
 function Placeholder({ name }: { name: string }) {
   return (
@@ -14,6 +21,9 @@ function Placeholder({ name }: { name: string }) {
 
 export function DevToolsPanel() {
   const { isOpen, activeTab, setActiveTab } = useDevtoolsStore()
+  const [selectedTraceId] = useState<string | null>(null)
+  const [selectedStepId] = useState<string | null>(null)
+
   if (!isOpen) return null
 
   return (
@@ -64,8 +74,25 @@ export function DevToolsPanel() {
       {/* Tab content */}
       <div style={{ flex: 1, overflow: 'hidden' }}>
         {activeTab === 'context' && <ContextInspector />}
-        {activeTab === 'sop' && <SessionReplay />}
-        {activeTab !== 'context' && activeTab !== 'sop' && <Placeholder name={activeTab} />}
+        {activeTab === 'sop-sessions' && <SessionReplay />}
+        {activeTab === 'sop-judge' && (
+          selectedTraceId
+            ? <JudgeVariance traceId={selectedTraceId} />
+            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace from the Session Replay tab.</div>
+        )}
+        {activeTab === 'sop-prompt' && (
+          selectedTraceId && selectedStepId
+            ? <PromptInspector traceId={selectedTraceId} stepId={selectedStepId} />
+            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace+step from the Session Replay tab.</div>
+        )}
+        {activeTab === 'sop-timeline' && (
+          selectedTraceId
+            ? <CompactionTimeline traceId={selectedTraceId} />
+            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace from the Session Replay tab.</div>
+        )}
+        {!['context', 'sop-sessions', 'sop-judge', 'sop-prompt', 'sop-timeline'].includes(activeTab) && (
+          <Placeholder name={activeTab} />
+        )}
       </div>
     </div>
   )
