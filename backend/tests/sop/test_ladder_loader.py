@@ -42,3 +42,15 @@ def test_ladders_sorted_by_cost() -> None:
     for ld in load_all_ladders():
         costs = [order[r.cost] for r in ld.ladder]
         assert costs == sorted(costs), f"ladder {ld.bucket} not cost-ordered: {costs}"
+
+
+def test_load_ladder_rejects_suffix_collision() -> None:
+    # "quality" must NOT match "08-data-quality.yaml"
+    with pytest.raises(FileNotFoundError):
+        load_ladder("quality")
+
+
+def test_load_ladder_rejects_invalid_bucket_name() -> None:
+    for bad in ["../etc", "FOO", "has-dash", "1-digit-first", ""]:
+        with pytest.raises(ValueError):
+            load_ladder(bad)
