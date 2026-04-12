@@ -107,3 +107,23 @@ def test_prompt_assembly_endpoint_returns_sections(
     data = resp.json()
     assert len(data["sections"]) == 2
     assert data["sections"][0]["source"].endswith("system.md")
+
+
+def test_timeline_endpoint_returns_events_and_layers(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "app.api.sop_api.load_timeline",
+        lambda trace_id: {
+            "turns": [
+                {"turn": 0, "layers": {"system": 500, "L1_always": 200, "conversation": 100}},
+                {"turn": 1, "layers": {"system": 500, "L1_always": 200, "conversation": 600}},
+            ],
+            "events": [{"turn": 1, "kind": "scratchpad_write", "detail": "sql result"}],
+        },
+    )
+    resp = client.get("/api/sop/timeline/eval-x")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data["turns"]) == 2
+    assert data["events"][0]["kind"] == "scratchpad_write"

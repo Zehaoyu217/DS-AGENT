@@ -63,3 +63,25 @@ export async function fetchPromptAssembly(
   if (!resp.ok) throw new Error(`prompt-assembly failed: ${resp.status}`);
   return (await resp.json()) as PromptAssembly;
 }
+
+export interface TimelineTurn {
+  turn: number;
+  layers: Record<string, number>;
+}
+
+export interface TimelineEvent {
+  turn: number;
+  kind: string;
+  detail: string;
+}
+
+export interface Timeline {
+  turns: TimelineTurn[];
+  events: TimelineEvent[];
+}
+
+export async function fetchTimeline(traceId: string): Promise<Timeline> {
+  const resp = await fetch(`/api/sop/timeline/${traceId}`);
+  if (!resp.ok) throw new Error(`timeline failed: ${resp.status}`);
+  return (await resp.json()) as Timeline;
+}

@@ -67,3 +67,18 @@ def load_prompt_assembly(trace_id: str, step_id: str) -> dict[str, object]:
 @router.get("/prompt-assembly/{trace_id}/{step_id}")
 def prompt_assembly(trace_id: str, step_id: str) -> dict[str, object]:
     return load_prompt_assembly(trace_id, step_id)
+
+
+def load_timeline(trace_id: str) -> dict[str, object]:
+    """Placeholder stub — returns empty timeline.
+
+    Real implementation reads the trace JSON and reconstructs per-turn layer
+    token counts and events. Deferred to v2.
+    """
+    _ = trace_id
+    return {"turns": [], "events": []}
+
+
+@router.get("/timeline/{trace_id}")
+def timeline(trace_id: str) -> dict[str, object]:
+    return load_timeline(trace_id)
