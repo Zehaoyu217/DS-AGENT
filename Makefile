@@ -1,6 +1,6 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
-        seed-eval eval sop \
+        seed-eval eval eval-trace clean-traces sop \
         docker-build docker-up
 
 # Development
@@ -76,6 +76,12 @@ ifdef level
 else
 	cd backend && python -m pytest tests/evals/ -v -s
 endif
+
+eval-trace:
+	TRACE_MODE=always $(MAKE) eval
+
+clean-traces:
+	cd backend && uv run python -m app.trace.retention --clear-all
 
 # SOP
 sop:

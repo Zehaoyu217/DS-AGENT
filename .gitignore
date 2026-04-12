@@ -67,3 +67,6 @@ data/sandbox_sessions/
 
 # Graphify working files (output lives in knowledge/graphs/)
 **/graphify-out/
+
+# Trace subsystem output
+traces/
