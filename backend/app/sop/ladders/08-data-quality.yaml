@@ -1,0 +1,19 @@
+bucket: data_quality
+description: "Seed data changed, schema mismatch, planted-anomaly count drift"
+triage_signals:
+  - "Seed fingerprint differs from last-known-good"
+  - "Row counts off by more than 1%"
+  - "Planted-anomaly checksum mismatch"
+ladder:
+  - id: data-quality-01
+    name: "Re-run seed with pinned SEED=42 and verify row counts"
+    cost: trivial
+    files: ["backend/scripts/seed_eval_data.py"]
+  - id: data-quality-02
+    name: "Pin faker/random seeds inside seed_all()"
+    cost: trivial
+    files: ["backend/scripts/seed_eval_data.py"]
+  - id: data-quality-03
+    name: "Add seed fingerprint assertion to test suite"
+    cost: small
+    files: ["backend/tests/unit/test_seed_eval.py"]

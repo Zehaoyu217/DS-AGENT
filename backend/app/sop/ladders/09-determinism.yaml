@@ -1,0 +1,19 @@
+bucket: determinism
+description: "Agent gives different output same input, temperature leakage"
+triage_signals:
+  - "Re-run of same eval produces different grade"
+  - "Agent output differs across replays with identical inputs"
+  - "Tool ordering varies across runs"
+ladder:
+  - id: determinism-01
+    name: "Pin agent temperature=0 for eval runs"
+    cost: trivial
+    files: ["backend/app/agent/config.py"]
+  - id: determinism-02
+    name: "Seed any stochastic library calls"
+    cost: trivial
+    files: ["backend/app/agent/"]
+  - id: determinism-03
+    name: "Sort tool results to eliminate ordering variance"
+    cost: small
+    files: ["backend/app/agent/tools/"]

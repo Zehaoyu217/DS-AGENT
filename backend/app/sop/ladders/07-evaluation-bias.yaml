@@ -1,0 +1,19 @@
+bucket: evaluation_bias
+description: "Judge miscalibrated, rubric ambiguous, fixture stale"
+triage_signals:
+  - "Judge variance across N replays > 0.5 grade steps"
+  - "Judge justification contradicts its own score"
+  - "Rubric dimension name unclear relative to criteria"
+ladder:
+  - id: evaluation-bias-01
+    name: "Clarify rubric criteria wording"
+    cost: trivial
+    files: ["backend/tests/evals/rubrics/level<N>.yaml"]
+  - id: evaluation-bias-02
+    name: "Pin judge temperature=0 and add seed"
+    cost: trivial
+    files: ["backend/app/evals/judge.py"]
+  - id: evaluation-bias-03
+    name: "Add calibration fixtures with known grades"
+    cost: small
+    files: ["backend/tests/evals/calibration/"]

@@ -1,0 +1,19 @@
+bucket: architecture
+description: "Missing subagent, needs parallelism, handoff vs single-loop wrong"
+triage_signals:
+  - "Level 5 state-tracking failure with subagents_spawned == 0"
+  - "Single-loop exhausts context on multi-step task"
+  - "Independent subtasks executed sequentially"
+ladder:
+  - id: architecture-01
+    name: "Wrap failing subtask in a subagent"
+    cost: small
+    files: ["backend/app/agent/loop.py"]
+  - id: architecture-02
+    name: "Parallelize independent subagents"
+    cost: medium
+    files: ["backend/app/agent/loop.py"]
+  - id: architecture-03
+    name: "Introduce handoff between planner and executor"
+    cost: large
+    files: ["backend/app/agent/"]

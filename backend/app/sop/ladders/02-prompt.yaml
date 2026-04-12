@@ -1,0 +1,19 @@
+bucket: prompt
+description: "System-prompt contradictions, missing guidance, misleading framing"
+triage_signals:
+  - "Agent consistently ignores one directive"
+  - "Judge justifications reference missing guidance"
+  - "Two prompt sources contain opposing directives"
+ladder:
+  - id: prompt-01
+    name: "Remove conflicting directive from assembled prompt"
+    cost: trivial
+    files: ["backend/app/prompts/system.md"]
+  - id: prompt-02
+    name: "Add explicit guidance for failing behavior"
+    cost: small
+    files: ["backend/app/prompts/system.md"]
+  - id: prompt-03
+    name: "Restructure prompt assembly ordering"
+    cost: medium
+    files: ["backend/app/prompts/assembler.py"]

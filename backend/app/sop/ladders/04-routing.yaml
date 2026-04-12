@@ -1,0 +1,19 @@
+bucket: routing
+description: "Wrong model for the job"
+triage_signals:
+  - "Haiku used for reasoning-heavy step (architecture/synthesis)"
+  - "Opus used for mechanical step (format, extract)"
+  - "models_used has no sonnet on a multi-step eval"
+ladder:
+  - id: routing-01
+    name: "Promote step to sonnet in router config"
+    cost: trivial
+    files: ["backend/app/router/config.yaml"]
+  - id: routing-02
+    name: "Demote mechanical step to haiku"
+    cost: trivial
+    files: ["backend/app/router/config.yaml"]
+  - id: routing-03
+    name: "Add routing rule keyed on step type"
+    cost: small
+    files: ["backend/app/router/rules.py"]

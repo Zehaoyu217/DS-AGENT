@@ -1,0 +1,19 @@
+bucket: capability
+description: "Skill instructions unclear, missing Python helpers, skill too bloated"
+triage_signals:
+  - "Skill invoked but produces wrong output"
+  - "Skill token cost > 30% of session"
+  - "Same skill retried multiple times in trace"
+ladder:
+  - id: capability-01
+    name: "Tighten SKILL.md instructions for failing skill"
+    cost: trivial
+    files: ["backend/app/skills/<skill>/SKILL.md"]
+  - id: capability-02
+    name: "Add Python helper to skill package for common operation"
+    cost: small
+    files: ["backend/app/skills/<skill>/pkg/"]
+  - id: capability-03
+    name: "Split bloated skill into two focused skills"
+    cost: medium
+    files: ["backend/app/skills/<skill>/"]

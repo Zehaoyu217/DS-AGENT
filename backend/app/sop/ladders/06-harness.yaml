@@ -1,0 +1,19 @@
+bucket: harness
+description: "Middleware missing fallback, tool error bubbling wrong, retries absent"
+triage_signals:
+  - "tool_errors > 0 with retries == 0"
+  - "Session aborted on transient failure"
+  - "Tool error surfaces to user instead of being handled"
+ladder:
+  - id: harness-01
+    name: "Add retry-with-backoff to tool middleware"
+    cost: small
+    files: ["backend/app/agent/middleware.py"]
+  - id: harness-02
+    name: "Add fallback tool for failing primary"
+    cost: medium
+    files: ["backend/app/agent/middleware.py", "backend/app/agent/tools/"]
+  - id: harness-03
+    name: "Reorder middleware stack to catch errors before bubble"
+    cost: medium
+    files: ["backend/app/agent/middleware.py"]

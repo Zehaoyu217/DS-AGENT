@@ -1,0 +1,24 @@
+bucket: context
+description: "Compaction loss, scratchpad misuse, stale layers"
+triage_signals:
+  - "scratchpad_writes == 0 when tool_calls > 5"
+  - "compaction_events >= 3 in a single session"
+  - "token_count > 1.5x baseline"
+ladder:
+  - id: context-01
+    name: "Lower compaction threshold"
+    cost: trivial
+    files: ["backend/app/context/manager.py"]
+    pattern: "COMPACTION_THRESHOLD = 0.80 -> 0.70"
+  - id: context-02
+    name: "Force scratchpad write on every tool return"
+    cost: small
+    files: ["backend/app/context/manager.py"]
+  - id: context-03
+    name: "Add L2_skill layer pruning before compaction"
+    cost: medium
+    files: ["backend/app/context/manager.py", "backend/app/context/compaction.py"]
+  - id: context-04
+    name: "Replace flat context with hierarchical summarization"
+    cost: large
+    files: ["backend/app/context/**"]
