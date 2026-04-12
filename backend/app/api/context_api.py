@@ -13,5 +13,5 @@ def get_context_manager() -> ContextManager:
 
 
 @router.get("/api/context")
-async def get_context() -> dict:
+async def get_context() -> dict[str, object]:
     return get_context_manager().snapshot()

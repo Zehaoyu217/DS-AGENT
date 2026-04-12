@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.context_api import router as context_router
 from app.api.health import router as health_router
+from app.api.sop_api import router as sop_router
 
 
 def create_app() -> FastAPI:
@@ -22,5 +23,6 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router)
     app.include_router(context_router)
+    app.include_router(sop_router)
 
     return app
