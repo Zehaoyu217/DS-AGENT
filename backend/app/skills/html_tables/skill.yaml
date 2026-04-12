@@ -1,0 +1,5 @@
+dependencies:
+  requires: [theme_config]
+  used_by: [data_profiler, report_builder, dashboard_builder]
+  packages: [pandas]
+errors: {}
