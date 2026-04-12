@@ -64,3 +64,50 @@ def test_registry_ignores_dir_without_skill_md(tmp_path: Path) -> None:
     registry = SkillRegistry(tmp_path)
     registry.discover()
     assert registry.list_skills() == []
+
+
+def test_registry_skips_skill_with_invalid_yaml_frontmatter(tmp_path: Path) -> None:
+    broken = tmp_path / "broken"
+    broken.mkdir()
+    (broken / "SKILL.md").write_text(
+        "---\n"
+        "name: broken\n"
+        "description: bad\n"
+        "  indent: wrong\n"  # bad YAML
+        "---\n"
+        "body\n"
+    )
+    good = tmp_path / "good"
+    good.mkdir()
+    (good / "SKILL.md").write_text(
+        "---\n"
+        "name: good\n"
+        "description: fine\n"
+        "level: 1\n"
+        "version: '0.1'\n"
+        "---\n"
+        "# Good\n"
+    )
+
+    registry = SkillRegistry(tmp_path)
+    registry.discover()
+
+    # Broken skill is skipped (no name recovered), good skill loads.
+    assert registry.get_skill("broken") is None
+    assert registry.get_skill("good") is not None
+
+
+def test_registry_skips_skill_with_non_mapping_frontmatter(tmp_path: Path) -> None:
+    scalar = tmp_path / "scalar"
+    scalar.mkdir()
+    (scalar / "SKILL.md").write_text(
+        "---\n"
+        "just a plain string\n"
+        "---\n"
+        "body\n"
+    )
+
+    registry = SkillRegistry(tmp_path)
+    registry.discover()
+
+    assert registry.list_skills() == []

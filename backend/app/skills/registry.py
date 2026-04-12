@@ -32,7 +32,12 @@ def _split_frontmatter(text: str) -> tuple[dict, str]:
         return {}, text
     raw = "".join(lines[1:end])
     body = "".join(lines[end + 1 :]).lstrip("\n")
-    parsed = yaml.safe_load(raw) or {}
+    try:
+        parsed = yaml.safe_load(raw)
+    except yaml.YAMLError:
+        return {}, text
+    if not isinstance(parsed, dict):
+        return {}, body
     return parsed, body
 
 
