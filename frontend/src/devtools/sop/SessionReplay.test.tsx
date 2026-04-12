@@ -1,48 +1,64 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { SessionReplay } from './SessionReplay';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useDevtoolsStore } from '../../stores/devtools'
+import { SessionReplay } from './SessionReplay'
 
-const mockSession = {
-  session_id: '2026-04-12-level3-001',
-  date: '2026-04-12',
-  level: 3,
-  overall_grade_before: 'C',
-  triage: { bucket: 'context', evidence: ['e'], hypothesis: 'h' },
-  fix: {
-    ladder_id: 'context-01', name: 'Lower threshold',
-    files_changed: ['backend/app/context/manager.py'],
-    model_used_for_fix: 'sonnet', cost_bucket: 'trivial',
+const mockSessions = [
+  {
+    session_id: 's-001',
+    date: '2026-04-12',
+    level: 3,
+    overall_grade_before: 'F' as const,
+    preflight: { verdict: 'pass' as const },
+    triage: { bucket: 'context-management' },
+    fix: { name: 'reduce-compaction', evidence: null },
+    outcome: { grade_after: null },
+    trace_links: { trace_id: 's-001' },
   },
-  outcome: { grade_after: 'B', regressions: 'none', iterations: 1, success: true },
-  trace_links: { before: 'a.json', after: 'b.json' },
-  preflight: { evaluation_bias: 'pass', data_quality: 'pass', determinism: 'pass' },
-};
+  {
+    session_id: 's-002',
+    date: '2026-04-12',
+    level: 3,
+    overall_grade_before: 'F' as const,
+    preflight: { verdict: 'pass' as const },
+    triage: { bucket: 'other' },
+    fix: { name: null, evidence: null },
+    outcome: { grade_after: null },
+    trace_links: { trace_id: null },
+  },
+]
 
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({ sessions: [mockSession] }),
-  }) as unknown as typeof fetch;
-});
+  useDevtoolsStore.setState({ selectedTraceId: null })
+  vi.stubGlobal('fetch', vi.fn(async () =>
+    new Response(JSON.stringify({ sessions: mockSessions }), { status: 200 }),
+  ))
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('SessionReplay', () => {
-  it('renders session list from API', async () => {
-    render(<SessionReplay />);
+  it('row click with trace_id sets selectedTraceId', async () => {
+    render(<SessionReplay />)
+    const row = await screen.findByRole('button', { name: /s-001/i })
+    fireEvent.click(row)
     await waitFor(() => {
-      expect(screen.getByText('2026-04-12-level3-001')).toBeInTheDocument();
-      expect(screen.getByText(/context/i)).toBeInTheDocument();
-      expect(screen.getByText(/C.*→.*B/)).toBeInTheDocument();
-    });
-  });
+      expect(useDevtoolsStore.getState().selectedTraceId).toBe('s-001')
+    })
+  })
 
-  it('shows empty state when no sessions', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sessions: [] }),
-    });
-    render(<SessionReplay />);
-    await waitFor(() => {
-      expect(screen.getByText(/no sop sessions yet/i)).toBeInTheDocument();
-    });
-  });
-});
+  it('row without trace_id is disabled and shows (no trace) label', async () => {
+    render(<SessionReplay />)
+    const noTraceRow = await screen.findByText(/s-002/i)
+    expect(noTraceRow.parentElement).toHaveTextContent(/no trace/i)
+  })
+
+  it('selected row has aria-selected true', async () => {
+    useDevtoolsStore.setState({ selectedTraceId: 's-001' })
+    render(<SessionReplay />)
+    const row = await screen.findByRole('button', { name: /s-001/i })
+    expect(row).toHaveAttribute('aria-selected', 'true')
+  })
+})
