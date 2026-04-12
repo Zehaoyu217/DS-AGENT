@@ -74,7 +74,7 @@ def test_failure_report_invalid_grade_rejected() -> None:
 
 def test_baseline_minimum_fields() -> None:
     b = Baseline(
-        level=3, date="2026-04-10", trace_id="eval-y",
+        level=3, date="2026-04-10", trace_id="eval-y", grade="B",
         signals=Signals(
             token_count=12800, duration_ms=30000, compaction_events=1,
             scratchpad_writes=8, tool_errors=0, retries=0,
@@ -82,6 +82,7 @@ def test_baseline_minimum_fields() -> None:
         ),
     )
     assert b.level == 3
+    assert b.grade == "B"
 
 
 def test_diff_vs_baseline_shape() -> None:

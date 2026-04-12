@@ -55,7 +55,11 @@ def _compute_diff(current: Signals, baseline: Baseline) -> DiffVsBaseline:
             if isinstance(b_val, int) and isinstance(a_val, int) and b_val > 0:
                 entry["delta_pct"] = round((a_val - b_val) / b_val * 100, 2)
             changes[key] = entry
-    return DiffVsBaseline(baseline_date=baseline.date, baseline_grade="B", changes=changes)
+    return DiffVsBaseline(
+        baseline_date=baseline.date,
+        baseline_grade=baseline.grade,
+        changes=changes,
+    )
 
 
 def build_failure_report(

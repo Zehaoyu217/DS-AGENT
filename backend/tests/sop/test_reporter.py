@@ -64,7 +64,7 @@ def test_build_failure_report_extracts_signals() -> None:
 
 def test_build_failure_report_computes_diff(tmp_path: Path) -> None:
     baseline = Baseline(
-        level=3, date="2026-04-10", trace_id="prior",
+        level=3, date="2026-04-10", trace_id="prior", grade="B",
         signals=Signals(
             token_count=12800, duration_ms=30000, compaction_events=1,
             scratchpad_writes=8, tool_errors=0, retries=0,
@@ -84,6 +84,27 @@ def test_build_failure_report_computes_diff(tmp_path: Path) -> None:
     assert fr.diff_vs_baseline.changes["token_count"]["after"] == 18400
     assert fr.diff_vs_baseline.changes["scratchpad_writes"]["before"] == 8
     assert fr.diff_vs_baseline.changes["scratchpad_writes"]["after"] == 0
+
+
+def test_baseline_grade_propagated_to_diff() -> None:
+    """baseline_grade in diff must come from Baseline.grade, not be hardcoded."""
+    baseline = Baseline(
+        level=3, date="2026-04-10", trace_id="prior", grade="A",
+        signals=Signals(
+            token_count=12800, duration_ms=30000, compaction_events=1,
+            scratchpad_writes=8, tool_errors=0, retries=0,
+            subagents_spawned=2, models_used={},
+        ),
+    )
+    fr = build_failure_report(
+        level_result=_level_result(),
+        trace=_trace(),
+        trace_id="eval-x",
+        trace_path="traces/eval-x.json",
+        baseline=baseline,
+    )
+    assert fr.diff_vs_baseline is not None
+    assert fr.diff_vs_baseline.baseline_grade == "A"
 
 
 def test_write_failure_report_yaml(tmp_path: Path) -> None:

@@ -40,9 +40,10 @@ def next_session_id(log_dir: Path, level: int, date: str) -> str:
     prefix = f"{date}-level{level}-"
     if not log_dir.exists():
         return f"{prefix}001"
-    existing = sorted(
-        int(p.stem.rsplit("-", 1)[1])
-        for p in log_dir.glob(f"{prefix}*.yaml")
-    )
-    n = (existing[-1] + 1) if existing else 1
+    existing: list[int] = []
+    for p in log_dir.glob(f"{prefix}*.yaml"):
+        suffix = p.stem.rsplit("-", 1)[-1]
+        if suffix.isdigit():
+            existing.append(int(suffix))
+    n = (max(existing) + 1) if existing else 1
     return f"{prefix}{n:03d}"

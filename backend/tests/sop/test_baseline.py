@@ -17,7 +17,7 @@ def baselines_dir(tmp_path: Path) -> Path:
 
 def _sample(level: int, writes: int) -> Baseline:
     return Baseline(
-        level=level, date="2026-04-10", trace_id="t",
+        level=level, date="2026-04-10", trace_id="t", grade="B",
         signals=Signals(
             token_count=100, duration_ms=10, compaction_events=0,
             scratchpad_writes=writes, tool_errors=0, retries=0,

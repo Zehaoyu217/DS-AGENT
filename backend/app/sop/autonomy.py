@@ -46,11 +46,14 @@ def revert_to_proposed(bucket: str, path: Path) -> None:
 
 def evaluate_graduation_readiness(bucket: str, log_dir: Path) -> bool:
     """True iff bucket meets all graduation criteria."""
-    entries = [e for e in list_entries(log_dir) if e.triage.bucket == bucket]
+    entries = [
+        e for e in list_entries(log_dir)
+        if e.triage is not None and e.triage.bucket == bucket
+    ]
     if len(entries) < MIN_SESSIONS:
         return False
     success_rate = sum(1 for e in entries if e.outcome.get("success")) / len(entries)
     if success_rate < MIN_SUCCESS_RATE:
         return False
-    distinct_rungs = {e.fix.ladder_id for e in entries}
+    distinct_rungs = {e.fix.ladder_id for e in entries if e.fix is not None}
     return len(distinct_rungs) >= MIN_DISTINCT_RUNGS

@@ -57,3 +57,31 @@ def test_list_entries_sorted(tmp_path: Path) -> None:
 def test_read_missing_entry_raises(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         read_entry("2026-04-12-level3-999", tmp_path)
+
+
+def test_next_session_id_skips_non_numeric_suffix(tmp_path: Path) -> None:
+    """A malformed YAML like 2026-04-12-level3-draft.yaml must not crash next_session_id."""
+    write_entry(_entry("2026-04-12-level3-001"), tmp_path)
+    # Create a rogue file with a non-numeric suffix
+    (tmp_path / "2026-04-12-level3-draft.yaml").write_text("garbage: true")
+    assert next_session_id(tmp_path, level=3, date="2026-04-12") == "2026-04-12-level3-002"
+
+
+def test_entry_with_nullable_triage_and_fix(tmp_path: Path) -> None:
+    """IterationLogEntry must accept triage=None and fix=None (e.g. preflight fail)."""
+    entry = IterationLogEntry(
+        date="2026-04-12",
+        session_id="2026-04-12-level3-010",
+        level=3,
+        overall_grade_before="C",
+        preflight=PreflightResult(evaluation_bias="fail", data_quality="pass", determinism="pass"),
+        triage=None,
+        fix=None,
+        outcome={"success": False, "reason": "preflight_failed"},
+        trace_links={},
+    )
+    write_entry(entry, tmp_path)
+    loaded = read_entry("2026-04-12-level3-010", tmp_path)
+    assert loaded.triage is None
+    assert loaded.fix is None
+    assert loaded.outcome == {"success": False, "reason": "preflight_failed"}

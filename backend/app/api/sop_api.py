@@ -2,16 +2,20 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+from pydantic import ValidationError
 
 from app.sop.ladder_loader import load_all_ladders
 from app.sop.log import list_entries, read_entry
 from app.sop.preflight import JUDGE_VARIANCE_THRESHOLD
 
 router = APIRouter(prefix="/api/sop", tags=["sop"])
+
+_SESSION_ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
 def _log_dir() -> Path:
@@ -20,11 +24,16 @@ def _log_dir() -> Path:
 
 @router.get("/sessions")
 def list_sessions() -> dict[str, Any]:
-    return {"sessions": [e.model_dump() for e in list_entries(_log_dir())]}
+    try:
+        return {"sessions": [e.model_dump() for e in list_entries(_log_dir())]}
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(status_code=500, detail="Failed to load sessions") from exc
 
 
 @router.get("/sessions/{session_id}")
 def get_session(session_id: str) -> dict[str, Any]:
+    if not _SESSION_ID_RE.match(session_id):
+        raise HTTPException(status_code=400, detail="invalid session_id")
     try:
         entry = read_entry(session_id, _log_dir())
     except FileNotFoundError as exc:
@@ -34,7 +43,10 @@ def get_session(session_id: str) -> dict[str, Any]:
 
 @router.get("/ladders")
 def list_ladders() -> dict[str, Any]:
-    return {"ladders": [ld.model_dump() for ld in load_all_ladders()]}
+    try:
+        return {"ladders": [ld.model_dump() for ld in load_all_ladders()]}
+    except (ValueError, ValidationError) as exc:
+        raise HTTPException(status_code=500, detail="Failed to load ladders") from exc
 
 
 def compute_judge_variance(trace_id: str, n: int) -> dict[str, float]:

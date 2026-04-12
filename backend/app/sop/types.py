@@ -59,6 +59,7 @@ class Baseline(BaseModel):
     level: int = Field(ge=1, le=5)
     date: str
     trace_id: str
+    grade: Grade
     signals: Signals
 
 
@@ -99,8 +100,8 @@ class IterationLogEntry(BaseModel):
     level: int = Field(ge=1, le=5)
     overall_grade_before: Grade
     preflight: PreflightResult
-    triage: TriageDecision
-    fix: FixApplied
+    triage: TriageDecision | None = None
+    fix: FixApplied | None = None
     outcome: dict[str, Any]
     trace_links: dict[str, str]
 

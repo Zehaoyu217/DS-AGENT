@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pydantic
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import ValidationError as PydanticValidationError
 
 from app.main import create_app
 from app.sop.log import write_entry
@@ -67,11 +69,62 @@ def test_get_session_missing_returns_404(client: TestClient) -> None:
     assert resp.status_code == 404
 
 
+def test_get_session_path_traversal_blocked(client: TestClient) -> None:
+    # Starlette normalizes `/../` before routing — results in 404 (route not matched).
+    # Either 400 or 404 is acceptable; what matters is it is NOT 200.
+    resp = client.get("/api/sop/sessions/../etc")
+    assert resp.status_code in (400, 404)
+
+
+def test_get_session_encoded_slash_blocked(client: TestClient) -> None:
+    # URL-encoded slash: Starlette rejects before routing, returns 404.
+    resp = client.get("/api/sop/sessions/..%2F..%2Fetc")
+    assert resp.status_code in (400, 404)
+
+
+def test_get_session_invalid_chars_returns_400(client: TestClient) -> None:
+    # Characters outside [A-Za-z0-9_-] (e.g. a dot) must return 400.
+    resp = client.get("/api/sop/sessions/abc.def")
+    assert resp.status_code == 400
+
+
 def test_list_ladders_returns_nine(client: TestClient) -> None:
     resp = client.get("/api/sop/ladders")
     assert resp.status_code == 200
     data = resp.json()
     assert len(data["ladders"]) == 9
+
+
+def test_list_sessions_returns_500_on_validation_error(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def _boom() -> list[object]:
+        # Construct a real ValidationError via pydantic
+        try:
+            pydantic.TypeAdapter(int).validate_python("not-an-int")
+        except PydanticValidationError as exc:
+            raise exc
+        return []
+
+    monkeypatch.setattr("app.api.sop_api.list_entries", lambda _: _boom())
+    resp = client.get("/api/sop/sessions")
+    assert resp.status_code == 500
+    assert "detail" in resp.json()
+    # Must not contain a raw Python traceback in the response body
+    assert "Traceback" not in resp.text
+
+
+def test_list_ladders_returns_500_on_value_error(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "app.api.sop_api.load_all_ladders",
+        lambda: (_ for _ in ()).throw(ValueError("malformed YAML")),
+    )
+    resp = client.get("/api/sop/ladders")
+    assert resp.status_code == 500
+    assert "detail" in resp.json()
+    assert "Traceback" not in resp.text
 
 
 def test_judge_variance_endpoint_returns_dimension_variance(
