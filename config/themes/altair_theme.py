@@ -13,8 +13,9 @@ _DEFAULT_TOKENS: ThemeTokens | None = None
 def _build_spec(tokens: VariantTokens, typography: dict[str, Any]) -> dict[str, Any]:
     sans = typography["sans"]
     font = sans
-    title_font = typography.get("serif", sans) if tokens.typography_override().get("headings") == "serif" else sans
-    base_size = tokens.typography_override().get("base_size", typography["scale"]["base"])
+    override = tokens.typography_override()
+    title_font = typography.get("serif", sans) if override.get("headings") == "serif" else sans
+    base_size = override.get("base_size", typography["scale"]["base"])
 
     return {
         "background": tokens.surface("base"),
@@ -80,6 +81,11 @@ def _build_spec(tokens: VariantTokens, typography: dict[str, Any]) -> dict[str, 
 
 
 def register_all(tokens_path: Path | None = None) -> None:
+    """Load tokens.yaml and register one Altair theme per variant as `gir_<variant>`.
+
+    Repeated calls re-register each `gir_<variant>` theme, overwriting any
+    previous registration with the same name.
+    """
     global _DEFAULT_TOKENS
     path = tokens_path or (Path(__file__).parent / "tokens.yaml")
     _DEFAULT_TOKENS = ThemeTokens.load(path)
@@ -102,5 +108,7 @@ def active_tokens() -> VariantTokens:
         register_all()
     assert _DEFAULT_TOKENS is not None
     active = alt.themes.active or f"gir_{_DEFAULT_TOKENS.default_variant}"
+    if not active.startswith("gir_"):
+        return _DEFAULT_TOKENS.for_variant(_DEFAULT_TOKENS.default_variant)
     variant_name = active.removeprefix("gir_")
     return _DEFAULT_TOKENS.for_variant(variant_name)

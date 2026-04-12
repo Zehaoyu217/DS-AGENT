@@ -5,7 +5,7 @@ from pathlib import Path
 import altair as alt
 import pytest
 
-from config.themes.altair_theme import register_all, use_variant
+from config.themes.altair_theme import active_tokens, register_all, use_variant
 
 TOKENS_PATH = Path(__file__).resolve().parents[3] / "config" / "themes" / "tokens.yaml"
 
@@ -39,3 +39,13 @@ def test_theme_title_anchor_is_start() -> None:
     use_variant("editorial")
     config = alt.themes.get()()
     assert config["config"]["title"]["anchor"] == "start"
+
+
+def test_active_tokens_falls_back_when_non_gir_theme_active() -> None:
+    """If a theme outside the gir_* family is active, active_tokens falls back to default variant."""
+    alt.themes.enable("quartz")
+    try:
+        tokens = active_tokens()
+        assert tokens.name == "light"  # default_variant in tokens.yaml
+    finally:
+        alt.themes.enable("gir_light")

@@ -47,3 +47,26 @@ def test_unknown_variant_raises() -> None:
 def test_categorical_has_at_least_18_colors() -> None:
     tokens = ThemeTokens.load(TOKENS_PATH).for_variant("light")
     assert len(tokens.categorical()) >= 18
+
+
+def test_malformed_yaml_raises_useful_error(tmp_path: Path) -> None:
+    """default_variant pointing to a missing variant should raise ValueError with a clear message."""
+    bad_yaml = tmp_path / "tokens.yaml"
+    bad_yaml.write_text(
+        """
+default_variant: neon
+typography: {sans: "Inter"}
+series_strokes:
+  actual: {width: 2.5, dash: null}
+variants:
+  light:
+    surface: {}
+    series_blues: {}
+    semantic: {}
+    categorical: []
+    diverging: {}
+    chart: {}
+"""
+    )
+    with pytest.raises(ValueError, match="default_variant"):
+        ThemeTokens.load(bad_yaml)

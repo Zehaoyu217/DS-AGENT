@@ -7,8 +7,9 @@ from config.themes.theme_switcher import ThemeTokens
 
 def render_table_css(variant: str = "light", tokens_path: Path | None = None) -> str:
     path = tokens_path or (Path(__file__).parent / "tokens.yaml")
-    tokens = ThemeTokens.load(path).for_variant(variant)
-    typography = ThemeTokens.load(path).typography
+    bundle = ThemeTokens.load(path)
+    tokens = bundle.for_variant(variant)
+    typography = bundle.typography
     sans = typography["sans"]
     base = typography["scale"]["base"]
     sm = typography["scale"]["sm"]

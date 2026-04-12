@@ -44,7 +44,7 @@ class VariantTokens:
         return self.raw["chart"][key]
 
     def typography_override(self) -> dict[str, Any]:
-        return dict(self.raw.get("typography_override", {}))
+        return dict(self.typography)
 
 
 @dataclass(frozen=True)
@@ -57,6 +57,7 @@ class ThemeTokens:
     @classmethod
     def load(cls, path: Path) -> ThemeTokens:
         data = yaml.safe_load(path.read_text())
+        _validate_tokens_shape(data, path)
         strokes = {
             role: SeriesStroke(width=float(s["width"]), dash=s.get("dash"))
             for role, s in data["series_strokes"].items()
@@ -65,7 +66,7 @@ class ThemeTokens:
             variants=data["variants"],
             typography=data["typography"],
             series_strokes=strokes,
-            default_variant=data.get("default_variant", "light"),
+            default_variant=data["default_variant"],
         )
 
     def for_variant(self, name: str) -> VariantTokens:
@@ -75,8 +76,51 @@ class ThemeTokens:
             name=name,
             raw=self.variants[name],
             series_strokes=self.series_strokes,
-            typography=self.typography,
+            typography=dict(self.variants[name].get("typography_override", {})),
         )
 
     def default(self) -> VariantTokens:
         return self.for_variant(self.default_variant)
+
+
+_REQUIRED_VARIANT_KEYS = (
+    "surface",
+    "series_blues",
+    "semantic",
+    "categorical",
+    "diverging",
+    "chart",
+)
+
+
+def _validate_tokens_shape(data: Any, path: Path) -> None:
+    """Shallow shape check for tokens.yaml. Raises ValueError with a clear message."""
+    if not isinstance(data, dict):
+        raise ValueError(f"{path}: top-level must be a mapping, got {type(data).__name__}")
+    variants = data.get("variants")
+    if not isinstance(variants, dict) or not variants:
+        raise ValueError(
+            f"{path}: 'variants' must be a non-empty mapping of variant name to tokens"
+        )
+    default_variant = data.get("default_variant")
+    if not isinstance(default_variant, str):
+        raise ValueError(f"{path}: 'default_variant' must be a string")
+    if default_variant not in variants:
+        raise ValueError(
+            f"{path}: 'default_variant' {default_variant!r} is not present in 'variants' "
+            f"(available: {sorted(variants)})"
+        )
+    if not isinstance(data.get("typography"), dict):
+        raise ValueError(f"{path}: top-level 'typography' must be a mapping")
+    if not isinstance(data.get("series_strokes"), dict):
+        raise ValueError(f"{path}: top-level 'series_strokes' must be a mapping")
+    for variant_name, variant in variants.items():
+        if not isinstance(variant, dict):
+            raise ValueError(
+                f"{path}: variant {variant_name!r} must be a mapping, got {type(variant).__name__}"
+            )
+        for key in _REQUIRED_VARIANT_KEYS:
+            if key not in variant:
+                raise ValueError(
+                    f"{path}: variant {variant_name!r} is missing required key {key!r}"
+                )
