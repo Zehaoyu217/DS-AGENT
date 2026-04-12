@@ -3,7 +3,7 @@ import type { ContextSnapshot } from '../lib/api'
 
 interface DevtoolsState {
   isOpen: boolean
-  activeTab: 'events' | 'skills' | 'config' | 'wiki' | 'evals' | 'context'
+  activeTab: 'events' | 'skills' | 'config' | 'wiki' | 'evals' | 'context' | 'sop'
   contextSnapshot: ContextSnapshot | null
   toggle: () => void
   setActiveTab: (tab: DevtoolsState['activeTab']) => void

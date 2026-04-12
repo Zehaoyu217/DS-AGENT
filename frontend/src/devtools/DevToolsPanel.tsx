@@ -1,7 +1,8 @@
 import { useDevtoolsStore } from '../stores/devtools'
 import { ContextInspector } from './ContextInspector'
+import { SessionReplay } from './sop/SessionReplay'
 
-const TABS = ['events', 'skills', 'config', 'wiki', 'evals', 'context'] as const
+const TABS = ['events', 'skills', 'config', 'wiki', 'evals', 'context', 'sop'] as const
 
 function Placeholder({ name }: { name: string }) {
   return (
@@ -63,7 +64,8 @@ export function DevToolsPanel() {
       {/* Tab content */}
       <div style={{ flex: 1, overflow: 'hidden' }}>
         {activeTab === 'context' && <ContextInspector />}
-        {activeTab !== 'context' && <Placeholder name={activeTab} />}
+        {activeTab === 'sop' && <SessionReplay />}
+        {activeTab !== 'context' && activeTab !== 'sop' && <Placeholder name={activeTab} />}
       </div>
     </div>
   )
