@@ -23,6 +23,8 @@ def test_cli_prints_result_for_latest_report(tmp_path: Path) -> None:
     }
     (reports / "2026-04-12-level3.yaml").write_text(yaml.safe_dump(report))
 
+    # cwd must be backend/ so `python -m app.sop.cli` can import app.sop.
+    # parents[0]=tests/sop, [1]=tests, [2]=backend.
     result = subprocess.run(
         [sys.executable, "-m", "app.sop.cli", "--level", "3", "--reports-dir", str(reports)],
         capture_output=True, text=True, cwd=Path(__file__).resolve().parents[2],
@@ -31,3 +33,7 @@ def test_cli_prints_result_for_latest_report(tmp_path: Path) -> None:
     data = json.loads(result.stdout)
     assert data["triage"]["bucket"] == "context"
     assert data["proposal"]["id"] == "context-01"
+    assert "preflight" in data
+    assert "triage" in data
+    assert "proposal" in data
+    assert "advisory" in data

@@ -3,12 +3,16 @@
 Reads the latest FailureReport for the given level, runs the SOP, and prints
 the result as JSON. Invoked via ``python -m app.sop.cli --level <N>`` or
 ``make sop level=<N>``.
+
+Note: ``--reports-dir`` is a trusted operator input; this CLI is for developer use
+and is not exposed over any network surface.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import sys
 from pathlib import Path
 
 import yaml
@@ -39,15 +43,21 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    report = _latest_report(Path(args.reports_dir), args.level)
-    # v1: preflight inputs default to empty/passing; operators can extend later
-    # via env vars or explicit CLI flags.
-    result = run_sop(
-        report=report,
-        judge_variance={},
-        seed_fingerprint_matches=True,
-        rerun_grades=[],
-    )
+    try:
+        report = _latest_report(Path(args.reports_dir), args.level)
+        result = run_sop(
+            report=report,
+            judge_variance={},
+            seed_fingerprint_matches=True,
+            rerun_grades=[],
+        )
+    except FileNotFoundError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except ValueError as exc:
+        print(f"error: invalid report: {exc}", file=sys.stderr)
+        return 1
+
     print(json.dumps(result.model_dump(), indent=2))
     return 0
 

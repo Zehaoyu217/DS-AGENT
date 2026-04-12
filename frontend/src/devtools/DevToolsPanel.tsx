@@ -21,6 +21,9 @@ function Placeholder({ name }: { name: string }) {
 
 export function DevToolsPanel() {
   const { isOpen, activeTab, setActiveTab } = useDevtoolsStore()
+  // v1: trace selection is not wired — Session Replay does not yet expose a
+  // selection callback. The three dependent tabs show a placeholder until a
+  // future task adds selection state and threads it through SessionReplay.
   const [selectedTraceId] = useState<string | null>(null)
   const [selectedStepId] = useState<string | null>(null)
 
@@ -78,17 +81,17 @@ export function DevToolsPanel() {
         {activeTab === 'sop-judge' && (
           selectedTraceId
             ? <JudgeVariance traceId={selectedTraceId} />
-            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace from the Session Replay tab.</div>
+            : <div className="sop-empty">Select a trace from the Session Replay tab.</div>
         )}
         {activeTab === 'sop-prompt' && (
           selectedTraceId && selectedStepId
             ? <PromptInspector traceId={selectedTraceId} stepId={selectedStepId} />
-            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace+step from the Session Replay tab.</div>
+            : <div className="sop-empty">Select a trace+step from the Session Replay tab.</div>
         )}
         {activeTab === 'sop-timeline' && (
           selectedTraceId
             ? <CompactionTimeline traceId={selectedTraceId} />
-            : <div style={{ padding: 16, color: '#4a4a5a' }}>Select a trace from the Session Replay tab.</div>
+            : <div className="sop-empty">Select a trace from the Session Replay tab.</div>
         )}
         {!['context', 'sop-sessions', 'sop-judge', 'sop-prompt', 'sop-timeline'].includes(activeTab) && (
           <Placeholder name={activeTab} />
