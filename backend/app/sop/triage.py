@@ -5,10 +5,6 @@ from collections.abc import Callable
 
 from app.sop.types import FailureReport, TriageDecision
 
-TRIAGE_ORDER: list[str] = [
-    "context", "prompt", "capability", "routing", "architecture", "harness",
-]
-
 
 def _check_context(r: FailureReport) -> list[str] | None:
     evidence: list[str] = []
@@ -27,6 +23,8 @@ def _check_context(r: FailureReport) -> list[str] | None:
     return evidence or None
 
 
+# Heuristic: substring match on judge justifications. False positives acceptable;
+# wrong-bucket fixes surface in the iteration log and prompt moving on.
 def _check_prompt(r: FailureReport) -> list[str] | None:
     keywords = ("ignored", "contradic", "missing guidance", "unclear instruction")
     hits = [
@@ -38,6 +36,8 @@ def _check_prompt(r: FailureReport) -> list[str] | None:
     return hits or None
 
 
+# Heuristic: substring match on judge justifications. False positives acceptable;
+# wrong-bucket fixes surface in the iteration log and prompt moving on.
 def _check_capability(r: FailureReport) -> list[str] | None:
     hits = [
         f"judge flags wrong output in {dim}"
@@ -55,6 +55,7 @@ def _check_routing(r: FailureReport) -> list[str] | None:
         return None
     sonnet = models.get("sonnet", 0)
     haiku = models.get("haiku", 0)
+    # Level 1 tasks are mechanical (format/extract) and haiku-only is correct.
     if haiku > 0 and sonnet == 0 and r.level >= 2:
         return [f"models_used has no sonnet on level {r.level} (reasoning-heavy)"]
     return None
@@ -81,6 +82,9 @@ BUCKET_CHECKS: dict[str, Callable[[FailureReport], list[str] | None]] = {
     "harness": _check_harness,
 }
 
+# Single source of truth for iteration order (dict preserves insertion order, Python 3.7+).
+TRIAGE_ORDER: tuple[str, ...] = tuple(BUCKET_CHECKS)
+
 
 _HYPOTHESIS_TEMPLATES: dict[str, str] = {
     "context": "Context layer is leaking or compaction is mis-tuned",
@@ -98,8 +102,8 @@ def _hypothesis(bucket: str, evidence: list[str]) -> str:
 
 def triage(report: FailureReport) -> TriageDecision | None:
     """Return the first bucket (cost-ordered) whose signals fire, else None."""
-    for bucket in TRIAGE_ORDER:
-        evidence = BUCKET_CHECKS[bucket](report)
+    for bucket, check in BUCKET_CHECKS.items():
+        evidence = check(report)
         if evidence:
             return TriageDecision(
                 bucket=bucket,

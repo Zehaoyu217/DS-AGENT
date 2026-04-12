@@ -73,3 +73,26 @@ def test_picks_architecture_on_level5_with_no_subagents() -> None:
     ))
     assert decision is not None
     assert decision.bucket == "architecture"
+
+
+def test_routing_does_not_fire_on_level1_haiku_only() -> None:
+    # Level 1 tasks are mechanical; haiku-only is the correct choice, not a routing fault.
+    decision = triage(_report(
+        signals=_signals(models_used={"haiku": 5, "sonnet": 0}),
+        level=1,
+    ))
+    assert decision is None or decision.bucket != "routing"
+
+
+def test_context_diff_branch_fires_on_token_count_growth() -> None:
+    decision = triage(_report(
+        signals=_signals(compaction_events=0, scratchpad_writes=5, token_count=8000),
+        diff=DiffVsBaseline(
+            baseline_date="2026-04-10",
+            baseline_grade="B",
+            changes={"token_count": {"before": 10000, "after": 20000}},
+        ),
+    ))
+    assert decision is not None
+    assert decision.bucket == "context"
+    assert any(">1.5x" in e for e in decision.evidence)
