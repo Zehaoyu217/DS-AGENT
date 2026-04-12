@@ -13,15 +13,27 @@ def ensure_theme_registered() -> None:
     try:
         if "gir_light" not in alt.themes.names():
             register_all()
-    except Exception:  # noqa: BLE001
+    except AttributeError:
         register_all()
 
 
+_FALLBACK_ROLE = "actual"
+
+
 def resolve_series_style(role: str) -> dict[str, Any]:
-    """Return a dict of Altair mark kwargs for a named series role."""
+    """Return Altair mark kwargs for a named series role.
+
+    Data-driven role values (from `multi_line` series columns) may not match any
+    registered token — fall back to the `actual` role and let the caller
+    distinguish runs by other encodings (category hue, panel, etc.).
+    """
     tokens = active_tokens()
-    color = tokens.series_color(role)
-    stroke = tokens.series_stroke(role)
+    try:
+        color = tokens.series_color(role)
+        stroke = tokens.series_stroke(role)
+    except KeyError:
+        color = tokens.series_color(_FALLBACK_ROLE)
+        stroke = tokens.series_stroke(_FALLBACK_ROLE)
     props: dict[str, Any] = {"color": color, "strokeWidth": stroke.width}
     if stroke.dash is not None:
         props["strokeDash"] = stroke.dash

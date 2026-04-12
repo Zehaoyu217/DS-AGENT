@@ -35,11 +35,16 @@ def scatter_trend(
             y=alt.Y(y, type="quantitative"),
         )
     )
+    line_kwargs: dict[str, object] = {
+        "color": reference["color"],
+        "strokeWidth": reference["strokeWidth"],
+    }
+    if "strokeDash" in reference:
+        line_kwargs["strokeDash"] = reference["strokeDash"]
     line = (
         alt.Chart(df)
         .transform_regression(x, y, method=trend)
-        .mark_line(color=reference["color"], strokeWidth=reference["strokeWidth"],
-                   strokeDash=reference.get("strokeDash"))
+        .mark_line(**line_kwargs)
         .encode(
             x=alt.X(x, type="quantitative"),
             y=alt.Y(y, type="quantitative"),
