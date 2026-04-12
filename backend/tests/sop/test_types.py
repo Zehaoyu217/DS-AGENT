@@ -110,3 +110,11 @@ def test_iteration_log_entry_minimum() -> None:
         trace_links={"before": "a.json", "after": "b.json"},
     )
     assert e.triage.bucket == "context"
+
+
+def test_sop_session_has_nullable_trace_id() -> None:
+    from app.sop.types import SOPSession
+
+    fields = SOPSession.model_fields
+    assert "trace_id" in fields
+    assert fields["trace_id"].default is None
