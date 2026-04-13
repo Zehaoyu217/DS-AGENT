@@ -1,0 +1,8 @@
+dependencies:
+  python:
+    - numpy
+    - pandas
+    - scipy
+error_templates:
+  insufficient_n: "distribution_fit: n={n} < 50, cannot fit reliably."
+  unknown_candidate: "distribution_fit: candidate '{name}' unknown."
