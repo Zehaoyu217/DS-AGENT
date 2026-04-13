@@ -1,0 +1,9 @@
+dependencies:
+  python:
+    - numpy
+    - pandas
+    - scipy
+    - statsmodels
+error_templates:
+  unknown_claim_kind: "stat_validate: claim_kind '{kind}' unknown. Use 'correlation'|'group_diff'|'regression'|'classifier'|'forecast'."
+  payload_missing_field: "stat_validate: payload missing required field '{field}' for claim_kind '{kind}'."
