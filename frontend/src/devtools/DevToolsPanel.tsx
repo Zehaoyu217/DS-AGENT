@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { useDevtoolsStore } from '../stores/devtools'
 import { ContextInspector } from './ContextInspector'
 import { SessionReplay } from './sop/SessionReplay'
 import { JudgeVariance } from './sop/JudgeVariance'
 import { PromptInspector } from './sop/PromptInspector'
 import { CompactionTimeline } from './sop/CompactionTimeline'
+import { useSelectionUrlSync } from './sop/useSelectionUrlSync'
 
 const TABS = [
   'events', 'skills', 'config', 'wiki', 'evals', 'context',
@@ -20,12 +20,9 @@ function Placeholder({ name }: { name: string }) {
 }
 
 export function DevToolsPanel() {
-  const { isOpen, activeTab, setActiveTab } = useDevtoolsStore()
-  // v1: trace selection is not wired — Session Replay does not yet expose a
-  // selection callback. The three dependent tabs show a placeholder until a
-  // future task adds selection state and threads it through SessionReplay.
-  const [selectedTraceId] = useState<string | null>(null)
-  const [selectedStepId] = useState<string | null>(null)
+  const { isOpen, activeTab, setActiveTab, selectedTraceId, selectedStepId } =
+    useDevtoolsStore()
+  useSelectionUrlSync()
 
   if (!isOpen) return null
 
@@ -44,7 +41,6 @@ export function DevToolsPanel() {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* Tab bar */}
       <div style={{
         display: 'flex',
         gap: 16,
@@ -74,7 +70,6 @@ export function DevToolsPanel() {
         ))}
       </div>
 
-      {/* Tab content */}
       <div style={{ flex: 1, overflow: 'hidden' }}>
         {activeTab === 'context' && <ContextInspector />}
         {activeTab === 'sop-sessions' && <SessionReplay />}
