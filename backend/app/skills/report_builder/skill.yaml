@@ -1,0 +1,18 @@
+# backend/app/skills/report_builder/skill.yaml
+dependencies:
+  packages: [jinja2, weasyprint]
+errors:
+  WRONG_KEY_POINT_COUNT:
+    message: "research_memo requires exactly 3 key points, got {got}."
+    remedy: "Trim or expand `spec.key_points` to length 3."
+  FAILED_FINDING:
+    message: "Finding {finding_id} has stat_validate verdict FAIL; cannot include."
+    remedy: "Re-run stat_validate and fix the underlying issue, or remove the finding."
+  MISSING_METHODOLOGY:
+    message: "Methodology section is required."
+    remedy: "Populate `spec.methodology` with method + data sources + caveats."
+  UNKNOWN_TEMPLATE:
+    message: "Unknown template '{template}'. Use research_memo | analysis_brief | full_report."
+  PDF_BACKEND_UNAVAILABLE:
+    message: "weasyprint could not be imported; PDF output disabled."
+    remedy: "Install system libcairo + pango, then `pip install weasyprint`."
