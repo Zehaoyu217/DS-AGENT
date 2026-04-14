@@ -257,7 +257,7 @@ def register_core_tools(
     dispatcher.register("distribution_fit.fit", _fit)
     dispatcher.register("data_profiler.profile", _profile)
 
-    from app.skills.report_builder.pkg import build as _report_build  # local import to keep harness import graph flat
+    from app.skills.report_builder.pkg.build import build as _report_build  # local import to keep harness import graph flat
 
     dispatcher.register("report.build", lambda **kw: _report_build(**kw))
 
