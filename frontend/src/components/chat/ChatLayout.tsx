@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
 import { useChatStore } from '@/lib/store'
-import { ThemeProvider } from '@/components/layout/ThemeProvider'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
 import { ChatWindow } from './ChatWindow'
 import { ChatInput } from './ChatInput'
 
-function ChatLayoutInner() {
+export function ChatLayout() {
   const conversations = useChatStore((s) => s.conversations)
   const activeConversationId = useChatStore((s) => s.activeConversationId)
   const createConversation = useChatStore((s) => s.createConversation)
@@ -71,10 +70,3 @@ function ChatLayoutInner() {
   )
 }
 
-export function ChatLayout() {
-  return (
-    <ThemeProvider>
-      <ChatLayoutInner />
-    </ThemeProvider>
-  )
-}

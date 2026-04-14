@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   MessageSquare,
@@ -37,17 +36,7 @@ export function Sidebar() {
   const setActiveConversation = useChatStore((s) => s.setActiveConversation)
   const createConversation = useChatStore((s) => s.createConversation)
 
-  // Global keyboard shortcut: Cmd/Ctrl+B
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
-        e.preventDefault()
-        toggleSidebar()
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [toggleSidebar])
+  // Global Cmd/Ctrl+B is now owned by the command registry in App.tsx.
 
   const handleTabClick = (id: SidebarTab) => {
     if (!sidebarOpen) toggleSidebar()
