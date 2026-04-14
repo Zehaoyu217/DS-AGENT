@@ -4,7 +4,6 @@ from app.skills.dashboard_builder.pkg.build import (
     DashboardSpec,
     KPICard,
     SectionSpec,
-    build,
 )
 
 __all__ = [
