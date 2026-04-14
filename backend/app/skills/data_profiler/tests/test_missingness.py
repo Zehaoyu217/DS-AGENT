@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-pytest_plugins = ["app.skills.data_profiler.tests.fixtures.conftest"]
 
 
 def test_flags_missing_over_50_percent(heavy_missing_df: pd.DataFrame) -> None:

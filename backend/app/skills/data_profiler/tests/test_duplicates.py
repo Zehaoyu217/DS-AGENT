@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-pytest_plugins = ["app.skills.data_profiler.tests.fixtures.conftest"]
 
 
 def test_detects_duplicate_rows() -> None:

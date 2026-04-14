@@ -3,7 +3,6 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-pytest_plugins = ["app.skills.data_profiler.tests.fixtures.conftest"]
 
 
 def test_profile_returns_report_with_risks_sorted(duplicated_key_df: pd.DataFrame) -> None:

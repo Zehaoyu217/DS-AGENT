@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-pytest_plugins = ["app.skills.data_profiler.tests.fixtures.conftest"]
-
 
 def test_flags_date_gap(date_gap_df: pd.DataFrame) -> None:
     from app.skills.data_profiler.pkg.sections.dates import run
