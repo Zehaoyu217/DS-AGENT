@@ -64,6 +64,18 @@ Backend (FastAPI :8000)
 - **Tests:** pytest (backend), vitest (frontend), 80% coverage target
 - **Commits:** `<type>: <description>` (feat, fix, refactor, docs, test, chore)
 - **Skills:** SKILL.md < 200 lines, Python packages unlimited, errors must be actionable
+- **Changelog:** every main update lands an entry in `docs/log.md` under `[Unreleased]` — see that file's header for the policy and entry shape.
+
+## Changelog Policy
+
+`docs/log.md` is the single source of truth for notable changes. **You must update it** before marking a task complete whenever the change is one of:
+
+- A `feat:` commit that touches user-visible behavior or adds a capability
+- A breaking change to a public interface (skill signature, tool registration, API schema, config schema)
+- A migration, rename, or removal that affects existing callers
+- A security, correctness, or data-loss fix on a critical path
+
+Pure refactors, test-only commits, and doc-only commits do not require an entry unless they change observable behavior.
 
 ## Current State
 
@@ -76,3 +88,4 @@ Read `knowledge/wiki/working.md` for what's in progress.
 - Testing guide: `docs/testing.md`
 - Skill creation: `docs/skill-creation.md`
 - Known gotchas: `docs/gotchas.md`
+- Changelog: `docs/log.md`
