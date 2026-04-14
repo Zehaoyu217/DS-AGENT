@@ -58,6 +58,7 @@ interface ChatState {
   rightPanelOpen: boolean
   rightPanelTab: RightPanelTab
   toolCallLog: ToolCallEntry[]
+  scratchpad: string
 
   createConversation: () => string
   setActiveConversation: (id: string) => void
@@ -75,6 +76,8 @@ interface ChatState {
   pushToolCall: (entry: Omit<ToolCallEntry, 'id'>) => string
   updateToolCallById: (id: string, patch: Partial<ToolCallEntry>) => void
   clearToolCallLog: () => void
+  setScratchpad: (content: string) => void
+  clearScratchpad: () => void
   setDraftInput: (s: string) => void
   updateSettings: (patch: Partial<Settings>) => void
   openSettings: () => void
@@ -96,6 +99,7 @@ export const useChatStore = create<ChatState>()(
       rightPanelOpen: false,
       rightPanelTab: 'tools' as RightPanelTab,
       toolCallLog: [] as ToolCallEntry[],
+      scratchpad: '',
 
       createConversation: () => {
         const id = nanoid()
@@ -239,6 +243,8 @@ export const useChatStore = create<ChatState>()(
         })),
 
       clearToolCallLog: () => set({ toolCallLog: [] }),
+      setScratchpad: (content) => set({ scratchpad: content }),
+      clearScratchpad: () => set({ scratchpad: '' }),
 
       setDraftInput: (s) => set({ draftInput: s }),
 

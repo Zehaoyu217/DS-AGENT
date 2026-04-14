@@ -8,6 +8,7 @@ from app.harness.clients.base import (
     CompletionRequest,
     Message,
     ModelClient,
+    ToolSchema,
 )
 from app.harness.dispatcher import ToolDispatcher, ToolResult
 from app.harness.guardrails.end_of_turn import end_of_turn
@@ -40,6 +41,7 @@ class AgentLoop:
         dataset_loaded: bool,
         max_steps: int = 12,
         scratchpad: str = "",
+        tools: tuple[ToolSchema, ...] = (),
     ) -> LoopOutcome:
         state = TurnState(dataset_loaded=dataset_loaded, scratchpad=scratchpad)
         messages: list[Message] = [Message(role="user", content=user_message)]
@@ -51,7 +53,7 @@ class AgentLoop:
         for steps in range(1, max_steps + 1):
             resp = client.complete(CompletionRequest(
                 system=system, messages=tuple(messages),
-                tools=(), max_tokens=2048,
+                tools=tools, max_tokens=2048,
             ))
             final_text = resp.text
 
@@ -90,6 +92,11 @@ class AgentLoop:
                 report = post_tool(result)
                 for aid in report.new_artifact_ids:
                     state.record_artifact(aid)
+                # Keep scratchpad in sync when the agent writes working.md.
+                if call.name == "write_working" and result.ok:
+                    new_pad = (result.payload or {}).get("content", "")
+                    if new_pad:
+                        state.scratchpad = new_pad
                 state.record_tool(
                     name=call.name,
                     result_payload=(result.payload
@@ -129,12 +136,17 @@ class AgentLoop:
         session_id: str = "",
         max_steps: int = 12,
         scratchpad: str = "",
+        tools: tuple[ToolSchema, ...] = (),
     ) -> Generator[StreamEvent, None, None]:
         """Run the agent loop, yielding a StreamEvent for each notable moment.
 
         Yields turn_start before each LLM call, tool_call / tool_result around
         each dispatch, and turn_end when the loop exits.  Callers can serialise
         each event to SSE via ``event.to_sse()``.
+
+        A ``scratchpad_delta`` event is emitted whenever the agent calls the
+        ``write_working`` tool, carrying the full new scratchpad content so the
+        UI can show live reasoning.
         """
         state = TurnState(dataset_loaded=dataset_loaded, scratchpad=scratchpad)
         messages: list[Message] = [Message(role="user", content=user_message)]
@@ -151,7 +163,7 @@ class AgentLoop:
 
             resp = client.complete(CompletionRequest(
                 system=system, messages=tuple(messages),
-                tools=(), max_tokens=2048,
+                tools=tools, max_tokens=2048,
             ))
             final_text = resp.text
 
@@ -221,6 +233,16 @@ class AgentLoop:
                 report = post_tool(result)
                 for aid in report.new_artifact_ids:
                     state.record_artifact(aid)
+                # Keep scratchpad in sync when the agent writes working.md and
+                # emit a live delta so the frontend panel can update in real time.
+                if call.name == "write_working" and result.ok:
+                    new_pad = (result.payload or {}).get("content", "")
+                    if new_pad:
+                        state.scratchpad = new_pad
+                        yield StreamEvent(
+                            type="scratchpad_delta",
+                            payload={"content": new_pad},
+                        )
                 state.record_tool(
                     name=call.name,
                     result_payload=(result.payload

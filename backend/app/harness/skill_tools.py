@@ -99,8 +99,9 @@ def register_core_tools(
         }
 
     def _write_working(args: dict[str, Any]) -> dict:
-        wiki.write_working(str(args.get("content", "")))
-        return {"ok": True}
+        content = str(args.get("content", ""))
+        wiki.write_working(content)
+        return {"ok": True, "content": content}
 
     def _promote(args: dict[str, Any]) -> dict:
         finding = Finding(

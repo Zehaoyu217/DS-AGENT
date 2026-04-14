@@ -31,6 +31,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const pushToolCall = useChatStore((s) => s.pushToolCall)
   const updateToolCallById = useChatStore((s) => s.updateToolCallById)
   const clearToolCallLog = useChatStore((s) => s.clearToolCallLog)
+  const setScratchpad = useChatStore((s) => s.setScratchpad)
+  const clearScratchpad = useChatStore((s) => s.clearScratchpad)
   const setRightPanelTab = useChatStore((s) => s.setRightPanelTab)
 
   const adjustHeight = useCallback(() => {
@@ -149,8 +151,9 @@ export function ChatInput({ conversationId }: ChatInputProps) {
       status: 'sending',
     })
 
-    // Clear tool call log from any previous turn
+    // Clear tool call log and scratchpad from any previous turn
     clearToolCallLog()
+    clearScratchpad()
 
     // Map from tool call entry ID → store entry ID so we can update on result
     const pendingToolCallIds = new Map<string, string>()
@@ -213,6 +216,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
               content: [...a2aBlocksByStep.values()] as ContentBlock[],
             })
           }
+        } else if (event.type === 'scratchpad_delta') {
+          setScratchpad(event.content ?? '')
         } else if (event.type === 'turn_end') {
           const responseText = event.final_text ?? ''
           finalResponseText = responseText
@@ -281,6 +286,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     pushToolCall,
     updateToolCallById,
     clearToolCallLog,
+    setScratchpad,
+    clearScratchpad,
     setRightPanelTab,
     adjustHeight,
   ])

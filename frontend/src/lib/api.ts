@@ -121,6 +121,8 @@ export interface ChatStreamEvent {
   artifact_id?: string
   ok?: boolean
   summary?: string
+  // scratchpad_delta
+  content?: string
 }
 
 /**

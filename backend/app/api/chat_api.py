@@ -37,6 +37,8 @@ from app.harness.clients.base import (
 from app.harness.clients.ollama_client import OllamaClient
 from app.harness.clients.openrouter_client import OpenRouterClient
 from app.harness.config import ModelProfile
+from app.harness.dispatcher import ToolDispatcher
+from app.harness.loop import AgentLoop
 from app.harness.sandbox import SandboxExecutor
 from app.harness.sandbox_bootstrap import build_duckdb_globals
 from app.harness.stream_events import sse_line
@@ -139,6 +141,29 @@ _EXECUTE_PYTHON = ToolSchema(
         "required": ["code"],
     },
 )
+
+_WRITE_WORKING = ToolSchema(
+    name="write_working",
+    description=(
+        "Write the full contents of the working scratchpad (working.md). "
+        "Use markdown with sections: ## TODO, ## COT, ## Findings, ## Evidence. "
+        "Always append — do not erase prior COT entries."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "content": {
+                "type": "string",
+                "description": "Full markdown content for working.md",
+            }
+        },
+        "required": ["content"],
+    },
+)
+
+# The two tools advertised to the LLM.  All analytical skills (correlate,
+# profile, etc.) are called as Python functions inside the sandbox.
+_CHAT_TOOLS = (_EXECUTE_PYTHON, _WRITE_WORKING)
 
 _SYSTEM_PROMPT = (
     "You are a financial analytical assistant with Python execution capabilities.\n\n"
@@ -275,118 +300,72 @@ def _agent_loop(
 # ── streaming agent loop ──────────────────────────────────────────────────────
 
 
+def _build_dispatcher(
+    session_bootstrap: str,
+    charts_out: list[dict[str, Any]],
+) -> ToolDispatcher:
+    """Build a ToolDispatcher with execute_python and write_working handlers.
+
+    Charts produced by execute_python are appended to ``charts_out`` so the
+    caller can include them in the turn_end SSE payload.
+    """
+    dispatcher = ToolDispatcher()
+
+    def _exec_python(args: dict[str, Any]) -> dict[str, Any]:
+        code = str(args.get("code", ""))
+        output, charts = _run_python(code, session_bootstrap)
+        charts_out.extend(charts)
+        return {"output": output, "charts_rendered": len(charts)}
+
+    def _write_working(args: dict[str, Any]) -> dict[str, Any]:
+        content = str(args.get("content", ""))
+        return {"ok": True, "content": content}
+
+    dispatcher.register("execute_python", _exec_python)
+    dispatcher.register("write_working", _write_working)
+    return dispatcher
+
+
 def _stream_agent_loop(
     model_id: str,
     message: str,
     session_id: str,
-    max_steps: int = 3,
+    max_steps: int = 6,
     session_bootstrap: str = "",
 ) -> Generator[str, None, None]:
-    """Yield SSE-formatted strings as the agent runs.
+    """Yield SSE-formatted strings as the full harness agent runs.
 
-    Mirrors ``_agent_loop`` but emits one SSE frame per event instead of
-    collecting results and returning a single payload.
+    Uses AgentLoop.run_stream() so all harness features are active:
+    guardrails, scratchpad tracking (scratchpad_delta events), A2A delegation.
 
-    Events yielded (JSON payload embedded in each frame):
-        turn_start      — before each LLM call
-        tool_call       — when a tool invocation is about to run
-        tool_result     — after the tool returns
-        turn_end        — final assistant text + all charts
-        error           — if an unrecoverable exception occurs
+    Events yielded:
+        turn_start, tool_call, tool_result, scratchpad_delta,
+        a2a_start, a2a_end, turn_end, error
     """
     all_charts: list[dict[str, Any]] = []
-    messages: list[Message] = [Message(role="user", content=message)]
+    dispatcher = _build_dispatcher(session_bootstrap, all_charts)
 
-    with httpx.Client(timeout=120) as http:
-        client = _make_client(model_id, http)
-
-        for step in range(1, max_steps + 1):
-            yield sse_line("turn_start", {"session_id": session_id, "step": step})
-
-            try:
-                req = CompletionRequest(
-                    system=_SYSTEM_PROMPT,
-                    messages=tuple(messages),
-                    tools=(_EXECUTE_PYTHON,),
-                    max_tokens=2048,
-                )
-                resp = client.complete(req)
-            except Exception as exc:
-                yield sse_line("error", {"message": str(exc)})
-                return
-
-            if not resp.tool_calls:
-                yield sse_line("turn_end", {
-                    "final_text": resp.text,
-                    "stop_reason": resp.stop_reason or "end_turn",
-                    "steps": step,
-                    "charts": all_charts,
-                })
-                return
-
-            messages.append(Message(role="assistant", content=resp.text or ""))
-            got_charts_this_step = False
-
-            for call in resp.tool_calls:
-                code_preview = str(call.arguments.get("code", ""))[:120]
-                yield sse_line("tool_call", {
-                    "step": step,
-                    "name": call.name,
-                    "input_preview": code_preview,
-                })
-
-                if call.name == "execute_python":
-                    code = str(call.arguments.get("code", ""))
-                    output, charts = _run_python(code, session_bootstrap)
-                    all_charts.extend(charts)
-                    if charts:
-                        got_charts_this_step = True
-                    result_json = json.dumps({"output": output, "charts_rendered": len(charts)})
-                    status = "error" if output.startswith("Error:") else "ok"
-                    yield sse_line("tool_result", {
-                        "step": step, "name": call.name,
-                        "status": status, "artifact_ids": [],
-                        "preview": output[:200],
-                    })
+    try:
+        with httpx.Client(timeout=120) as http:
+            client = _make_client(model_id, http)
+            loop = AgentLoop(dispatcher)
+            for event in loop.run_stream(
+                client=client,
+                system=_SYSTEM_PROMPT,
+                user_message=message,
+                dataset_loaded=bool(session_bootstrap),
+                session_id=session_id,
+                max_steps=max_steps,
+                tools=_CHAT_TOOLS,
+            ):
+                if event.type == "turn_end":
+                    # Inject accumulated charts so the frontend can render them.
+                    yield sse_line("turn_end", {**event.payload, "charts": all_charts})
                 else:
-                    result_json = json.dumps({"error": f"unknown tool: {call.name}"})
-                    yield sse_line("tool_result", {
-                        "step": step, "name": call.name,
-                        "status": "error", "artifact_ids": [],
-                        "preview": f"unknown tool: {call.name}",
-                    })
-
-                messages.append(Message(
-                    role="tool", tool_use_id=call.id,
-                    name=call.name, content=result_json,
-                ))
-
-            if got_charts_this_step:
-                try:
-                    req = CompletionRequest(
-                        system=_SYSTEM_PROMPT,
-                        messages=tuple(messages),
-                        tools=(),
-                        max_tokens=256,
-                    )
-                    resp = client.complete(req)
-                except Exception as exc:
-                    yield sse_line("error", {"message": str(exc)})
-                    return
-                yield sse_line("turn_end", {
-                    "final_text": resp.text,
-                    "stop_reason": "end_turn",
-                    "steps": step,
-                    "charts": all_charts,
-                })
-                return
-
-    yield sse_line("turn_end", {
-        "final_text": "",
-        "stop_reason": "max_steps",
-        "steps": max_steps,
-        "charts": all_charts,
-    })
+                    yield event.to_sse()
+    except Exception as exc:
+        logger.error("stream_agent_loop failed: %s", exc, exc_info=True)
+        yield sse_line("error", {"message": str(exc)})
 
 
 # ── API ───────────────────────────────────────────────────────────────────────
