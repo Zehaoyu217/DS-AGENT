@@ -88,7 +88,15 @@ export async function listTraces(): Promise<TraceListItem[]> {
 // ── SSE streaming chat ────────────────────────────────────────────────────────
 
 export interface ChatStreamEvent {
-  type: 'turn_start' | 'tool_call' | 'tool_result' | 'scratchpad_delta' | 'turn_end' | 'error'
+  type:
+    | 'turn_start'
+    | 'tool_call'
+    | 'tool_result'
+    | 'scratchpad_delta'
+    | 'turn_end'
+    | 'error'
+    | 'a2a_start'
+    | 'a2a_end'
   // turn_start
   session_id?: string
   step?: number
@@ -106,6 +114,13 @@ export interface ChatStreamEvent {
   charts?: Array<Record<string, unknown>>
   // error
   message?: string
+  // a2a_start
+  task_preview?: string
+  tools_allowed?: string[]
+  // a2a_end
+  artifact_id?: string
+  ok?: boolean
+  summary?: string
 }
 
 /**

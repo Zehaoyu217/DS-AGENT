@@ -6,6 +6,7 @@ import { streamChatMessage } from '@/lib/api-chat'
 import { backend, type SlashCommand } from '@/lib/api-backend'
 import { cn } from '@/lib/utils'
 import { MAX_MESSAGE_LENGTH } from '@/lib/constants'
+import type { A2aContent, ContentBlock } from '@/lib/types'
 
 interface ChatInputProps {
   conversationId: string
@@ -153,6 +154,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
 
     // Map from tool call entry ID → store entry ID so we can update on result
     const pendingToolCallIds = new Map<string, string>()
+    // A2A blocks accumulate in-message as sub-agent events arrive
+    const a2aBlocksByStep = new Map<number, A2aContent>()
     let finalSessionId = conversation?.sessionId ?? null
     let finalResponseText = ''
 
@@ -183,16 +186,45 @@ export function ChatInput({ conversationId }: ChatInputProps) {
               artifactIds: event.artifact_ids,
             })
           }
+        } else if (event.type === 'a2a_start') {
+          const a2aBlock: A2aContent = {
+            type: 'a2a',
+            task: event.task_preview ?? '',
+            artifactId: '',
+            summary: '',
+            status: 'pending',
+          }
+          a2aBlocksByStep.set(event.step ?? 0, a2aBlock)
+          // Show the pending sub-agent card inline in the message
+          updateMessage(conversationId, assistantId, {
+            content: [...a2aBlocksByStep.values()] as ContentBlock[],
+          })
+        } else if (event.type === 'a2a_end') {
+          const step = event.step ?? 0
+          const existing = a2aBlocksByStep.get(step)
+          if (existing) {
+            a2aBlocksByStep.set(step, {
+              ...existing,
+              artifactId: event.artifact_id ?? '',
+              summary: event.summary ?? '',
+              status: event.ok !== false ? 'complete' : 'error',
+            })
+            updateMessage(conversationId, assistantId, {
+              content: [...a2aBlocksByStep.values()] as ContentBlock[],
+            })
+          }
         } else if (event.type === 'turn_end') {
           const responseText = event.final_text ?? ''
           finalResponseText = responseText
           const charts = event.charts ?? []
-          const content =
-            charts.length > 0
-              ? [
-                  { type: 'text' as const, text: responseText },
-                  ...charts.map((spec) => ({ type: 'chart' as const, spec })),
-                ]
+          const a2aBlocks = [...a2aBlocksByStep.values()] as ContentBlock[]
+          const textBlock = responseText
+            ? [{ type: 'text' as const, text: responseText }]
+            : []
+          const chartBlocks = charts.map((spec) => ({ type: 'chart' as const, spec }))
+          const content: ContentBlock[] | string =
+            a2aBlocks.length > 0 || charts.length > 0
+              ? [...a2aBlocks, ...textBlock, ...chartBlocks]
               : responseText
           updateMessage(conversationId, assistantId, {
             content,

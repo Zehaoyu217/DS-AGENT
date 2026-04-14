@@ -37,4 +37,12 @@ export interface ChartContent {
   spec: Record<string, unknown>  // Vega-Lite JSON spec
 }
 
-export type ContentBlock = TextContent | ToolUseContent | ToolResultContent | ChartContent
+export interface A2aContent {
+  type: 'a2a'
+  task: string
+  artifactId: string
+  summary: string
+  status: 'pending' | 'complete' | 'error'
+}
+
+export type ContentBlock = TextContent | ToolUseContent | ToolResultContent | ChartContent | A2aContent
