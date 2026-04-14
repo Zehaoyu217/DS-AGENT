@@ -13,4 +13,5 @@ __all__ = [
     "Methodology",
     "ReportResult",
     "ReportSpec",
+    "build",
 ]

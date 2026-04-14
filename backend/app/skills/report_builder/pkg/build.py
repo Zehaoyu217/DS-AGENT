@@ -84,3 +84,66 @@ def validate_spec(spec: ReportSpec, template: Template) -> None:
             raise ValueError(
                 f"FAILED_FINDING: Finding {fs.finding.id} has no evidence_ids."
             )
+
+
+# ---------------------------------------------------------------------------
+# Orchestrator. Appended after the contracts + validate_spec above.
+# ---------------------------------------------------------------------------
+from datetime import date as _date  # noqa: E402
+
+from app.skills.report_builder.pkg.render_html import render_html  # noqa: E402
+from app.skills.report_builder.pkg.render_md import render_md  # noqa: E402
+
+_OUTPUT_DIR = Path("data/reports")  # overridable in tests
+
+
+def build(
+    spec: ReportSpec,
+    template: Template = "research_memo",
+    formats: tuple[str, ...] = ("md", "html"),
+    session_id: str | None = None,
+    today: _date | None = None,
+) -> ReportResult:
+    validate_spec(spec, template)
+
+    today = today or _date.today()
+    base = _OUTPUT_DIR / (session_id or "default")
+    base.mkdir(parents=True, exist_ok=True)
+
+    stem = _slugify(spec.title) or "report"
+    paths: dict[str, Path] = {}
+    artifact_ids: dict[str, str] = {}
+
+    if "md" in formats:
+        p = base / f"{stem}.md"
+        p.write_text(render_md(spec, template=template, today=today), encoding="utf-8")
+        paths["md"] = p
+        artifact_ids["md"] = f"report-md-{stem}"
+
+    if "html" in formats:
+        p = base / f"{stem}.html"
+        p.write_text(render_html(spec, template=template, today=today), encoding="utf-8")
+        paths["html"] = p
+        artifact_ids["html"] = f"report-html-{stem}"
+
+    if "pdf" in formats:
+        from app.skills.report_builder.pkg.render_pdf import render_pdf
+
+        p = base / f"{stem}.pdf"
+        render_pdf(spec, template=template, output_path=p, today=today)
+        paths["pdf"] = p
+        artifact_ids["pdf"] = f"report-pdf-{stem}"
+
+    return ReportResult(
+        template=template,
+        formats=formats,
+        paths=paths,
+        artifact_ids=artifact_ids,
+    )
+
+
+def _slugify(s: str) -> str:
+    import re
+
+    s = re.sub(r"[^A-Za-z0-9]+", "-", s.strip().lower())
+    return s.strip("-")
