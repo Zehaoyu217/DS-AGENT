@@ -16,7 +16,11 @@ class ChangepointResult:
 def find_changepoints(
     series: pd.Series | np.ndarray, penalty: float = 10.0
 ) -> ChangepointResult:
-    arr = series.dropna().to_numpy() if isinstance(series, pd.Series) else np.asarray(series, dtype=float)
+    arr = (
+        series.dropna().to_numpy()
+        if isinstance(series, pd.Series)
+        else np.asarray(series, dtype=float)
+    )
     algo = rpt.Pelt(model="rbf").fit(arr.reshape(-1, 1))
     raw = algo.predict(pen=penalty)
     indices = [int(i) for i in raw[:-1]]

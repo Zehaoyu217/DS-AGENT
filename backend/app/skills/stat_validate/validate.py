@@ -53,7 +53,11 @@ def validate(
 
     _accept(check_effect_size(payload), "effect size outside negligible band", "effect_size")
     _accept(check_sample_size(payload), "sample size adequate", "sample_size")
-    _accept(check_multiple_comparisons(turn_trace), "no multiple-comparisons concern", "multiple_comparisons")
+    _accept(
+        check_multiple_comparisons(turn_trace),
+        "no multiple-comparisons concern",
+        "multiple_comparisons",
+    )
 
     if claim_kind == "correlation" and frame is not None:
         simpsons = check_simpsons_paradox(payload, frame=frame,

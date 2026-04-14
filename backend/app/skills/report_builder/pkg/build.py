@@ -69,7 +69,8 @@ def validate_spec(spec: ReportSpec, template: Template) -> None:
     n = _REQUIRED_KP[template]
     if len(spec.key_points) != n:
         raise ValueError(
-            f"WRONG_KEY_POINT_COUNT: {template} requires exactly {n} key points, got {len(spec.key_points)}."
+            f"WRONG_KEY_POINT_COUNT: {template} requires exactly {n} key points, "
+            f"got {len(spec.key_points)}."
         )
     if not spec.methodology.method.strip() or not spec.methodology.data_sources:
         raise ValueError("MISSING_METHODOLOGY: Methodology section is required.")
@@ -78,7 +79,8 @@ def validate_spec(spec: ReportSpec, template: Template) -> None:
     for fs in spec.findings:
         if fs.finding.verdict == "FAIL":
             raise ValueError(
-                f"FAILED_FINDING: Finding {fs.finding.id} has stat_validate verdict FAIL; cannot include."
+                f"FAILED_FINDING: Finding {fs.finding.id} has stat_validate "
+                "verdict FAIL; cannot include."
             )
         if not fs.finding.evidence_ids:
             raise ValueError(

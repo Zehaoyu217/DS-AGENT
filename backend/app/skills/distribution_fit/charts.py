@@ -30,7 +30,9 @@ def qq_chart(arr: np.ndarray, candidate: FitCandidate, variant: str = "light") -
     )
 
 
-def pdf_overlay_chart(arr: np.ndarray, candidate: FitCandidate, variant: str = "light") -> alt.LayerChart:
+def pdf_overlay_chart(
+    arr: np.ndarray, candidate: FitCandidate, variant: str = "light",
+) -> alt.LayerChart:
     dist = SUPPORTED[candidate.name]
     lo, hi = float(np.min(arr)), float(np.max(arr))
     xs = np.linspace(lo, hi, 300)

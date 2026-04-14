@@ -81,7 +81,9 @@ class ArtifactStore:
         return folder / f"{artifact_id}.{ext}"
 
     def _should_offload(self, content: str) -> bool:
-        return self._disk_root is not None and len(content.encode("utf-8")) >= self._inline_threshold
+        if self._disk_root is None:
+            return False
+        return len(content.encode("utf-8")) >= self._inline_threshold
 
     # ── Row (de)serialization ───────────────────────────────────────────────
 
@@ -181,7 +183,14 @@ class ArtifactStore:
             artifact.name = slug
         self._cache.setdefault(session_id, []).append(artifact)
         self._persist(artifact)
-        self._events.emit("artifact.saved", {"session_id": session_id, "artifact_id": artifact.id, "type": artifact.type})
+        self._events.emit(
+            "artifact.saved",
+            {
+                "session_id": session_id,
+                "artifact_id": artifact.id,
+                "type": artifact.type,
+            },
+        )
         return artifact
 
     def update_artifact(self, session_id: str, artifact_id: str, **kwargs: Any) -> Artifact | None:
@@ -192,7 +201,10 @@ class ArtifactStore:
                 updated = a.model_copy(update=kwargs)
                 items[idx] = updated
                 self._persist(updated)
-                self._events.emit("artifact.updated", {"session_id": session_id, "artifact_id": updated.id})
+                self._events.emit(
+                    "artifact.updated",
+                    {"session_id": session_id, "artifact_id": updated.id},
+                )
                 return updated
         return None
 

@@ -24,7 +24,7 @@ def lollipop(
         y=alt.Y(category, type="nominal", sort=sort, title=category),
     )
     stem = base.mark_rule(strokeWidth=1.5).encode(
-        x=alt.X(f"datum.{value}:Q", title=value) if False else alt.X(value, type="quantitative", title=value),
+        x=alt.X(value, type="quantitative", title=value),
         x2=alt.datum(0),
     )
     head = base.mark_point(filled=True, size=110).encode(

@@ -36,7 +36,10 @@ def run(df: pd.DataFrame) -> dict[str, Any]:
                     severity="HIGH",
                     columns=(col,),
                     detail=f"{frac * 100:.1f}% of '{col}' is null",
-                    mitigation="Either impute with a defensible strategy or restrict analysis to non-null rows and disclose.",
+                    mitigation=(
+                        "Either impute with a defensible strategy or "
+                        "restrict analysis to non-null rows and disclose."
+                    ),
                 )
             )
 
@@ -55,8 +58,14 @@ def run(df: pd.DataFrame) -> dict[str, Any]:
                         kind="missing_co_occurrence",
                         severity="MEDIUM",
                         columns=(a, b),
-                        detail=f"when '{a}' is null, '{b}' is null {joint / base * 100:.0f}% of the time",
-                        mitigation="Treat these as a single 'not collected' case; consider one indicator column.",
+                        detail=(
+                            f"when '{a}' is null, '{b}' is null "
+                            f"{joint / base * 100:.0f}% of the time"
+                        ),
+                        mitigation=(
+                            "Treat these as a single 'not collected' case; "
+                            "consider one indicator column."
+                        ),
                     )
                 )
     return {"per_column_fraction": per_col, "risks": risks}

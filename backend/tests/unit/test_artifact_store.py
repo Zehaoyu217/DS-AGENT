@@ -32,7 +32,10 @@ def test_slug_collision_is_suffixed(store: ArtifactStore) -> None:
 
 
 def test_get_by_name(store: ArtifactStore) -> None:
-    saved = store.add_artifact("s1", Artifact(type="chart", title="Trend", content="{}", format="vega-lite"))
+    saved = store.add_artifact(
+        "s1",
+        Artifact(type="chart", title="Trend", content="{}", format="vega-lite"),
+    )
     hit = store.get_artifact_by_name("s1", "trend")
     assert hit is not None
     assert hit.id == saved.id
@@ -59,9 +62,16 @@ def test_update_preserves_id(store: ArtifactStore) -> None:
 
 
 def test_disk_split_above_threshold(tmp_path: Path) -> None:
-    store = ArtifactStore(db_path=tmp_path / "a.db", disk_root=tmp_path / "blobs", inline_threshold=100)
+    store = ArtifactStore(
+        db_path=tmp_path / "a.db",
+        disk_root=tmp_path / "blobs",
+        inline_threshold=100,
+    )
     big = "x" * 500
-    saved = store.add_artifact("s1", Artifact(type="file", title="Big", content=big, format="txt"))
+    saved = store.add_artifact(
+        "s1",
+        Artifact(type="file", title="Big", content=big, format="txt"),
+    )
     again = store.get_artifact("s1", saved.id)
     assert again is not None
     assert again.content == big
@@ -112,9 +122,16 @@ def test_load_session_failure_is_retried(tmp_path: Path, monkeypatch: pytest.Mon
 
 
 def test_update_shrinks_below_threshold_cleans_old_disk(tmp_path: Path) -> None:
-    store = ArtifactStore(db_path=tmp_path / "a.db", disk_root=tmp_path / "blobs", inline_threshold=100)
+    store = ArtifactStore(
+        db_path=tmp_path / "a.db",
+        disk_root=tmp_path / "blobs",
+        inline_threshold=100,
+    )
     big = "x" * 500
-    saved = store.add_artifact("s1", Artifact(type="file", title="Big", content=big, format="txt"))
+    saved = store.add_artifact(
+        "s1",
+        Artifact(type="file", title="Big", content=big, format="txt"),
+    )
     old_disk = tmp_path / "blobs" / "s1" / f"{saved.id}.txt"
     assert old_disk.exists()
     store.update_artifact("s1", saved.id, content="small")
@@ -124,8 +141,15 @@ def test_update_shrinks_below_threshold_cleans_old_disk(tmp_path: Path) -> None:
 
 
 def test_update_format_change_cleans_old_disk(tmp_path: Path) -> None:
-    store = ArtifactStore(db_path=tmp_path / "a.db", disk_root=tmp_path / "blobs", inline_threshold=100)
-    saved = store.add_artifact("s1", Artifact(type="file", title="Big", content="x" * 500, format="txt"))
+    store = ArtifactStore(
+        db_path=tmp_path / "a.db",
+        disk_root=tmp_path / "blobs",
+        inline_threshold=100,
+    )
+    saved = store.add_artifact(
+        "s1",
+        Artifact(type="file", title="Big", content="x" * 500, format="txt"),
+    )
     old_disk = tmp_path / "blobs" / "s1" / f"{saved.id}.txt"
     assert old_disk.exists()
     store.update_artifact("s1", saved.id, content="y" * 500, format="html")

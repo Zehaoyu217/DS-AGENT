@@ -40,7 +40,11 @@ def correlation_heatmap(
                 scale=alt.Scale(domain=[-1, 0, 1], range=diverging),
                 title="corr",
             ),
-            tooltip=[alt.Tooltip("var_x:N"), alt.Tooltip("var_y:N"), alt.Tooltip("corr:Q", format=".2f")],
+            tooltip=[
+                alt.Tooltip("var_x:N"),
+                alt.Tooltip("var_y:N"),
+                alt.Tooltip("corr:Q", format=".2f"),
+            ],
         )
     )
     if title:

@@ -52,5 +52,9 @@ def lag_correlate(
             continue
         coefs[i] = float(np.corrcoef(x_arr[mask], shifted[mask])[0, 1])
     threshold = 2.0 / np.sqrt(n)
-    significant = [int(lag) for lag, c in zip(lags, coefs) if not np.isnan(c) and abs(c) > threshold]
+    significant = [
+        int(lag)
+        for lag, c in zip(lags, coefs)
+        if not np.isnan(c) and abs(c) > threshold
+    ]
     return LagCorrelationResult(lags=lags, coefficients=coefs, significant_lags=significant)

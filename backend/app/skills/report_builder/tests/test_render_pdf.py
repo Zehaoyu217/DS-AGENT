@@ -40,7 +40,12 @@ def test_render_pdf_produces_nonempty_bytes_or_skips(tmp_path: Path) -> None:
 
     out = tmp_path / "r.pdf"
     try:
-        render_pdf.render_pdf(_spec(), template="research_memo", output_path=out, today=date(2026, 4, 12))
+        render_pdf.render_pdf(
+            _spec(),
+            template="research_memo",
+            output_path=out,
+            today=date(2026, 4, 12),
+        )
     except render_pdf.PDFBackendUnavailable:
         pytest.skip("weasyprint unavailable on this host")
     assert out.exists()

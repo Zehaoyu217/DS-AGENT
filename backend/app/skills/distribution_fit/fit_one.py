@@ -53,7 +53,11 @@ def fit_one(name: str, arr: np.ndarray) -> FitCandidate:
     except Exception:
         ks_p = float("nan")
     try:
-        ad_stat = float(stats.anderson(x, dist="norm").statistic) if name == "norm" else float("nan")
+        ad_stat = (
+            float(stats.anderson(x, dist="norm").statistic)
+            if name == "norm"
+            else float("nan")
+        )
     except Exception:
         ad_stat = float("nan")
     return FitCandidate(

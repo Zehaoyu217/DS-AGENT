@@ -46,7 +46,11 @@ def fit(
     store: ArtifactStore | None = None,
     session_id: str | None = None,
 ) -> FitResult:
-    arr = series.dropna().to_numpy() if isinstance(series, pd.Series) else np.asarray(series, dtype=float)
+    arr = (
+        series.dropna().to_numpy()
+        if isinstance(series, pd.Series)
+        else np.asarray(series, dtype=float)
+    )
     arr = arr[~np.isnan(arr)]
     if arr.size < 50:
         raise ValueError(f"distribution_fit: n={arr.size} < 50")

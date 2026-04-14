@@ -22,7 +22,13 @@ class PlanStep:
 
     @classmethod
     def from_template(cls, idx: int, tpl: StepTemplate) -> PlanStep:
-        return cls(idx=idx, slug=tpl.slug, label=tpl.label, skill=tpl.skill, artifact_hint=tpl.artifact_hint)
+        return cls(
+            idx=idx,
+            slug=tpl.slug,
+            label=tpl.label,
+            skill=tpl.skill,
+            artifact_hint=tpl.artifact_hint,
+        )
 
 
 @dataclass(frozen=True)
@@ -49,7 +55,13 @@ def plan(
     working_path = WIKI_DIR / "working.md"
     working_path.write_text(_render_working_md(q, dataset, depth, steps), encoding="utf-8")
 
-    return PlanResult(question=q, dataset=dataset, depth=depth, steps=steps, working_md_path=working_path)
+    return PlanResult(
+        question=q,
+        dataset=dataset,
+        depth=depth,
+        steps=steps,
+        working_md_path=working_path,
+    )
 
 
 def _render_working_md(

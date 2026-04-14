@@ -37,7 +37,11 @@ def find_anomalies(
     method: str = "auto",
     z_threshold: float = 3.5,
 ) -> AnomalyResult:
-    arr = series.dropna().to_numpy() if isinstance(series, pd.Series) else np.asarray(series, dtype=float)
+    arr = (
+        series.dropna().to_numpy()
+        if isinstance(series, pd.Series)
+        else np.asarray(series, dtype=float)
+    )
     if method == "auto":
         period = _dominant_period(arr)
         method = "seasonal_esd" if period is not None else "robust_z"

@@ -18,9 +18,11 @@ def test_bar_returns_chart_with_bar_mark() -> None:
 def test_bar_with_category_adds_color_channel() -> None:
     from app.skills.altair_charts.pkg.bar import bar
 
-    df = pd.DataFrame(
-        {"country": ["US", "US", "UK", "UK"], "segment": ["A", "B", "A", "B"], "revenue": [10, 20, 15, 25]}
-    )
+    df = pd.DataFrame({
+        "country": ["US", "US", "UK", "UK"],
+        "segment": ["A", "B", "A", "B"],
+        "revenue": [10, 20, 15, 25],
+    })
     chart = bar(df, x="country", y="revenue", category="segment")
     spec = chart.to_dict()
     assert "color" in spec["encoding"]

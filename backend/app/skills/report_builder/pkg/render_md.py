@@ -17,7 +17,11 @@ _env = Environment(
 )
 
 
-def render_md(spec: ReportSpec, template: Template = "research_memo", today: _date | None = None) -> str:
+def render_md(
+    spec: ReportSpec,
+    template: Template = "research_memo",
+    today: _date | None = None,
+) -> str:
     validate_spec(spec, template)
     tpl = _env.get_template(f"{template}.md.j2")
     return tpl.render(spec=spec, today=(today or _date.today()).isoformat())

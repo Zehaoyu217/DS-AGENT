@@ -31,7 +31,11 @@ def render(
     caption_html = f"<caption>{escape(caption_text)}</caption>" if caption_text else ""
 
     numeric_cols = {c for c in df.columns if _is_numeric(df[c])}
-    thead = "<thead><tr>" + "".join(f"<th>{escape(str(c))}</th>" for c in df.columns) + "</tr></thead>"
+    thead = (
+        "<thead><tr>"
+        + "".join(f"<th>{escape(str(c))}</th>" for c in df.columns)
+        + "</tr></thead>"
+    )
 
     rows_html: list[str] = []
     truncated = max(0, len(df) - max_rows)

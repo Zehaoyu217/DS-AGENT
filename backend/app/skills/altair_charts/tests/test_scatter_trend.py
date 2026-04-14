@@ -11,7 +11,12 @@ def test_scatter_trend_layers_points_and_regression_line() -> None:
     chart = scatter_trend(df, x="x", y="y")
     spec = chart.to_dict()
     assert "layer" in spec
-    marks = {layer.get("mark", {}).get("type") if isinstance(layer.get("mark"), dict) else layer.get("mark") for layer in spec["layer"]}
+    marks = {
+        layer.get("mark", {}).get("type")
+        if isinstance(layer.get("mark"), dict)
+        else layer.get("mark")
+        for layer in spec["layer"]
+    }
     assert "point" in marks or "circle" in marks
     assert "line" in marks
 

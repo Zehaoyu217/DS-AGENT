@@ -39,4 +39,9 @@ def run(df: pd.DataFrame) -> dict[str, Any]:
                         ),
                     )
                 )
-    return {"n_rows": int(len(df)), "n_cols": int(len(df.columns)), "columns": columns, "risks": risks}
+    return {
+        "n_rows": int(len(df)),
+        "n_cols": int(len(df.columns)),
+        "columns": columns,
+        "risks": risks,
+    }

@@ -62,7 +62,11 @@ class WikiEngine:
         out: list[tuple[str, str]] = []
         for md in sorted(folder.glob("*.md")):
             first_heading = next(
-                (ln.lstrip("# ").strip() for ln in md.read_text().splitlines() if ln.startswith("# ")),
+                (
+                    ln.lstrip("# ").strip()
+                    for ln in md.read_text().splitlines()
+                    if ln.startswith("# ")
+                ),
                 md.stem,
             )
             out.append((md.stem, first_heading))

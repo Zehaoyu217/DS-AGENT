@@ -17,7 +17,10 @@ def run(df: pd.DataFrame, key_candidates: list[str] | None = None) -> dict[str, 
                 severity="HIGH",
                 columns=tuple(df.columns),
                 detail=f"{dup_rows} full-row duplicates detected",
-                mitigation="Run `df.drop_duplicates()` or investigate the source for re-ingestion bugs.",
+                mitigation=(
+                    "Run `df.drop_duplicates()` or investigate the source "
+                    "for re-ingestion bugs."
+                ),
             )
         )
     dup_key_detail: dict[str, int] = {}
@@ -33,8 +36,14 @@ def run(df: pd.DataFrame, key_candidates: list[str] | None = None) -> dict[str, 
                         kind="duplicate_key",
                         severity="BLOCKER",
                         columns=(col,),
-                        detail=f"'{col}' has {dup} duplicate values; not a valid primary key",
-                        mitigation="Re-derive the key, deduplicate with a tie-breaker, or choose a composite key.",
+                        detail=(
+                            f"'{col}' has {dup} duplicate values; "
+                            "not a valid primary key"
+                        ),
+                        mitigation=(
+                            "Re-derive the key, deduplicate with a tie-breaker, "
+                            "or choose a composite key."
+                        ),
                     )
                 )
     return {"duplicate_rows": dup_rows, "duplicate_keys": dup_key_detail, "risks": risks}

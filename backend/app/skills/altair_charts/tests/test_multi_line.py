@@ -17,7 +17,12 @@ def test_multi_line_with_series_role_has_layers() -> None:
     chart = multi_line(df, x="date", y="value", series_role="series")
     spec = chart.to_dict()
     # Layered chart containing at least 2 layers (one per role).
-    assert "layer" in spec or "hconcat" in spec or "vconcat" in spec or spec.get("mark") in ("line", {"type": "line"})
+    assert (
+        "layer" in spec
+        or "hconcat" in spec
+        or "vconcat" in spec
+        or spec.get("mark") in ("line", {"type": "line"})
+    )
 
 
 def test_multi_line_forecast_layer_has_dashed_stroke() -> None:

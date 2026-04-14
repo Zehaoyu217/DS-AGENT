@@ -12,7 +12,11 @@ def test_flags_missing_over_50_percent(heavy_missing_df: pd.DataFrame) -> None:
     result = run(heavy_missing_df)
     kinds = {(r.kind, r.severity) for r in result["risks"]}
     assert ("missing_over_threshold", "BLOCKER") in kinds
-    assert any(r.columns == ("email",) for r in result["risks"] if r.kind == "missing_over_threshold")
+    assert any(
+        r.columns == ("email",)
+        for r in result["risks"]
+        if r.kind == "missing_over_threshold"
+    )
 
 
 def test_flags_co_occurrence_when_columns_missing_together() -> None:

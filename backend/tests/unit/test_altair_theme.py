@@ -41,7 +41,7 @@ def test_theme_title_anchor_is_start() -> None:
 
 
 def test_active_tokens_falls_back_when_non_gir_theme_active() -> None:
-    """If a theme outside the gir_* family is active, active_tokens falls back to default variant."""
+    """Non-gir_* active themes must fall through to the default variant."""
     alt.themes.enable("quartz")
     try:
         tokens = active_tokens()

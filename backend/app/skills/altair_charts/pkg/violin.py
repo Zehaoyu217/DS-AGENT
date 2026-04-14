@@ -48,7 +48,11 @@ def violin(
         .properties(width=120, height=300)
     )
     chart = base.facet(
-        column=alt.Column(group, type="nominal", header=alt.Header(titleOrient="bottom", labelOrient="bottom")),
+        column=alt.Column(
+            group,
+            type="nominal",
+            header=alt.Header(titleOrient="bottom", labelOrient="bottom"),
+        ),
     )
     if title:
         chart = chart.properties(title=title)

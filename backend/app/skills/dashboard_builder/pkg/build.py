@@ -59,18 +59,21 @@ def validate_spec(spec: DashboardSpec) -> None:
         raise ValueError("EMPTY_DASHBOARD: Dashboard has no sections.")
     if len(spec.sections) > _MAX_SECTIONS:
         raise ValueError(
-            f"TOO_MANY_SECTIONS: Dashboard has {len(spec.sections)} sections; maximum is {_MAX_SECTIONS}."
+            f"TOO_MANY_SECTIONS: Dashboard has {len(spec.sections)} sections; "
+            f"maximum is {_MAX_SECTIONS}."
         )
     if spec.layout not in _VALID_LAYOUTS:
         raise ValueError(
-            f"UNKNOWN_LAYOUT: Unknown layout '{spec.layout}'. Use bento | grid | single_column."
+            f"UNKNOWN_LAYOUT: Unknown layout '{spec.layout}'. "
+            "Use bento | grid | single_column."
         )
     for section in spec.sections:
         if section.kind == "kpi":
             kpi: KPICard = section.payload
             if kpi.delta is None:
                 raise ValueError(
-                    f"KPI_NO_DELTA: KPI '{kpi.label}' has no delta; cards must show delta or be dropped."
+                    f"KPI_NO_DELTA: KPI '{kpi.label}' has no delta; "
+                    "cards must show delta or be dropped."
                 )
             if kpi.direction not in _VALID_DIRECTIONS:
                 raise ValueError(
@@ -143,11 +146,29 @@ def build(
                 }
             )
         elif section.kind == "chart":
-            chart_svg = chart_resolver(section.payload) if chart_resolver else f"<!-- chart {section.payload} -->"
-            rendered.append({"kind": "chart", "span": span, "title": section.title, "chart_svg": chart_svg})
+            chart_svg = (
+                chart_resolver(section.payload)
+                if chart_resolver
+                else f"<!-- chart {section.payload} -->"
+            )
+            rendered.append({
+                "kind": "chart",
+                "span": span,
+                "title": section.title,
+                "chart_svg": chart_svg,
+            })
         elif section.kind == "table":
-            table_html = table_resolver(section.payload) if table_resolver else f"<!-- table {section.payload} -->"
-            rendered.append({"kind": "table", "span": span, "title": section.title, "table_html": table_html})
+            table_html = (
+                table_resolver(section.payload)
+                if table_resolver
+                else f"<!-- table {section.payload} -->"
+            )
+            rendered.append({
+                "kind": "table",
+                "span": span,
+                "title": section.title,
+                "table_html": table_html,
+            })
         else:
             raise ValueError(f"Unknown section kind '{section.kind}'")
 

@@ -48,7 +48,11 @@ def _augment(section: FindingSection) -> FindingSection:
     )
 
 
-def render_html(spec: ReportSpec, template: Template = "research_memo", today: _date | None = None) -> str:
+def render_html(
+    spec: ReportSpec,
+    template: Template = "research_memo",
+    today: _date | None = None,
+) -> str:
     validate_spec(spec, template)
     # Compute a shimmed spec where each FindingSection exposes `body_html`.
     shimmed_findings = []

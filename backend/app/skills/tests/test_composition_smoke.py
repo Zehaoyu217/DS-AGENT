@@ -67,7 +67,12 @@ def test_plan_chart_report_dashboard_end_to_end(tmp_path: Path, monkeypatch) -> 
         appendix=(),
     )
     monkeypatch.setattr(report_build_mod, "_OUTPUT_DIR", tmp_path / "reports")
-    rep = report_build_mod.build(spec, template="research_memo", formats=("md", "html"), session_id="sess")
+    rep = report_build_mod.build(
+        spec,
+        template="research_memo",
+        formats=("md", "html"),
+        session_id="sess",
+    )
     assert rep.paths["md"].exists()
 
     # 4. Dashboard

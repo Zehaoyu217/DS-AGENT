@@ -18,7 +18,11 @@ def test_pick_method_auto_picks_pearson_for_linear(linear_07) -> None:
 
 
 def test_pick_method_auto_picks_spearman_for_monotonic_nonlinear(monotonic_df) -> None:
-    picked = pick_method(monotonic_df["x"].to_numpy(), monotonic_df["y"].to_numpy(), requested="auto")
+    picked = pick_method(
+        monotonic_df["x"].to_numpy(),
+        monotonic_df["y"].to_numpy(),
+        requested="auto",
+    )
     assert picked == "spearman"
 
 

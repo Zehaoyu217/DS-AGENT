@@ -49,7 +49,7 @@ def test_categorical_has_at_least_18_colors() -> None:
 
 
 def test_malformed_yaml_raises_useful_error(tmp_path: Path) -> None:
-    """default_variant pointing to a missing variant should raise ValueError with a clear message."""
+    """default_variant pointing to a missing variant must raise a clear ValueError."""
     bad_yaml = tmp_path / "tokens.yaml"
     bad_yaml.write_text(
         """

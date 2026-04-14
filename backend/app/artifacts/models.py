@@ -6,7 +6,9 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-ArtifactType = Literal["table", "chart", "diagram", "dashboard_component", "profile", "analysis", "file"]
+ArtifactType = Literal[
+    "table", "chart", "diagram", "dashboard_component", "profile", "analysis", "file",
+]
 
 
 class Artifact(BaseModel):
