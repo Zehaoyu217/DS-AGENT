@@ -52,8 +52,8 @@ Goal: ship a data-scientist-grade agent with a skills runtime, composition skill
 
 ### Fixed
 
-- Append-turn lost-update race — per-conversation `threading.Lock` serializes read-modify-write on `/api/conversations/{id}/turns`. (`backend/app/api/conversations_api.py`)
-- Cold-start conversation now persists to the backend so the happy-path first message isn't dropped by the 404 guard on `/turns`. (`frontend/src/components/chat/ChatLayout.tsx`)
+- Append-turn lost-update race — per-conversation `threading.Lock` serializes read-modify-write on `/api/conversations/{id}/turns`. (`backend/app/api/conversations_api.py`) — `e889f1b`
+- Cold-start conversation now persists to the backend so the happy-path first message isn't dropped by the 404 guard on `/turns`. (`frontend/src/components/chat/ChatLayout.tsx`) — `e889f1b`
 
 ### Fixed
 
