@@ -1,0 +1,62 @@
+# {{ spec.title }}
+{% if spec.subtitle %}*{{ spec.subtitle }}*{% endif %}
+
+**{{ spec.author }}** · {{ today }}
+
+{{ spec.summary }}
+
+## Table of Contents
+- [Key points](#key-points)
+{% for fs in spec.findings %}- [{{ fs.finding.title }}](#{{ fs.finding.id | lower }})
+{% endfor %}- [Discussion](#discussion)
+- [Methodology](#methodology)
+- [Caveats](#caveats)
+- [Appendix](#appendix)
+
+## Introduction
+{{ spec.summary }}
+
+## Key points
+1. {{ spec.key_points[0] }}
+2. {{ spec.key_points[1] }}
+3. {{ spec.key_points[2] }}
+
+{% for fs in spec.findings %}
+## {{ fs.finding.title }} <a id="{{ fs.finding.id | lower }}"></a>
+
+{{ fs.body }}
+
+{% if fs.chart_id %}![chart]({{ fs.chart_id }}.svg){% endif %}
+
+**Evidence:** {{ fs.finding.evidence_ids | join(", ") }}
+**Validated by:** `{{ fs.finding.validated_by }}` — {{ fs.finding.verdict }}
+{% if fs.caveats %}
+**Caveats:**
+{% for c in fs.caveats %}- {{ c }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+## Discussion
+{% if spec.appendix %}{{ spec.appendix[0] }}{% else %}_No discussion section supplied._{% endif %}
+
+## Methodology
+
+**Method:** {{ spec.methodology.method }}
+
+**Data sources:**
+{% for src in spec.methodology.data_sources %}- {{ src }}
+{% endfor %}
+
+**Caveats:**
+{% for c in spec.methodology.caveats %}- {{ c }}
+{% endfor %}
+
+## Caveats
+{% for c in spec.caveats %}- {{ c }}
+{% endfor %}
+
+## Appendix
+{% for section in spec.appendix[1:] %}{{ section }}
+
+{% endfor %}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ spec.title }}</title>
+  <link rel="stylesheet" href="{{ editorial_css_uri }}">
+</head>
+<body class="report report--analysis-brief theme--{{ spec.theme_variant }}">
+  <header class="report__head">
+    <h1 class="report__title">{{ spec.title }}</h1>
+    <p class="report__byline">{{ spec.author }} · {{ today }}</p>
+    <p class="report__summary">{{ spec.summary }}</p>
+  </header>
+  <section class="report__key-points">
+    <ol>
+      <li>{{ spec.key_points[0] }}</li>
+      <li>{{ spec.key_points[1] }}</li>
+      <li>{{ spec.key_points[2] }}</li>
+    </ol>
+  </section>
+  {% set fs = spec.findings[0] %}
+  <section class="report__finding">
+    <h2>{{ fs.finding.title }}</h2>
+    <div class="report__body">{{ fs.body_html | safe }}</div>
+    {% if fs.chart_id %}<figure><img src="{{ fs.chart_id }}.svg" alt=""></figure>{% endif %}
+  </section>
+  <footer class="report__meta">
+    Evidence: {{ fs.finding.evidence_ids | join(", ") }} · Method: {{ spec.methodology.method }} · Caveats: {{ spec.caveats | join(" · ") }}
+  </footer>
+</body>
+</html>
