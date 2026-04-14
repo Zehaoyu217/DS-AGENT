@@ -17,6 +17,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const [error, setError] = useState<string | null>(null)
   const [slashCommands, setSlashCommands] = useState<SlashCommand[] | null>(null)
   const [slashHighlight, setSlashHighlight] = useState(0)
+  const [slashLocked, setSlashLocked] = useState(false)
   const slashFetchRef = useRef<Promise<SlashCommand[]> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -34,9 +35,11 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`
   }, [])
 
-  // Slash menu visibility — only when value starts with "/" and nothing else
-  // the server has already turned into an attachment or bound command.
-  const showSlashMenu = input.startsWith('/')
+  // Slash menu visibility — only when value starts with "/" AND the user
+  // hasn't just picked a command (slashLocked). Locking closes the menu after
+  // a pick so the next Enter submits the message instead of re-firing the
+  // command. Lock clears the moment the user edits the input again.
+  const showSlashMenu = input.startsWith('/') && !slashLocked
   const slashQuery = showSlashMenu ? input.slice(1).toLowerCase() : ''
 
   const filteredCommands = useMemo(() => {
@@ -80,6 +83,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const pickSlashCommand = useCallback(
     (cmd: SlashCommand) => {
       setInput(cmd.label)
+      setSlashLocked(true)
       // Fire-and-forget; we don't want execute failures to block the UX.
       backend.slash
         .execute(cmd.id, {}, conversationId)
@@ -99,6 +103,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value.slice(0, MAX_MESSAGE_LENGTH)
     setInput(value)
+    setSlashLocked(false)
     adjustHeight()
   }
 
@@ -204,6 +209,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
       if (e.key === 'Escape') {
         e.preventDefault()
         setInput('')
+        setSlashLocked(false)
         requestAnimationFrame(() => adjustHeight())
         return
       }

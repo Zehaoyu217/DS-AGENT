@@ -122,4 +122,58 @@ describe('<ChatInput> slash menu', () => {
     expect(execCall).toBeDefined()
     expect((execCall?.body as { command_id: string }).command_id).toBe('help')
   })
+
+  it('closes the menu after pick so the next Enter submits instead of re-firing', async () => {
+    const { impl, calls } = makeFetchMock({
+      'GET /api/slash': {
+        body: [{ id: 'help', label: '/help', description: 'Show help' }],
+      },
+      'POST /api/slash/execute': {
+        body: { ok: true, message: 'Executed help' },
+      },
+      // Accept persistence + chat send calls so the happy path can complete.
+      'POST /api/conversations/conv-1/turns': {
+        body: { id: 'conv-1', turns: [] },
+      },
+      'POST /api/chat': {
+        body: { response: 'ok', session_id: 'sess-1' },
+      },
+    })
+    vi.stubGlobal('fetch', impl)
+
+    render(<ChatInput conversationId="conv-1" />)
+    const textarea = screen.getByLabelText('Message') as HTMLTextAreaElement
+
+    // Type "/" → menu opens.
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: '/' } })
+    })
+    await act(async () => { await Promise.resolve() })
+    await act(async () => { await Promise.resolve() })
+    expect(screen.queryByRole('listbox', { name: /slash commands/i })).toBeInTheDocument()
+
+    // First Enter picks the command — menu should close even though input
+    // still starts with "/".
+    await act(async () => {
+      fireEvent.keyDown(textarea, { key: 'Enter' })
+    })
+    await act(async () => { await Promise.resolve() })
+
+    expect(textarea.value).toBe('/help')
+    expect(screen.queryByRole('listbox', { name: /slash commands/i })).not.toBeInTheDocument()
+
+    // Second Enter must submit, not re-fire the command.
+    const execBefore = calls.filter((c) => c.url === '/api/slash/execute').length
+    await act(async () => {
+      fireEvent.keyDown(textarea, { key: 'Enter' })
+    })
+    await act(async () => { await Promise.resolve() })
+
+    const execAfter = calls.filter((c) => c.url === '/api/slash/execute').length
+    expect(execAfter).toBe(execBefore)
+
+    const chatCall = calls.find((c) => c.url === '/api/chat')
+    expect(chatCall).toBeDefined()
+    expect((chatCall?.body as { message: string }).message).toBe('/help')
+  })
 })
