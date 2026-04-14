@@ -29,9 +29,9 @@ def build_sandbox_bootstrap(
         ")",
         "from app.skills.distribution_fit import fit",
         "from app.skills.altair_charts.pkg import bar, multi_line, histogram, scatter_trend, boxplot, correlation_heatmap",
-        "from app.skills.report_builder.pkg import build as report_build",
-        "from app.skills.analysis_plan.pkg import plan as analysis_plan",
-        "from app.skills.dashboard_builder.pkg import build as dashboard_build",
+        "from app.skills.report_builder.pkg.build import build as report_build",
+        "from app.skills.analysis_plan.pkg.plan import plan as analysis_plan",
+        "from app.skills.dashboard_builder.pkg.build import build as dashboard_build",
         "",
         f"_SESSION_ID = {session_id!r}",
     ]

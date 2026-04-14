@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import Any
 
@@ -9,6 +10,8 @@ from app.harness.clients.base import (
     ToolCall,
 )
 from app.harness.config import ModelProfile
+
+logger = logging.getLogger(__name__)
 
 
 class OllamaClient:
@@ -110,5 +113,7 @@ class OllamaClient:
         }
         try:
             self._http.post(self._endpoint("/api/chat"), json=payload, timeout=120)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning(
+                "ollama warmup failed for model %s: %s", self.profile.model_id, exc, exc_info=True
+            )

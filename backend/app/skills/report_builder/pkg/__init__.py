@@ -1,4 +1,5 @@
 # backend/app/skills/report_builder/pkg/__init__.py
+from app.skills.report_builder.pkg import build
 from app.skills.report_builder.pkg.build import (
     Finding,
     FindingSection,
