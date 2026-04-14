@@ -97,6 +97,7 @@ export interface ChatStreamEvent {
     | 'error'
     | 'a2a_start'
     | 'a2a_end'
+    | 'artifact'
   // turn_start
   session_id?: string
   step?: number
@@ -123,6 +124,14 @@ export interface ChatStreamEvent {
   summary?: string
   // scratchpad_delta
   content?: string
+  // artifact event fields
+  id?: string
+  title?: string
+  format?: string
+  artifact_type?: string
+  artifact_content?: string
+  artifact_metadata?: Record<string, unknown>
+  created_at?: number
 }
 
 /**

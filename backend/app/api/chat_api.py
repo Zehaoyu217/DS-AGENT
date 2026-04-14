@@ -344,6 +344,9 @@ def _stream_agent_loop(
     all_charts: list[dict[str, Any]] = []
     dispatcher = _build_dispatcher(session_bootstrap, all_charts)
 
+    # Track charts already emitted as artifact events so we don't duplicate them.
+    emitted_chart_count = 0
+
     try:
         with httpx.Client(timeout=120) as http:
             client = _make_client(model_id, http)
@@ -357,8 +360,26 @@ def _stream_agent_loop(
                 max_steps=max_steps,
                 tools=_CHAT_TOOLS,
             ):
+                # After each tool_result, emit artifact SSE events for any new charts.
+                if event.type == "tool_result":
+                    while emitted_chart_count < len(all_charts):
+                        spec = all_charts[emitted_chart_count]
+                        artifact_id = f"chart-{secrets.token_hex(4)}"
+                        yield sse_line("artifact", {
+                            "id": artifact_id,
+                            "type": "artifact",
+                            "artifact_type": "chart",
+                            "title": spec.get("title", "Chart") if isinstance(spec.get("title"), str) else "Chart",
+                            "format": "vega-lite",
+                            "artifact_content": json.dumps(spec),
+                            "session_id": session_id,
+                            "created_at": time.time(),
+                            "artifact_metadata": {},
+                        })
+                        emitted_chart_count += 1
+
                 if event.type == "turn_end":
-                    # Inject accumulated charts so the frontend can render them.
+                    # Inject accumulated charts for backward compat (and any not yet emitted).
                     yield sse_line("turn_end", {**event.payload, "charts": all_charts})
                 else:
                     yield event.to_sse()

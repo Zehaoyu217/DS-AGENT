@@ -9,12 +9,15 @@ import {
   Wrench,
 } from 'lucide-react'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
-import type { Message } from '@/lib/store'
+import type { Message, Artifact } from '@/lib/store'
+import { useChatStore } from '@/lib/store'
 import type { ContentBlock, ToolUseContent } from '@/lib/types'
 import { cn, extractTextContent, formatDate } from '@/lib/utils'
 import { MarkdownContent } from './MarkdownContent'
 import { SubagentCard } from './SubagentCard'
 import { VegaChart } from './VegaChart'
+import { MermaidDiagram } from './MermaidDiagram'
+import { DataTable } from '@/components/right-panel/DataTable'
 
 interface MessageBubbleProps {
   message: Message
@@ -44,14 +47,37 @@ function ToolUsePlaceholder({ block }: { block: ToolUseContent }) {
   )
 }
 
+/**
+ * Render a single artifact inline inside a chat bubble.
+ */
+function InlineArtifact({ artifact }: { artifact: Artifact }) {
+  if (artifact.format === 'vega-lite') {
+    return <VegaChart spec={artifact.content} />
+  }
+  if (artifact.format === 'mermaid') {
+    return <MermaidDiagram code={artifact.content} />
+  }
+  if (artifact.format === 'table-json') {
+    return <DataTable content={artifact.content} />
+  }
+  return (
+    <div
+      className="text-xs text-surface-400 overflow-auto max-h-64"
+      dangerouslySetInnerHTML={{ __html: artifact.content }}
+    />
+  )
+}
+
 function AssistantContent({
   blocks,
   isStreaming,
   isError,
+  inlineArtifacts,
 }: {
   blocks: ContentBlock[]
   isStreaming: boolean
   isError: boolean
+  inlineArtifacts: Artifact[]
 }) {
   const hasTools = blocks.some((b) => b.type === 'tool_use')
 
@@ -61,20 +87,25 @@ function AssistantContent({
       .map((b) => b.text)
       .join('')
     return (
-      <div
-        className={cn(
-          'rounded-2xl px-4 py-3 text-sm rounded-tl-sm',
-          isError
-            ? 'bg-red-950 border border-red-800 text-red-200'
-            : 'bg-surface-800 text-surface-100',
-        )}
-      >
-        {text ? (
-          <MarkdownContent content={text} />
-        ) : isStreaming ? null : (
-          <span className="text-surface-400 italic">(empty response)</span>
-        )}
-        {isStreaming && <StreamingCursor />}
+      <div className="flex flex-col gap-2 w-full">
+        <div
+          className={cn(
+            'rounded-2xl px-4 py-3 text-sm rounded-tl-sm',
+            isError
+              ? 'bg-red-950 border border-red-800 text-red-200'
+              : 'bg-surface-800 text-surface-100',
+          )}
+        >
+          {text ? (
+            <MarkdownContent content={text} />
+          ) : isStreaming ? null : (
+            <span className="text-surface-400 italic">(empty response)</span>
+          )}
+          {isStreaming && <StreamingCursor />}
+        </div>
+        {inlineArtifacts.map((artifact) => (
+          <InlineArtifact key={artifact.id} artifact={artifact} />
+        ))}
       </div>
     )
   }
@@ -100,6 +131,7 @@ function AssistantContent({
         }
 
         if (block.type === 'chart') {
+          // Fallback for old chart blocks not yet migrated to artifact store
           return <VegaChart key={i} spec={block.spec} />
         }
 
@@ -114,6 +146,10 @@ function AssistantContent({
       {isStreaming && blocks[blocks.length - 1]?.type === 'tool_use' && (
         <div className="px-2 py-1 text-xs text-surface-500 animate-pulse">Working…</div>
       )}
+
+      {inlineArtifacts.map((artifact) => (
+        <InlineArtifact key={artifact.id} artifact={artifact} />
+      ))}
     </div>
   )
 }
@@ -125,6 +161,12 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessageBub
   const isStreaming = message.status === 'streaming' || message.status === 'sending'
 
   const [copied, setCopied] = useState(false)
+
+  // Resolve inline artifacts from the store for this message
+  const allArtifacts = useChatStore((s) => s.artifacts)
+  const inlineArtifacts: Artifact[] = (message.artifactIds ?? [])
+    .map((id) => allArtifacts.find((a) => a.id === id))
+    .filter((a): a is Artifact => a !== undefined)
 
   // Normalise content to a blocks array so the assistant path always handles both shapes.
   const blocks: ContentBlock[] = Array.isArray(message.content)
@@ -177,7 +219,7 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessageBub
               <p className="whitespace-pre-wrap break-words">{textOnly}</p>
             </div>
           ) : (
-            <AssistantContent blocks={blocks} isStreaming={isStreaming} isError={isError} />
+            <AssistantContent blocks={blocks} isStreaming={isStreaming} isError={isError} inlineArtifacts={inlineArtifacts} />
           )}
         </div>
 

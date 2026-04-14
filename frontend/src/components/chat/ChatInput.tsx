@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { nanoid } from 'nanoid'
 import { Send } from 'lucide-react'
 import { useChatStore } from '@/lib/store'
 import { useDevtoolsStore } from '@/stores/devtools'
@@ -7,6 +8,7 @@ import { backend, type SlashCommand } from '@/lib/api-backend'
 import { cn } from '@/lib/utils'
 import { MAX_MESSAGE_LENGTH } from '@/lib/constants'
 import type { A2aContent, ContentBlock } from '@/lib/types'
+import type { Artifact } from '@/lib/store'
 
 interface ChatInputProps {
   conversationId: string
@@ -34,6 +36,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const setScratchpad = useChatStore((s) => s.setScratchpad)
   const clearScratchpad = useChatStore((s) => s.clearScratchpad)
   const setRightPanelTab = useChatStore((s) => s.setRightPanelTab)
+  const addArtifact = useChatStore((s) => s.addArtifact)
+  const clearArtifacts = useChatStore((s) => s.clearArtifacts)
 
   const adjustHeight = useCallback(() => {
     const el = textareaRef.current
@@ -151,9 +155,10 @@ export function ChatInput({ conversationId }: ChatInputProps) {
       status: 'sending',
     })
 
-    // Clear tool call log and scratchpad from any previous turn
+    // Clear tool call log, scratchpad, and artifacts from any previous turn
     clearToolCallLog()
     clearScratchpad()
+    clearArtifacts()
 
     // Map from tool call entry ID → store entry ID so we can update on result
     const pendingToolCallIds = new Map<string, string>()
@@ -216,6 +221,28 @@ export function ChatInput({ conversationId }: ChatInputProps) {
               content: [...a2aBlocksByStep.values()] as ContentBlock[],
             })
           }
+        } else if (event.type === 'artifact') {
+          const artifact: Artifact = {
+            id: event.id ?? nanoid(),
+            type: (event.artifact_type as Artifact['type']) ?? 'chart',
+            title: event.title ?? 'Artifact',
+            content: event.artifact_content ?? '',
+            format: (event.format as Artifact['format']) ?? 'vega-lite',
+            session_id: event.session_id ?? '',
+            created_at: event.created_at ?? Date.now() / 1000,
+            metadata: event.artifact_metadata ?? {},
+          }
+          addArtifact(artifact)
+          // Also add artifact ID to the current assistant message
+          const currentConv = useChatStore.getState().conversations.find(
+            (c) => c.id === conversationId,
+          )
+          const currentMsg = currentConv?.messages.find((m) => m.id === assistantId)
+          updateMessage(conversationId, assistantId, {
+            artifactIds: [...(currentMsg?.artifactIds ?? []), artifact.id],
+          })
+          // Open the artifacts tab
+          setRightPanelTab('artifacts')
         } else if (event.type === 'scratchpad_delta') {
           setScratchpad(event.content ?? '')
         } else if (event.type === 'turn_end') {
@@ -226,10 +253,37 @@ export function ChatInput({ conversationId }: ChatInputProps) {
           const textBlock = responseText
             ? [{ type: 'text' as const, text: responseText }]
             : []
-          const chartBlocks = charts.map((spec) => ({ type: 'chart' as const, spec }))
+
+          // Backward compat: create artifact store entries for charts that arrived
+          // via turn_end (when backend doesn't emit separate artifact events).
+          const currentConvState = useChatStore.getState().conversations.find(
+            (c) => c.id === conversationId,
+          )
+          const currentMsgState = currentConvState?.messages.find((m) => m.id === assistantId)
+          const alreadyHasArtifacts = (currentMsgState?.artifactIds ?? []).length > 0
+          if (!alreadyHasArtifacts && charts.length > 0) {
+            const newArtifactIds: string[] = []
+            for (const spec of charts) {
+              const artifactId = nanoid()
+              addArtifact({
+                id: artifactId,
+                type: 'chart',
+                title: typeof spec.title === 'string' ? spec.title : 'Chart',
+                content: JSON.stringify(spec),
+                format: 'vega-lite',
+                session_id: finalSessionId ?? '',
+                created_at: Date.now() / 1000,
+                metadata: {},
+              })
+              newArtifactIds.push(artifactId)
+            }
+            updateMessage(conversationId, assistantId, { artifactIds: newArtifactIds })
+            if (charts.length > 0) setRightPanelTab('artifacts')
+          }
+
           const content: ContentBlock[] | string =
-            a2aBlocks.length > 0 || charts.length > 0
-              ? [...a2aBlocks, ...textBlock, ...chartBlocks]
+            a2aBlocks.length > 0
+              ? [...a2aBlocks, ...textBlock]
               : responseText
           updateMessage(conversationId, assistantId, {
             content,
@@ -289,6 +343,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     setScratchpad,
     clearScratchpad,
     setRightPanelTab,
+    addArtifact,
+    clearArtifacts,
     adjustHeight,
   ])
 
