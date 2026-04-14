@@ -43,6 +43,7 @@ from app.harness.loop import AgentLoop
 from app.harness.sandbox import SandboxExecutor
 from app.harness.sandbox_bootstrap import build_duckdb_globals
 from app.harness.stream_events import sse_line
+from app.context.manager import ContextLayer, session_registry
 from app.trace.events import PromptSection
 from app.trace.publishers import (
     TraceSession,
@@ -351,6 +352,38 @@ def _stream_agent_loop(
     # Track charts already emitted as artifact events so we don't duplicate them.
     emitted_chart_count = 0
 
+    # ── Register L1 (static) layers in the per-session context manager ──────
+    ctx = session_registry.get_or_create(session_id)
+    _sp_tokens = _estimate_tokens(_SYSTEM_PROMPT)
+    ctx.add_layer(ContextLayer(
+        name="System Prompt",
+        tokens=_sp_tokens,
+        compactable=False,
+        items=[{"name": "base_system_prompt", "tokens": _sp_tokens}],
+    ))
+    _user_tokens = _estimate_tokens(message)
+    ctx.add_layer(ContextLayer(
+        name="User Message",
+        tokens=_user_tokens,
+        compactable=True,
+        items=[{"name": "user_turn", "tokens": _user_tokens}],
+    ))
+    if session_bootstrap:
+        _boot_tokens = _estimate_tokens(session_bootstrap)
+        ctx.add_layer(ContextLayer(
+            name="Dataset Context",
+            tokens=_boot_tokens,
+            compactable=True,
+            items=[{"name": "dataset_bootstrap", "tokens": _boot_tokens}],
+        ))
+    # Placeholders updated as the turn progresses
+    ctx.add_layer(ContextLayer(name="Assistant Turns", tokens=0, compactable=True, items=[]))
+    ctx.add_layer(ContextLayer(name="Tool Results", tokens=0, compactable=True, items=[]))
+
+    # Running totals updated during streaming
+    assistant_tokens = 0
+    tool_result_tokens = 0
+
     try:
         with httpx.Client(timeout=120) as http:
             client = _make_client(model_id, http)
@@ -381,6 +414,27 @@ def _stream_agent_loop(
                             "artifact_metadata": {},
                         })
                         emitted_chart_count += 1
+
+                # ── Update live context layers as events stream ───────────
+                if event.type == "tool_result":
+                    result_text = json.dumps(event.payload)
+                    tool_result_tokens += _estimate_tokens(result_text)
+                    ctx.add_layer(ContextLayer(
+                        name="Tool Results",
+                        tokens=tool_result_tokens,
+                        compactable=True,
+                        items=[{"name": event.payload.get("name", "tool"), "tokens": _estimate_tokens(result_text)}],
+                    ))
+                elif event.type == "turn_end":
+                    final_text = event.payload.get("response", "") or ""
+                    if final_text:
+                        assistant_tokens += _estimate_tokens(str(final_text))
+                        ctx.add_layer(ContextLayer(
+                            name="Assistant Turns",
+                            tokens=assistant_tokens,
+                            compactable=True,
+                            items=[{"name": "assistant_response", "tokens": assistant_tokens}],
+                        ))
 
                 if event.type == "turn_end":
                     # Inject accumulated charts for backward compat (and any not yet emitted).

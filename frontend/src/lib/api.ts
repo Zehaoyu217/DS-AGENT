@@ -33,6 +33,55 @@ export async function fetchContext(): Promise<ContextSnapshot> {
   return res.json()
 }
 
+export interface SessionContextSnapshot extends ContextSnapshot {
+  session_id: string
+}
+
+export interface CompactionDiff {
+  session_id: string
+  compaction_id: number
+  timestamp: string
+  tokens_before: number
+  tokens_after: number
+  tokens_freed: number
+  trigger_utilization: number
+  information_loss_pct: number
+  loss_severity: 'LOW' | 'MEDIUM' | 'HIGH'
+  removed: Array<{ name: string; tokens: number }>
+  survived: string[]
+}
+
+export async function fetchSessionContext(sessionId: string): Promise<SessionContextSnapshot> {
+  const res = await fetch(`${BASE_URL}/context/${encodeURIComponent(sessionId)}`)
+  if (!res.ok) throw new Error(`context fetch failed (${res.status})`)
+  return res.json()
+}
+
+export async function fetchContextHistory(
+  sessionId: string,
+): Promise<{ session_id: string; history: ContextSnapshot['compaction_history'] }> {
+  const res = await fetch(`${BASE_URL}/context/${encodeURIComponent(sessionId)}/history`)
+  if (!res.ok) throw new Error(`history fetch failed (${res.status})`)
+  return res.json()
+}
+
+export async function fetchCompactionDiff(
+  sessionId: string,
+  compactionId: number,
+): Promise<CompactionDiff> {
+  const res = await fetch(
+    `${BASE_URL}/context/${encodeURIComponent(sessionId)}/compaction/${compactionId}`,
+  )
+  if (!res.ok) throw new Error(`compaction diff fetch failed (${res.status})`)
+  return res.json()
+}
+
+export async function listContextSessions(): Promise<{ sessions: string[] }> {
+  const res = await fetch(`${BASE_URL}/context/sessions`)
+  if (!res.ok) throw new Error(`sessions list failed (${res.status})`)
+  return res.json()
+}
+
 export interface ChatResponse {
   session_id: string
   response: string
