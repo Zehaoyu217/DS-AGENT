@@ -9,6 +9,7 @@ from app.api.files_api import router as files_router
 from app.api.health import router as health_router
 from app.api.models_api import router as models_router
 from app.api.settings_api import router as settings_router
+from app.api.prompts_api import router as prompts_router
 from app.api.skills_api import router as skills_router
 from app.api.slash_api import router as slash_router
 from app.api.sop_api import router as sop_router
@@ -39,6 +40,7 @@ def create_app() -> FastAPI:
     app.include_router(settings_router)
     app.include_router(models_router)
     app.include_router(files_router)
+    app.include_router(prompts_router)
     app.include_router(skills_router)
     app.include_router(slash_router)
     app.include_router(datasets_router)
