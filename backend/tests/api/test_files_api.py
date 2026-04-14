@@ -73,10 +73,31 @@ def test_read_utf8(client: TestClient, files_root: Path) -> None:
     assert body["path"] == "hello.txt"
 
 
-def test_read_binary_returns_base64(client: TestClient, files_root: Path) -> None:
+def test_read_binary_omits_content_by_default(
+    client: TestClient, files_root: Path,
+) -> None:
+    """Binary files return metadata only by default — avoids shipping
+    up to ~13 MB of base64 for a UI that only displays size + encoding.
+    """
     blob = b"\x89PNG\r\n\x1a\n\x00\x01\x02\xff"
     (files_root / "img.bin").write_bytes(blob)
     r = client.get("/api/files/read", params={"path": "img.bin"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["encoding"] == "base64"
+    assert body["content"] == ""
+    assert body["size"] == len(blob)
+
+
+def test_read_binary_include_content_opt_in(
+    client: TestClient, files_root: Path,
+) -> None:
+    blob = b"\x89PNG\r\n\x1a\n\x00\x01\x02\xff"
+    (files_root / "img.bin").write_bytes(blob)
+    r = client.get(
+        "/api/files/read",
+        params={"path": "img.bin", "include_binary_content": "1"},
+    )
     assert r.status_code == 200
     body = r.json()
     assert body["encoding"] == "base64"

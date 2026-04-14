@@ -128,7 +128,20 @@ def get_tree(path: str = Query(default="")) -> FileTreeResponse:
 
 
 @router.get("/read")
-def read_file(path: str = Query(...)) -> FileReadResponse:
+def read_file(
+    path: str = Query(...),
+    include_binary_content: bool = Query(default=False),
+) -> FileReadResponse:
+    """Read a file from inside the safe root.
+
+    Text files (valid UTF-8) always return content. Binary files return an
+    empty `content` by default — the current UI only shows a metadata line
+    for binary blobs, and shipping a 13 MB base64 payload just to render
+    "Binary file — N bytes" is pure waste on slow links.
+
+    Callers that truly need the bytes (e.g. a future download or preview
+    surface) can opt in with `?include_binary_content=1`.
+    """
     if not path:
         raise HTTPException(status_code=400, detail="path required")
     target = _resolve_within_root(path)
@@ -142,18 +155,22 @@ def read_file(path: str = Query(...)) -> FileReadResponse:
         raise HTTPException(status_code=413, detail="file exceeds read cap")
 
     data = target.read_bytes()
+    rel_path = _posix_rel(target, _files_root().resolve())
     try:
         text = data.decode("utf-8")
         return FileReadResponse(
-            path=_posix_rel(target, _files_root().resolve()),
+            path=rel_path,
             size=size,
             content=text,
             encoding="utf-8",
         )
     except UnicodeDecodeError:
-        encoded = base64.b64encode(data).decode("ascii")
+        if include_binary_content:
+            encoded = base64.b64encode(data).decode("ascii")
+        else:
+            encoded = ""
         return FileReadResponse(
-            path=_posix_rel(target, _files_root().resolve()),
+            path=rel_path,
             size=size,
             content=encoded,
             encoding="base64",

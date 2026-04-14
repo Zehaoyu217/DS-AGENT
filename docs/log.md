@@ -67,6 +67,7 @@ Goal: ship a data-scientist-grade agent with a skills runtime, composition skill
 
 ### Changed
 
+- `/api/files/read` omits binary content by default — the UI only renders size + encoding for binary blobs, so shipping up to ~13 MB of base64 was pure waste. Callers that need the bytes can opt in with `?include_binary_content=1`. (`backend/app/api/files_api.py`)
 - Ollama client `warmup()` replaces silent `except Exception: pass` with `logger.warning(..., exc_info=True)` so infra failures surface. (`harness/clients/ollama_client.py`) — `ea0b227`
 
 ### Removed
