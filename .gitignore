@@ -70,3 +70,6 @@ data/sandbox_sessions/
 
 # Trace subsystem output
 traces/
+
+# analysis_plan skill scratchpad (runtime output; canonical wiki is knowledge/wiki/)
+backend/wiki/
