@@ -3,7 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.chat_api import router as chat_router
 from app.api.context_api import router as context_router
+from app.api.conversations_api import router as conversations_router
+from app.api.files_api import router as files_router
 from app.api.health import router as health_router
+from app.api.settings_api import router as settings_router
+from app.api.slash_api import router as slash_router
 from app.api.sop_api import router as sop_router
 from app.api.trace_api import router as trace_router
 
@@ -28,5 +32,9 @@ def create_app() -> FastAPI:
     app.include_router(sop_router)
     app.include_router(trace_router)
     app.include_router(chat_router)
+    app.include_router(conversations_router)
+    app.include_router(settings_router)
+    app.include_router(files_router)
+    app.include_router(slash_router)
 
     return app
