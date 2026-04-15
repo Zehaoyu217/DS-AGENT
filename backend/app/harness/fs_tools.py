@@ -39,7 +39,7 @@ class FsTools:
     def _resolve(self, path_str: str) -> Path:
         """Resolve path relative to root, raising on escape or banned name."""
         resolved = (self._root / path_str).resolve()
-        if not str(resolved).startswith(str(self._root)):
+        if not resolved.is_relative_to(self._root):
             raise PathEscapeError(path_str)
         # Check each component for banned names/suffixes
         for part in resolved.parts:
@@ -102,7 +102,7 @@ class FsTools:
         if path_str.startswith("..") or "/../" in path_str or path_str.startswith("/"):
             return {"ok": False, "error": "path_escape"}
         search_root = (self._root / path_str).resolve()
-        if not str(search_root).startswith(str(self._root)):
+        if not search_root.is_relative_to(self._root):
             return {"ok": False, "error": "path_escape"}
         try:
             compiled = re.compile(pattern)

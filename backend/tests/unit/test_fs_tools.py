@@ -105,3 +105,19 @@ def test_search_text_path_escape(fs):
     result = fs.search_text({"pattern": "foo", "path": "../.."})
     assert result["ok"] is False
     assert result["error"] == "path_escape"
+
+
+# ── sibling directory escape (string prefix attack) ───────────────────────────
+
+
+def test_read_file_sibling_directory_escape(fs, root):
+    """Sibling directories are rejected even though their path starts with root path string."""
+    parent = root.parent
+    sibling_name = root.name + "evil"
+    sibling = parent / sibling_name
+    sibling.mkdir(exist_ok=True)
+    (sibling / "secret.txt").write_text("LEAKED")
+    # Attempt to escape to sibling via ../<root_name>evil/
+    result = fs.read_file({"path": f"../{sibling_name}/secret.txt"})
+    assert result["ok"] is False
+    assert result["error"] == "path_escape"
