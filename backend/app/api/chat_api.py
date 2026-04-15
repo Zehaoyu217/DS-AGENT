@@ -592,6 +592,17 @@ def _stream_agent_loop(
                 if event.type == "scratchpad_delta":
                     captured_state.scratchpad = str(event.payload.get("content", ""))
 
+                if event.type == "micro_compact":
+                    ctx.record_compaction(
+                        tokens_before=event.payload.get("tokens_before", 0),
+                        tokens_after=event.payload.get("tokens_after", 0),
+                        removed=[
+                            {"name": f"compacted_tool_{i}"}
+                            for i in range(event.payload.get("dropped_messages", 0))
+                        ],
+                        survived=list(event.payload.get("artifact_refs", [])),
+                    )
+
                 if event.type == "tool_result":
                     name = event.payload.get("name", "")
                     status = event.payload.get("status", "ok")
