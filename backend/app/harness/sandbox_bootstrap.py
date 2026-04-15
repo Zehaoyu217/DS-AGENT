@@ -1,0 +1,122 @@
+# backend/app/harness/sandbox_bootstrap.py
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+# Absolute path to the backend directory — injected into subprocess sys.path
+# so that `config.*` and `app.*` packages are importable from the temp-file sandbox.
+_BACKEND_DIR = str(Path(__file__).resolve().parent.parent.parent)
+
+_SKILL_IMPORTS: list[str] = [
+    "import sys",
+    "import os",
+    # Ensure the backend directory is on sys.path so that config.* and app.*
+    # packages are importable even when the sandbox runs from a temp file.
+    f"if {_BACKEND_DIR!r} not in sys.path:",
+    f"    sys.path.insert(0, {_BACKEND_DIR!r})",
+    "import json",
+    "import numpy as np",
+    "import pandas as pd",
+    "import altair as alt",
+    "import duckdb",
+    "",
+    "from config.themes.altair_theme import register_all as ensure_registered, use_variant",
+    "ensure_registered()",
+    "",
+    "from app.skills.correlation import correlate",
+    "from app.skills.group_compare import compare",
+    "from app.skills.stat_validate import validate",
+    "from app.skills.data_profiler import profile",
+    "from app.skills.time_series import (",
+    "    characterize, decompose, find_anomalies,",
+    "    find_changepoints, lag_correlate,",
+    ")",
+    "from app.skills.distribution_fit import fit",
+    "from app.skills.altair_charts.pkg import (",
+    "    bar, multi_line, histogram,",
+    "    scatter_trend, boxplot, correlation_heatmap,",
+    ")",
+    "from app.skills.report_builder.pkg.build import build as report_build",
+    "from app.skills.analysis_plan.pkg.plan import plan as analysis_plan",
+    "from app.skills.dashboard_builder.pkg.build import build as dashboard_build",
+]
+
+
+def build_sandbox_bootstrap(
+    session_id: str,
+    dataset_path: str | Path | None,
+) -> str:
+    parts = list(_SKILL_IMPORTS) + [
+        "",
+        f"_SESSION_ID = {session_id!r}",
+    ]
+    if dataset_path:
+        path = str(Path(dataset_path))
+        parts.append(f"df = pd.read_parquet({path!r})")
+    else:
+        parts.append("df = None")
+    return "\n".join(parts) + "\n"
+
+
+# Absolute path — computed at import time so sandbox subprocesses find the DB
+# regardless of their working directory.
+_MAIN_DB_PATH = str(
+    Path(__file__).resolve().parent.parent.parent / "data" / "duckdb" / "eval.db"
+)
+
+
+def build_duckdb_globals(
+    session_id: str,
+    dataset_path: str | Path | None = None,
+    db_path: str = _MAIN_DB_PATH,
+) -> str:
+    """Build a Python preamble for the sandbox that wires up DuckDB access.
+
+    Connects read-only to the shared ``data/duckdb/analytical.db`` so the
+    agent can query all loaded tables (bank_macro_panel, bank_wide, etc.)
+    from the start — no file upload required.
+
+    When *dataset_path* is provided (user uploaded a file), also reads it
+    into ``df`` for direct pandas access.
+
+    Exposes:
+    * ``conn``   – read-only DuckDB connection to the shared database
+    * ``df``     – pandas DataFrame from uploaded file, or ``None``
+    * ``save_artifact(name, data)`` – writes JSON artifact to disk
+    """
+    artifact_dir = f"data/artifacts/{session_id}"
+
+    parts: list[str] = list(_SKILL_IMPORTS) + [
+        "",
+        f"_SESSION_ID = {session_id!r}",
+        f"_DB_PATH = {db_path!r}",
+        f"_ARTIFACT_DIR = {artifact_dir!r}",
+        "",
+        "import pathlib as _pathlib",
+        # Connect read-only — safe for concurrent sandbox processes
+        "conn = duckdb.connect(_DB_PATH, read_only=True)",
+        "",
+    ]
+
+    if dataset_path:
+        path = str(Path(dataset_path))
+        suffix = Path(dataset_path).suffix.lower()
+        read_expr = f"pd.read_csv({path!r})" if suffix == ".csv" else f"pd.read_parquet({path!r})"
+        parts.append(f"df = {read_expr}")
+    else:
+        parts.append("df = None")
+
+    parts += [
+        "",
+        "def save_artifact(name: str, data: object) -> str:",
+        "    _art_dir = _pathlib.Path(_ARTIFACT_DIR)",
+        "    _art_dir.mkdir(parents=True, exist_ok=True)",
+        "    _art_path = _art_dir / f'{name}.json'",
+        "    with open(_art_path, 'w', encoding='utf-8') as _fh:",
+        "        json.dump(data, _fh)",
+        "    return str(_art_path)",
+        "",
+    ]
+
+    return "\n".join(parts) + "\n"

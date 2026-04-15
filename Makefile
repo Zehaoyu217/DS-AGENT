@@ -1,6 +1,6 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
-        seed-eval eval sop \
+        seed-eval eval eval-trace clean-traces sop \
         docker-build docker-up
 
 # Development
@@ -26,14 +26,14 @@ typecheck:
 test: test-backend test-frontend
 
 test-backend:
-	cd backend && pytest -v --tb=short
+	cd backend && uv run python -m pytest -v --tb=short
 
 test-frontend:
 	cd frontend && npm test 2>/dev/null || echo "No frontend tests yet"
 
 # Skills
 skill-check:
-	cd backend && python -m app.skills.manifest
+	cd backend && .venv/bin/python3 -m app.skills.manifest
 
 skill-eval:
 ifdef skill
@@ -46,10 +46,13 @@ skill-new:
 ifndef name
 	$(error Usage: make skill-new name=<skill_name>)
 endif
-	@mkdir -p backend/app/skills/$(name)/{pkg,references,tests,evals/fixtures}
+	@mkdir -p backend/app/skills/$(name)/pkg
+	@mkdir -p backend/app/skills/$(name)/references
+	@mkdir -p backend/app/skills/$(name)/tests
+	@mkdir -p backend/app/skills/$(name)/evals/fixtures
 	@touch backend/app/skills/$(name)/pkg/__init__.py
-	@echo "---\nname: $(name)\n---\n# $(name)\n" > backend/app/skills/$(name)/SKILL.md
-	@echo "name: $(name)\nversion: '0.1'\ndescription: ''\nlevel: 1\nerrors: {}\ndependencies:\n  requires: []\n  used_by: []\n  packages: []" > backend/app/skills/$(name)/skill.yaml
+	@printf -- "---\nname: $(name)\ndescription: ''\nlevel: 1\nversion: '0.1'\n---\n# $(name)\n\nOne-paragraph overview.\n\n## When to use\n\n...\n\n## Contract\n\n...\n" > backend/app/skills/$(name)/SKILL.md
+	@printf "dependencies:\n  requires: []\n  used_by: []\n  packages: []\nerrors: {}\n" > backend/app/skills/$(name)/skill.yaml
 	@echo "Skill scaffolded at backend/app/skills/$(name)/"
 
 # Knowledge
@@ -73,6 +76,12 @@ ifdef level
 else
 	cd backend && python -m pytest tests/evals/ -v -s
 endif
+
+eval-trace:
+	TRACE_MODE=always $(MAKE) eval
+
+clean-traces:
+	cd backend && uv run python -m app.trace.retention --clear-all
 
 # SOP
 sop:

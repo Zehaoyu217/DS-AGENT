@@ -15,6 +15,7 @@ class AppConfig(BaseSettings):
     default_model: str = "qwen3.5:9b"
     ollama_base_url: str = "http://localhost:11434"
     litellm_base_url: str = "http://localhost:4000"
+    openrouter_api_key: str = ""
 
     # Sandbox
     sandbox_timeout_seconds: int = 30
@@ -22,7 +23,7 @@ class AppConfig(BaseSettings):
     sandbox_state_root: str = "./data/sandbox_sessions"
 
     # DuckDB
-    duckdb_path: str = "./data/duckdb/analytical.db"
+    duckdb_path: str = "./data/duckdb/eval.db"
 
     # Wiki
     wiki_root: str = "../knowledge/wiki"

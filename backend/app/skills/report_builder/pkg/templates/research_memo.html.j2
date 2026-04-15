@@ -1,0 +1,65 @@
+{# backend/app/skills/report_builder/pkg/templates/research_memo.html.j2 #}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ spec.title }}</title>
+  <link rel="stylesheet" href="{{ editorial_css_uri }}">
+</head>
+<body class="report report--research-memo theme--{{ spec.theme_variant }}">
+  <header class="report__head">
+    <h1 class="report__title">{{ spec.title }}</h1>
+    {% if spec.subtitle %}<p class="report__subtitle">{{ spec.subtitle }}</p>{% endif %}
+    <p class="report__byline">{{ spec.author }} · {{ today }}</p>
+    <p class="report__summary">{{ spec.summary }}</p>
+  </header>
+
+  <section class="report__key-points">
+    <h2>Key points</h2>
+    <ol>
+      <li>{{ spec.key_points[0] }}</li>
+      <li>{{ spec.key_points[1] }}</li>
+      <li>{{ spec.key_points[2] }}</li>
+    </ol>
+  </section>
+
+  {% for fs in spec.findings %}
+  <section class="report__finding">
+    <h2>{{ fs.finding.title }}</h2>
+    <div class="report__body">{{ fs.body_html | safe }}</div>
+    {% if fs.chart_id %}<figure class="report__chart"><img src="{{ fs.chart_id }}.svg" alt=""></figure>{% endif %}
+    <footer class="report__meta">
+      <span class="report__evidence">Evidence: {{ fs.finding.evidence_ids | join(", ") }}</span>
+      <span class="report__validated">Validated by <code>{{ fs.finding.validated_by }}</code> — {{ fs.finding.verdict }}</span>
+    </footer>
+    {% if fs.caveats %}
+    <aside class="report__caveats">
+      <h3>Caveats</h3>
+      <ul>{% for c in fs.caveats %}<li>{{ c }}</li>{% endfor %}</ul>
+    </aside>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  <section class="report__methodology">
+    <h2>Methodology</h2>
+    <p><strong>Method:</strong> {{ spec.methodology.method }}</p>
+    <h3>Data sources</h3>
+    <ul>{% for src in spec.methodology.data_sources %}<li>{{ src }}</li>{% endfor %}</ul>
+    <h3>Caveats</h3>
+    <ul>{% for c in spec.methodology.caveats %}<li>{{ c }}</li>{% endfor %}</ul>
+  </section>
+
+  <section class="report__caveats-global">
+    <h2>Caveats</h2>
+    <ul>{% for c in spec.caveats %}<li>{{ c }}</li>{% endfor %}</ul>
+  </section>
+
+  {% if spec.appendix %}
+  <section class="report__appendix">
+    <h2>Appendix</h2>
+    {% for section in spec.appendix %}<div class="appendix__section">{{ section | safe }}</div>{% endfor %}
+  </section>
+  {% endif %}
+</body>
+</html>

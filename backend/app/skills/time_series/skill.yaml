@@ -1,0 +1,10 @@
+dependencies:
+  python:
+    - numpy
+    - pandas
+    - scipy
+    - statsmodels
+    - ruptures
+error_templates:
+  non_stationary_lag_corr: "time_series.lag_correlate: inputs are non-stationary. Set accept_non_stationary=True to override, or difference inputs first."
+  missing_period: "time_series.decompose: period required when autocorrelation cannot infer it."

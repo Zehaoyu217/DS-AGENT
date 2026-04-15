@@ -10,9 +10,19 @@ dependencies = [
     "pydantic-settings>=2.7.0",
     "duckdb>=1.2.0",
     "polars>=1.20.0",
+    "pandas>=2.2.0",
+    "altair>=5.5",
     "httpx>=0.28.0",
     "pyyaml>=6.0",
     "faker>=33.0.0",
+    "scipy>=1.14.0",
+    "statsmodels>=0.14.0",
+    "numpy>=1.26.0",
+    "ruptures>=1.1.9",
+    "anthropic>=0.40.0",
+    "python-multipart>=0.0.9",
+    "jinja2>=3.1.0",
+    "weasyprint>=62.0",
 ]
 
 [project.optional-dependencies]
@@ -26,9 +36,13 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "app/skills"]
 asyncio_mode = "auto"
-pythonpath = ["."]
+pythonpath = [".", ".."]
+addopts = "--import-mode=importlib"
+markers = [
+    "slow: marks tests as slow (multi-turn LLM evals — deselect with -m 'not slow')",
+]
 
 [tool.ruff]
 line-length = 100
@@ -43,5 +57,7 @@ strict = true
 
 [dependency-groups]
 dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=0.25.0",
     "types-pyyaml>=6.0.12.20260408",
 ]

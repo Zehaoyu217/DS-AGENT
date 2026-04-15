@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ spec.title }}</title>
+  <link rel="stylesheet" href="{{ editorial_css_uri }}">
+</head>
+<body class="report report--full-report theme--{{ spec.theme_variant }}">
+  <header class="report__head">
+    <h1 class="report__title">{{ spec.title }}</h1>
+    {% if spec.subtitle %}<p class="report__subtitle">{{ spec.subtitle }}</p>{% endif %}
+    <p class="report__byline">{{ spec.author }} · {{ today }}</p>
+    <p class="report__summary">{{ spec.summary }}</p>
+  </header>
+
+  <nav class="report__toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#key-points">Key points</a></li>
+      {% for fs in spec.findings %}<li><a href="#{{ fs.finding.id | lower }}">{{ fs.finding.title }}</a></li>{% endfor %}
+      <li><a href="#discussion">Discussion</a></li>
+      <li><a href="#methodology">Methodology</a></li>
+      <li><a href="#caveats">Caveats</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+    </ol>
+  </nav>
+
+  <section id="key-points" class="report__key-points">
+    <h2>Key points</h2>
+    <ol><li>{{ spec.key_points[0] }}</li><li>{{ spec.key_points[1] }}</li><li>{{ spec.key_points[2] }}</li></ol>
+  </section>
+
+  {% for fs in spec.findings %}
+  <section id="{{ fs.finding.id | lower }}" class="report__finding">
+    <h2>{{ fs.finding.title }}</h2>
+    <div class="report__body">{{ fs.body_html | safe }}</div>
+    {% if fs.chart_id %}<figure><img src="{{ fs.chart_id }}.svg" alt=""></figure>{% endif %}
+    <footer class="report__meta">Evidence: {{ fs.finding.evidence_ids | join(", ") }} · Validated by <code>{{ fs.finding.validated_by }}</code> — {{ fs.finding.verdict }}</footer>
+  </section>
+  {% endfor %}
+
+  <section id="discussion" class="report__discussion">
+    <h2>Discussion</h2>
+    {% if spec.appendix %}{{ spec.appendix[0] | safe }}{% else %}<p><em>No discussion section supplied.</em></p>{% endif %}
+  </section>
+
+  <section id="methodology" class="report__methodology">
+    <h2>Methodology</h2>
+    <p><strong>Method:</strong> {{ spec.methodology.method }}</p>
+    <h3>Data sources</h3>
+    <ul>{% for src in spec.methodology.data_sources %}<li>{{ src }}</li>{% endfor %}</ul>
+    <h3>Caveats</h3>
+    <ul>{% for c in spec.methodology.caveats %}<li>{{ c }}</li>{% endfor %}</ul>
+  </section>
+
+  <section id="caveats" class="report__caveats-global">
+    <h2>Caveats</h2>
+    <ul>{% for c in spec.caveats %}<li>{{ c }}</li>{% endfor %}</ul>
+  </section>
+
+  <section id="appendix" class="report__appendix">
+    <h2>Appendix</h2>
+    {% for section in spec.appendix[1:] %}<div>{{ section | safe }}</div>{% endfor %}
+  </section>
+</body>
+</html>

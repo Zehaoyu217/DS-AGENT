@@ -130,15 +130,18 @@ def test_list_ladders_returns_500_on_value_error(
 def test_judge_variance_endpoint_returns_dimension_variance(
     client: TestClient, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    fake_variance = {"detection_recall": 0.2, "false_positive_handling": 0.6}
+    fake_result = {
+        "variance": {"detection_recall": 0.2, "false_positive_handling": 0.6},
+        "threshold_exceeded": ["false_positive_handling"],
+    }
     monkeypatch.setattr(
-        "app.api.sop_api.compute_judge_variance",
-        lambda trace_id, n: fake_variance,
+        "app.api.sop_api._get_judge_variance",
+        lambda trace_id, refresh, n: fake_result,
     )
     resp = client.get("/api/sop/judge-variance/eval-x?n=5")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["variance"] == fake_variance
+    assert data["variance"] == fake_result["variance"]
     assert data["threshold_exceeded"] == ["false_positive_handling"]
 
 
@@ -146,7 +149,7 @@ def test_prompt_assembly_endpoint_returns_sections(
     client: TestClient, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "app.api.sop_api.load_prompt_assembly",
+        "app.api.sop_api._get_prompt_assembly",
         lambda trace_id, step_id: {
             "sections": [
                 {"source": "backend/app/prompts/system.md", "lines": "1-10", "text": "A"},
@@ -166,7 +169,7 @@ def test_timeline_endpoint_returns_events_and_layers(
     client: TestClient, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "app.api.sop_api.load_timeline",
+        "app.api.sop_api._get_timeline",
         lambda trace_id: {
             "turns": [
                 {"turn": 0, "layers": {"system": 500, "L1_always": 200, "conversation": 100}},

@@ -1,43 +1,129 @@
-import { useEffect } from 'react'
-import { StatusBar } from './panels/StatusBar'
-import { DevToolsPanel } from './devtools/DevToolsPanel'
-import { useDevtoolsStore } from './stores/devtools'
+import { useEffect, useState } from 'react'
+import { AnnouncerProvider } from '@/components/a11y/Announcer'
+import { SkipToContent } from '@/components/a11y/SkipToContent'
+import { CommandPalette } from '@/components/command-palette/CommandPalette'
+import { ShortcutsHelp } from '@/components/shortcuts/ShortcutsHelp'
+import { ThemeProvider, useTheme } from '@/components/layout/ThemeProvider'
+import {
+  CommandRegistryProvider,
+  useCommandRegistry,
+} from '@/hooks/useCommandRegistry'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { CMD } from '@/lib/shortcuts'
+import { MonitorPage } from '@/pages/MonitorPage'
+import { SessionLayout } from '@/components/session/SessionLayout'
+import { IconRail } from '@/components/layout/IconRail'
+import { useChatStore } from '@/lib/store'
+import { AgentsSection } from '@/sections/AgentsSection'
+import { SkillsSection } from '@/sections/SkillsSection'
+import { PromptsSection } from '@/sections/PromptsSection'
+import { ContextSection } from '@/sections/ContextSection'
+import { DevtoolsSection } from '@/sections/DevtoolsSection'
+import { SettingsSection } from '@/sections/SettingsSection'
 
-export default function App() {
-  const toggle = useDevtoolsStore((s) => s.toggle)
+function useHashRoute(): string {
+  const [hash, setHash] = useState(window.location.hash)
+  useEffect(() => {
+    const handler = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', handler)
+    return () => window.removeEventListener('hashchange', handler)
+  }, [])
+  return hash
+}
+
+function ShortcutWiring() {
+  const { registerCommand, openPalette, openHelp } = useCommandRegistry()
+  const { theme, setTheme } = useTheme()
+
+  useKeyboardShortcuts()
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'D') {
-        e.preventDefault()
-        toggle()
-      }
+    const disposers = [
+      registerCommand({
+        id: CMD.OPEN_PALETTE,
+        keys: ['mod+k'],
+        label: 'Open command palette',
+        description: 'Search and run any command',
+        category: 'Navigation',
+        action: openPalette,
+        global: true,
+        icon: 'Search',
+      }),
+      registerCommand({
+        id: CMD.TOGGLE_THEME,
+        keys: [],
+        label: 'Toggle theme',
+        description: 'Switch between dark and light themes',
+        category: 'Theme',
+        action: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+        icon: 'Sun',
+      }),
+      registerCommand({
+        id: CMD.SHOW_HELP,
+        keys: ['mod+/'],
+        label: 'Show keyboard shortcuts',
+        description: 'View all available keyboard shortcuts',
+        category: 'Help',
+        action: openHelp,
+        global: true,
+        icon: 'HelpCircle',
+      }),
+    ]
+    return () => {
+      for (const dispose of disposers) dispose()
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [toggle])
+  }, [registerCommand, openPalette, openHelp, theme, setTheme])
+
+  return null
+}
+
+function SectionContent() {
+  const activeSection = useChatStore((s) => s.activeSection)
+
+  switch (activeSection) {
+    case 'chat':
+      return <SessionLayout />
+    case 'agents':
+      return <AgentsSection />
+    case 'skills':
+      return <SkillsSection />
+    case 'prompts':
+      return <PromptsSection />
+    case 'context':
+      return <ContextSection />
+    case 'devtools':
+      return <DevtoolsSection />
+    case 'settings':
+      return <SettingsSection />
+    default:
+      return <SessionLayout />
+  }
+}
+
+export default function App() {
+  const hash = useHashRoute()
+  const monitorMatch = hash.match(/^#\/monitor\/(.+)$/)
+
+  if (monitorMatch) {
+    return <MonitorPage sessionId={monitorMatch[1]} />
+  }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      background: '#0a0a0f',
-      color: '#e0e0e8',
-    }}>
-      {/* Main content area (placeholder for analytical UI) */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', color: '#4a4a5a' }}>
-          <h1 style={{ fontSize: 24, fontWeight: 300, marginBottom: 8 }}>Analytical Agent</h1>
-          <p style={{ fontSize: 12 }}>Press Cmd+Shift+D to open developer tools</p>
-        </div>
-      </div>
-
-      {/* Devtools overlay */}
-      <DevToolsPanel />
-
-      {/* Status bar (always visible) */}
-      <StatusBar />
-    </div>
+    <ThemeProvider>
+      <AnnouncerProvider>
+        <CommandRegistryProvider>
+          <SkipToContent />
+          <ShortcutWiring />
+          <div className="flex h-dvh overflow-hidden bg-canvas text-surface-100">
+            <IconRail />
+            <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
+              <SectionContent />
+            </div>
+          </div>
+          <CommandPalette />
+          <ShortcutsHelp />
+        </CommandRegistryProvider>
+      </AnnouncerProvider>
+    </ThemeProvider>
   )
 }

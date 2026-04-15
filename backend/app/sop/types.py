@@ -123,3 +123,12 @@ class LadderDefinition(BaseModel):
     description: str
     triage_signals: list[str]
     ladder: list[LadderRung]
+
+
+class SOPSession(BaseModel):
+    """Link between an SOP iteration and its recorded trace."""
+
+    model_config = ConfigDict(frozen=True)
+
+    session_id: str
+    trace_id: str | None = None

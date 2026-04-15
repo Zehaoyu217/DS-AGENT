@@ -1,51 +1,79 @@
-import { useEffect, useState } from 'react';
-import { fetchTimeline, Timeline } from './api';
+import { useEffect, useMemo, useState } from 'react'
+import { useDevtoolsStore } from '../../stores/devtools'
+import { fetchTimeline, type Timeline } from './api'
 
 interface Props {
-  traceId: string;
+  traceId: string
+}
+
+interface FullTrace {
+  events: Array<{ kind: string; turn?: number; step_id?: string }>
 }
 
 export function CompactionTimeline({ traceId }: Props) {
-  const [data, setData] = useState<Timeline | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [timeline, setTimeline] = useState<Timeline | null>(null)
+  const [trace, setTrace] = useState<FullTrace | null>(null)
+  const setSelectedStep = useDevtoolsStore((s) => s.setSelectedStep)
 
   useEffect(() => {
-    fetchTimeline(traceId).then(setData).catch((e: Error) => setError(e.message));
-  }, [traceId]);
+    fetchTimeline(traceId).then(setTimeline)
+    fetch(`/api/trace/traces/${encodeURIComponent(traceId)}`)
+      .then((r) => r.json())
+      .then((body: FullTrace) => setTrace(body))
+  }, [traceId])
 
-  if (error) return <div className="sop-error">Error: {error}</div>;
-  if (data === null) return <div className="sop-loading">Loading…</div>;
-  if (data.turns.length === 0) return <div className="sop-empty">No timeline data.</div>;
+  const firstStepByTurn = useMemo(() => {
+    const m = new Map<number, string>()
+    if (!trace) return m
+    for (const e of trace.events) {
+      if (e.kind === 'llm_call' && e.turn !== undefined && e.step_id !== undefined) {
+        if (!m.has(e.turn)) m.set(e.turn, e.step_id)
+      }
+    }
+    return m
+  }, [trace])
 
-  const maxTotal = Math.max(
-    ...data.turns.map((t) => Object.values(t.layers).reduce((a, b) => a + b, 0)),
-  );
+  if (!timeline) return <div className="sop-empty">Loading…</div>
 
   return (
-    <div className="sop-compaction-timeline">
-      <h3>Compaction &amp; Scratchpad — {traceId}</h3>
-      <div className="sop-timeline-stack">
-        {data.turns.map((t) => {
-          const total = Object.values(t.layers).reduce((a, b) => a + b, 0);
-          const height = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+    <div style={{ padding: 12, color: '#e0e0e8', fontFamily: 'monospace', fontSize: 11 }}>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginBottom: 16 }}>
+        {timeline.turns.map((t) => {
+          const stepId = firstStepByTurn.get(t.turn)
+          const disabled = stepId === undefined
           return (
-            <div key={t.turn} className="sop-timeline-bar" style={{ height: `${height}%` }}>
-              <span>Turn {t.turn}</span>
-              <small>{total} tokens</small>
-            </div>
-          );
+            <button
+              key={t.turn}
+              type="button"
+              role="button"
+              aria-label={`Select turn ${t.turn}`}
+              disabled={disabled}
+              onClick={() => { if (stepId) setSelectedStep(stepId) }}
+              style={{
+                background: 'transparent',
+                border: '1px solid #2a2a3a',
+                color: '#e0e0e8',
+                padding: 8,
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled ? 0.5 : 1,
+                fontFamily: 'monospace',
+                fontSize: 11,
+              }}
+            >
+              <div>Turn {t.turn}</div>
+              <div style={{ color: '#818cf8' }}>in: {t.layers.input ?? 0}</div>
+              <div style={{ color: '#94a3b8' }}>tools: {t.layers.tool_calls ?? 0}</div>
+            </button>
+          )
         })}
       </div>
-      <div className="sop-timeline-events">
-        <strong>Events</strong>
-        <ul>
-          {data.events.map((e, i) => (
-            <li key={i}>
-              t{e.turn}: <strong>{e.kind}</strong> — {e.detail}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+        {timeline.events.map((e, i) => (
+          <li key={i} style={{ marginBottom: 4 }}>
+            t{e.turn}: <span style={{ color: '#f59e0b' }}>[{e.kind}]</span> {e.detail}
+          </li>
+        ))}
+      </ul>
     </div>
-  );
+  )
 }

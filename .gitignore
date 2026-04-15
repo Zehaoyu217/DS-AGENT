@@ -67,3 +67,14 @@ data/sandbox_sessions/
 
 # Graphify working files (output lives in knowledge/graphs/)
 **/graphify-out/
+
+# Trace subsystem output
+traces/
+
+# analysis_plan skill scratchpad (runtime output; canonical wiki is knowledge/wiki/)
+backend/wiki/
+
+# E2E debug scripts and screenshots (local-only, regenerated per session)
+frontend/e2e-*.cjs
+frontend/e2e-*.png
+backend/test-artifacts/

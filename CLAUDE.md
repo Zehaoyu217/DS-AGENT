@@ -64,6 +64,18 @@ Backend (FastAPI :8000)
 - **Tests:** pytest (backend), vitest (frontend), 80% coverage target
 - **Commits:** `<type>: <description>` (feat, fix, refactor, docs, test, chore)
 - **Skills:** SKILL.md < 200 lines, Python packages unlimited, errors must be actionable
+- **Changelog:** every main update lands an entry in `docs/log.md` under `[Unreleased]` — see that file's header for the policy and entry shape.
+
+## Changelog Policy
+
+`docs/log.md` is the single source of truth for notable changes. **You must update it** before marking a task complete whenever the change is one of:
+
+- A `feat:` commit that touches user-visible behavior or adds a capability
+- A breaking change to a public interface (skill signature, tool registration, API schema, config schema)
+- A migration, rename, or removal that affects existing callers
+- A security, correctness, or data-loss fix on a critical path
+
+Pure refactors, test-only commits, and doc-only commits do not require an entry unless they change observable behavior.
 
 ## Current State
 
@@ -76,3 +88,40 @@ Read `knowledge/wiki/working.md` for what's in progress.
 - Testing guide: `docs/testing.md`
 - Skill creation: `docs/skill-creation.md`
 - Known gotchas: `docs/gotchas.md`
+- Changelog: `docs/log.md`
+
+## Design Context
+
+### Users
+Machine learning engineers, data scientists, and quantitative analysts — technical power users running experiments, debugging pipelines, and interrogating data. They work under pressure and expect tools that keep up. The interface should make them feel **in command**: information-rich, fast, and authoritative. No hand-holding. No noise.
+
+### Brand Personality
+**Precise. Uncompromising. Technical.**
+
+The product is a precision instrument, not a consumer app. Personality lives in structure, density, and micro-detail — not decoration. A developer who opens this tool should feel the same way they feel opening Warp or Raycast: this was built for people like me.
+
+### Aesthetic Direction
+**Swiss / Terminal**
+
+Tight grid, monospace everywhere it makes sense, data density as a virtue. References: Warp, Raycast, Linear, Ghostty. Anti-references: consumer ChatGPT/Claude.ai, default shadcn/Tailwind dashboards, Jupyter Notebook, anything playful or pastel.
+
+- Typography does the heavy lifting. Caps + slashes + weights create hierarchy without decorative chrome.
+- JetBrains Mono is not just for code blocks — it's the voice of the UI at the system level (labels, metadata, status, timestamps).
+- Near-black backgrounds (`#09090b`, `#18181b`) with orange (`#e0733a`) as the primary accent — Claude's brand color, the one chromatic signal in the system.
+- Borders are subtle lines that separate information, not decorative frames.
+- Dark mode only. Light mode exists in the codebase but is not a design priority.
+- Motion is functional: instant feedback, not spectacle. No easing curves that feel "designed."
+
+### Design Principles
+
+1. **Density is a feature** — compact controls, tight line heights, information reachable without scrolling. Never pad for breathing room that a power user didn't ask for.
+
+2. **Monospace as personality** — JetBrains Mono at the system level (labels, status lines, metadata, timestamps). Sans-serif for prose content only. The type choice signals what kind of tool this is.
+
+3. **Structure through text** — visual hierarchy via caps, weight contrast, and measured spacing. Not through cards, shadows, gradients, or decorative backgrounds. A `TRACES` label in small caps at 10px carries more weight than a shadowed card.
+
+4. **Every state is visible** — loading, streaming, error, success, latency — all surfaced legibly. No spinner-and-pray. Power users need to know what the system is doing at all times.
+
+5. **Dark is not a mode — it's the product** — design for the dark theme as if the light theme doesn't exist. High contrast within the dark palette; the orange accent should feel intentional, not decorative.
+
+> Full context in `.impeccable.md` at project root.
