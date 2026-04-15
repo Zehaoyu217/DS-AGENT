@@ -73,7 +73,7 @@ logger = logging.getLogger(__name__)
 
 _MESSAGE_MAX_CHARS = 8000
 _CONVERSATION_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-_DEFAULT_MAX_STEPS = 8
+_DEFAULT_MAX_STEPS = 16
 
 # ── chart capture suffix (run after every sandbox call) ──────────────────────
 

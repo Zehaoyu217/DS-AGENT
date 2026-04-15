@@ -61,12 +61,13 @@ class RealAgentAdapter:
         self._traces_dir = Path(traces_dir)
         self._timeout = timeout
 
-    async def run(self, prompt: str, db_path: str) -> AgentTrace:
-        """Run the real agent against the given prompt and database.
+    async def run(self, prompt: str, db_path: str | None = None) -> AgentTrace:
+        """Run the real agent against the given prompt.
 
         Args:
             prompt: The eval question / instruction to send.
-            db_path: Absolute path to the DuckDB file (eval.db).
+            db_path: Unused — the backend sandbox always connects to its own
+                     data/duckdb/eval.db.  Kept for interface compatibility.
 
         Returns:
             AgentTrace with queries, final_output, errors, and timing.
@@ -78,6 +79,9 @@ class RealAgentAdapter:
         errors: list[str] = []
         final_output = ""
         tool_call_previews: list[dict[str, Any]] = []
+        # The backend appends a timestamp+random suffix to our session_id.
+        # Capture the real id from the first turn_start so trace YAML lookup works.
+        backend_session_id = session_id
 
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             async with client.stream(
@@ -85,7 +89,6 @@ class RealAgentAdapter:
                 f"{self._base_url}/api/chat/stream",
                 json={
                     "message": prompt,
-                    "dataset_path": db_path,
                     "session_id": session_id,
                 },
                 headers={"Accept": "text/event-stream"},
@@ -104,30 +107,36 @@ class RealAgentAdapter:
                         continue
 
                     event_type = event.get("type", "")
-                    payload: dict[str, Any] = event.get("payload", {})
+                    # StreamEvent.to_sse() flattens payload into the top-level
+                    # dict: {"type": "...", ...payload fields...}.  There is no
+                    # nested "payload" key — read directly from `event`.
 
-                    if event_type == "tool_call":
+                    if event_type == "turn_start" and event.get("session_id"):
+                        # Capture the real session_id (backend appends timestamp suffix)
+                        backend_session_id = event["session_id"]
+
+                    elif event_type == "tool_call":
                         tool_call_previews.append({
-                            "name": payload.get("name", ""),
-                            "input_preview": payload.get("input_preview", ""),
+                            "name": event.get("name", ""),
+                            "input_preview": event.get("input_preview", ""),
                         })
 
                     elif event_type == "tool_result":
-                        if payload.get("status") == "error":
+                        if event.get("status") == "error":
                             errors.append(
-                                f"{payload.get('name', 'tool')}: "
-                                f"{payload.get('preview', '')[:200]}"
+                                f"{event.get('name', 'tool')}: "
+                                f"{event.get('preview', '')[:200]}"
                             )
 
                     elif event_type == "turn_end":
-                        final_output = payload.get("final_text", "") or ""
+                        final_output = event.get("final_text", "") or ""
 
         duration_ms = int((time.monotonic() - started) * 1000)
 
         # ── Load full trace YAML for accurate query data ──────────────────────
         # After EVAL-2 (loop.py publish_tool_call), the YAML has ToolCallEvents
         # with full tool_input. We prefer those over truncated SSE previews.
-        queries = self._extract_queries_from_trace(session_id)
+        queries = self._extract_queries_from_trace(backend_session_id)
 
         # Fall back to SSE previews if trace not yet written / no ToolCallEvents
         if not queries:
@@ -138,10 +147,10 @@ class RealAgentAdapter:
             ]
 
         # Extract intermediate artifacts from trace
-        intermediate = self._extract_intermediate_from_trace(session_id)
+        intermediate = self._extract_intermediate_from_trace(backend_session_id)
 
         # Token count from trace summary (0 if trace not available)
-        token_count = self._extract_token_count_from_trace(session_id)
+        token_count = self._extract_token_count_from_trace(backend_session_id)
 
         return AgentTrace(
             queries=queries,
