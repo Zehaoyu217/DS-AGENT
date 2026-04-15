@@ -121,3 +121,35 @@ def test_read_file_sibling_directory_escape(fs, root):
     result = fs.read_file({"path": f"../{sibling_name}/secret.txt"})
     assert result["ok"] is False
     assert result["error"] == "path_escape"
+
+
+# ── edge cases ────────────────────────────────────────────────────────────────
+
+
+def test_glob_banned_suffix_excluded(fs, root):
+    """Files with banned suffixes are filtered from glob results."""
+    (root / "data" / "secret.key").write_text("key content")
+    result = fs.glob_files({"pattern": "data/*"})
+    assert result["ok"] is True
+    assert not any(".key" in f for f in result["files"])
+
+
+def test_search_text_no_results(fs):
+    """Search that finds no matches returns empty list."""
+    result = fs.search_text({"pattern": "XYZZY_NOT_FOUND", "path": "data"})
+    assert result["ok"] is True
+    assert result["matches"] == []
+
+
+def test_read_file_directory_not_file(fs, root):
+    """Attempting to read a directory returns not_a_file error."""
+    result = fs.read_file({"path": "data"})
+    assert result["ok"] is False
+    assert result["error"] == "not_a_file"
+
+
+def test_search_text_invalid_regex(fs):
+    """Invalid regex pattern returns invalid_regex error."""
+    result = fs.search_text({"pattern": "[invalid", "path": "data"})
+    assert result["ok"] is False
+    assert "invalid_regex" in result["error"]

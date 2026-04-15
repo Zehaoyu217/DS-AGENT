@@ -137,3 +137,43 @@ def test_env_vars_injected(tmp_path):
     r = HookRunner(p)
     r.run_pre("execute_python", {"code": "1+1"}, session_id="sess-42")
     assert out_file.read_text().strip() == "execute_python"
+
+
+# ── edge cases ────────────────────────────────────────────────────────────────
+
+
+def test_hook_command_timeout_does_not_raise(tmp_path):
+    """Commands that hang must be killed and not raise (10s timeout enforced)."""
+    import time
+
+    cfg = {
+        "PreToolUse": [
+            {"matcher": "*", "command": "sleep 30", "description": "slow hook"},
+        ]
+    }
+    p = tmp_path / "hooks.json"
+    p.write_text(json.dumps(cfg))
+    r = HookRunner(p)
+    start = time.monotonic()
+    r.run_pre("any_tool", {})
+    elapsed = time.monotonic() - start
+    assert elapsed < 15, f"hook runner should time out within 10s, took {elapsed:.1f}s"
+
+
+def test_malformed_config_is_noop(tmp_path):
+    """Malformed JSON config is logged but doesn't raise."""
+    p = tmp_path / "hooks.json"
+    p.write_text("not valid json {{{")
+    r = HookRunner(p)
+    r.run_pre("execute_python", {})  # must not raise
+
+
+def test_empty_hooks_list_is_noop(tmp_path):
+    """Empty hook lists don't execute anything."""
+    cfg = {"PreToolUse": [], "PostToolUse": [], "Stop": []}
+    p = tmp_path / "hooks.json"
+    p.write_text(json.dumps(cfg))
+    r = HookRunner(p)
+    r.run_pre("execute_python", {})
+    r.run_post("save_artifact", {})
+    r.run_stop("sess-1")
