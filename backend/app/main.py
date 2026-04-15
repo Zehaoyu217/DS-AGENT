@@ -8,6 +8,7 @@ from app.api.conversations_api import router as conversations_router
 from app.api.datasets_api import router as datasets_router
 from app.api.files_api import router as files_router
 from app.api.health import router as health_router
+from app.api.hooks_api import router as hooks_router
 from app.api.models_api import router as models_router
 from app.api.prompts_api import router as prompts_router
 from app.api.settings_api import router as settings_router
@@ -51,5 +52,6 @@ def create_app() -> FastAPI:
     app.include_router(datasets_router)
     app.include_router(data_status_router)
     app.include_router(todos_router)
+    app.include_router(hooks_router)
 
     return app
