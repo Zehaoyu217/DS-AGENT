@@ -50,7 +50,7 @@ export function IconRail() {
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
           isActive
             ? 'text-brand-500'
-            : 'text-surface-600 hover:text-surface-300',
+            : 'text-surface-500 hover:text-surface-200',
         )}
         style={
           isActive
@@ -69,7 +69,7 @@ export function IconRail() {
   return (
     <nav
       aria-label="Main navigation"
-      className="hidden md:flex flex-col items-center w-12 h-full bg-surface-900 border-r border-surface-800 flex-shrink-0 py-2"
+      className="hidden lg:flex flex-col items-center w-12 h-full bg-surface-900 border-r border-surface-700/60 flex-shrink-0 py-2"
     >
       {/* Top section icons */}
       <div className="flex flex-col items-center gap-0.5 flex-1">
@@ -77,7 +77,7 @@ export function IconRail() {
       </div>
 
       {/* Separator before settings */}
-      <div className="w-8 h-px bg-surface-800 my-1" aria-hidden="true" />
+      <div className="w-6 h-px bg-surface-700/50 my-1" aria-hidden="true" />
 
       {/* Bottom section icons */}
       <div className="flex flex-col items-center gap-0.5 pb-1">

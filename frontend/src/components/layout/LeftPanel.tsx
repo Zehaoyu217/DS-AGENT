@@ -103,7 +103,7 @@ export function LeftPanel() {
       aria-label="Session configuration"
     >
       {/* ── Logo + New Session ────────────────────────────── */}
-      <div className="px-4 pt-5 pb-3 border-b border-surface-800/60">
+      <div className="px-4 pt-5 pb-3">
         <div className="flex items-start justify-between mb-1">
           <div className="flex flex-col gap-[2px]">
             <span className="text-[10px] font-mono tracking-[0.3em] text-surface-600 uppercase">
@@ -172,7 +172,7 @@ export function LeftPanel() {
       </div>
 
       {/* ── Controls ──────────────────────────────────────── */}
-      <div className="px-4 py-3 border-b border-surface-800/60 space-y-3.5">
+      <div className="px-4 py-3 space-y-3.5">
         {/* Model selector */}
         <div>
           <div className="text-[10px] font-mono font-semibold tracking-[0.18em] text-surface-600 uppercase mb-1.5">
@@ -263,11 +263,11 @@ export function LeftPanel() {
         </div>
       </div>
 
-      {/* ── Context bar ───────────────────────────────────── */}
-      <ContextBar />
-
       {/* Spacer */}
       <div className="flex-1" />
+
+      {/* ── Context bar ───────────────────────────────────── */}
+      <ContextBar />
     </aside>
   )
 }

@@ -73,7 +73,7 @@ export function ContextBar() {
   const isCritical = utilization > 0.95
 
   return (
-    <div className="px-4 pt-3 pb-4 border-t border-surface-800/60">
+    <div className="px-4 pt-3 pb-4">
       <p className="text-[10px] font-mono font-semibold tracking-[0.18em] text-surface-500 uppercase mb-2.5">
         Context
       </p>

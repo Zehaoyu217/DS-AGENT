@@ -88,23 +88,23 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex flex-col justify-center px-6 md:px-8 lg:px-10">
-        <div className="max-w-2xl">
+      <div className="flex-1 flex flex-col justify-center px-2">
+        <div className="max-w-2xl mx-auto w-full">
           <div className="flex items-center gap-3 mb-6">
             <span className="text-[11px] font-mono tracking-[0.25em] text-surface-500 uppercase">
               Analytical Agent
             </span>
-            <span className="w-px h-3 bg-surface-800 flex-shrink-0" aria-hidden />
-            <span className="text-[11px] font-mono tracking-[0.18em] text-brand-accent/60 uppercase">
+            <span className="w-px h-3 bg-surface-700 flex-shrink-0" aria-hidden />
+            <span className="text-[11px] font-mono tracking-[0.18em] text-brand-accent/80 uppercase">
               Ready
             </span>
           </div>
           <p className="text-[11px] font-mono text-surface-600 mb-5 leading-relaxed">
             Query datasets, run Python, produce charts and diagnostic reports.
             <br />
-            Type <span className="text-surface-400">/</span> for commands or start with a prompt below.
+            Type <span className="text-surface-400">/</span> for commands, or start with a quick query.
           </p>
-          <p className="text-[10px] font-mono tracking-[0.22em] text-surface-700 uppercase mb-3">
+          <p className="text-[10px] font-mono tracking-[0.22em] text-surface-600 uppercase mb-3">
             Quick queries
           </p>
           <SuggestedPrompts onSelect={(text) => setDraftInput(text)} />

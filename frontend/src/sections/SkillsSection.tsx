@@ -214,13 +214,14 @@ function SkillDetailPanel({ detail }: SkillDetailPanelProps) {
             </button>
           </div>
 
-          {/* File content */}
+          {/* File content — overflow-y-auto on the wrapper; CodeBlock must NOT
+              clip with overflow-hidden so its natural height feeds the scroll. */}
           {activeFile && (
-            <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
               <CodeBlock
                 code={activeFile.content}
                 language={guessLanguage(activeFile.path)}
-                className="!rounded-none !border-none !my-0 h-full"
+                className="!rounded-none !border-none !my-0 !overflow-visible"
               />
             </div>
           )}

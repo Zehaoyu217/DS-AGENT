@@ -450,25 +450,27 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const canSubmit = !!input.trim() && !isSending
 
   return (
-    <div className="border-t border-surface-800/80 bg-canvas px-4 py-4 md:px-6">
-      <div className="max-w-3xl relative">
+    <div className="bg-canvas pb-3 pt-1">
+      <div className="relative">
+        {/* Error banner floats above the card */}
         {error && (
           <div
             role="alert"
-            className="mb-3 flex items-center gap-2 text-[11px] font-mono text-red-400"
+            className="mb-2 flex items-center gap-2 text-[11px] font-mono text-error"
           >
-            <span className="text-error select-none" aria-hidden>!</span>
+            <span className="select-none" aria-hidden>!</span>
             {error}
           </div>
         )}
 
+        {/* Slash command menu anchors to the bottom of this relative container */}
         {showSlashMenu && filteredCommands.length > 0 && (
           <ul
             role="listbox"
             aria-label="Slash commands"
             className={cn(
-              'absolute bottom-full left-0 right-0 mb-2 z-30',
-              'border border-surface-800 bg-surface-900 shadow-2xl',
+              'absolute bottom-full left-0 right-0 mb-1 z-30',
+              'border border-surface-700/60 bg-surface-900 shadow-2xl',
               'max-h-64 overflow-y-auto py-1',
             )}
           >
@@ -503,109 +505,112 @@ export function ChatInput({ conversationId }: ChatInputProps) {
           </ul>
         )}
 
-        <div className="flex items-end gap-3">
-          {/* Terminal prompt glyph */}
-          <span
-            className="font-mono text-surface-700 text-sm select-none flex-shrink-0 pb-[3px]"
-            aria-hidden
-          >
-            ›
-          </span>
-
-          <label htmlFor="chat-input" className="sr-only">
-            Message
-          </label>
-          <textarea
-            id="chat-input"
-            ref={textareaRef}
-            value={input}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter a prompt…"
-            rows={1}
-            disabled={isSending}
-            aria-label="Message"
-            className={cn(
-              'flex-1 resize-none bg-transparent',
-              'text-[13px] font-mono text-surface-100',
-              'placeholder:text-surface-800',
-              'focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60',
-              'min-h-[24px] max-h-[200px] leading-[1.75]',
-              'disabled:opacity-50',
-            )}
-          />
-
-          {isSending ? (
-            <button
-              onClick={handleStop}
-              aria-label="Stop generation"
-              type="button"
-              className="p-2.5 transition-colors flex-shrink-0 mb-0.5 text-surface-500 hover:text-error"
+        {/* Floating input card */}
+        <div className="bg-surface-900/80 border border-surface-700/60 px-4 pt-3 pb-2">
+          <div className="flex items-end gap-3">
+            {/* Terminal prompt glyph */}
+            <span
+              className="font-mono text-surface-500 text-sm select-none flex-shrink-0 pb-[3px]"
+              aria-hidden
             >
-              <Square className="w-4 h-4" aria-hidden="true" />
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              aria-label="Send message"
-              type="button"
-              className={cn(
-                'p-1 transition-colors flex-shrink-0 mb-0.5',
-                canSubmit
-                  ? 'text-brand-accent hover:text-brand-400'
-                  : 'text-surface-800 cursor-not-allowed',
-              )}
-            >
-              <Send className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-          )}
-        </div>
+              ›
+            </span>
 
-        <div className="mt-2 flex items-center justify-between gap-4">
-          <p className="text-[9px] font-mono tracking-[0.18em] text-surface-600 uppercase">
-            {!input.trim() && !isSending
-              ? 'type / for commands'
-              : 'Enter · Send \u00A0/\u00A0 Shift+Enter · New line'}
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={togglePlanMode}
+            <label htmlFor="chat-input" className="sr-only">
+              Message
+            </label>
+            <textarea
+              id="chat-input"
+              ref={textareaRef}
+              value={input}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter a prompt…"
+              rows={1}
               disabled={isSending}
-              role="switch"
-              aria-checked={planMode}
-              aria-label="Plan mode — propose a plan instead of executing tools"
-              title={
-                planMode
-                  ? 'Plan Mode ON — agent will propose a plan and wait for approval'
-                  : 'Plan Mode OFF — agent will execute tools as needed'
-              }
+              aria-label="Message"
               className={cn(
-                'group flex items-center gap-1.5 select-none',
-                'font-mono text-[9px] tracking-[0.25em] uppercase',
-                'border px-2 py-1 transition-colors',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                planMode
-                  ? 'border-brand-accent/70 text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/15'
-                  : 'border-surface-800 text-surface-600 hover:text-surface-400 hover:border-surface-700',
+                'flex-1 resize-none bg-transparent',
+                'text-[13px] font-mono text-surface-100',
+                'placeholder:text-surface-600',
+                'focus:outline-none',
+                'min-h-[24px] max-h-[200px] leading-[1.75]',
+                'disabled:opacity-50',
               )}
-            >
-              <span
-                aria-hidden
+            />
+
+            {isSending ? (
+              <button
+                onClick={handleStop}
+                aria-label="Stop generation"
+                type="button"
+                className="p-2.5 transition-colors flex-shrink-0 mb-0.5 text-surface-500 hover:text-error"
+              >
+                <Square className="w-4 h-4" aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                aria-label="Send message"
+                type="button"
                 className={cn(
-                  'inline-block w-1.5 h-1.5 rounded-full transition-colors',
-                  planMode ? 'bg-brand-accent' : 'bg-surface-700 group-hover:bg-surface-600',
+                  'p-1 transition-colors flex-shrink-0 mb-0.5',
+                  canSubmit
+                    ? 'text-brand-accent hover:text-brand-400'
+                    : 'text-surface-700 cursor-not-allowed',
                 )}
-              />
-              plan
-            </button>
-            {!isSending && (
-              <p className="text-[9px] font-mono text-surface-600 tabular-nums">
-                ⌘K \u00A0·\u00A0 ⌘/
-              </p>
+              >
+                <Send className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
             )}
+          </div>
+
+          <div className="mt-2 flex items-center justify-between gap-4">
+            <p className="text-[9px] font-mono tracking-[0.18em] text-surface-600 uppercase">
+              {!input.trim() && !isSending
+                ? 'type / for commands'
+                : 'Enter · Send \u00A0/\u00A0 Shift+Enter · New line'}
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={togglePlanMode}
+                disabled={isSending}
+                role="switch"
+                aria-checked={planMode}
+                aria-label="Plan mode — propose a plan instead of executing tools"
+                title={
+                  planMode
+                    ? 'Plan Mode ON — agent will propose a plan and wait for approval'
+                    : 'Plan Mode OFF — agent will execute tools as needed'
+                }
+                className={cn(
+                  'group flex items-center gap-1.5 select-none',
+                  'font-mono text-[9px] tracking-[0.25em] uppercase',
+                  'border px-2 py-1 transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  planMode
+                    ? 'border-brand-accent/70 text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/15'
+                    : 'border-surface-700/60 text-surface-600 hover:text-surface-400 hover:border-surface-600',
+                )}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    'inline-block w-1.5 h-1.5 rounded-full transition-colors',
+                    planMode ? 'bg-brand-accent' : 'bg-surface-700 group-hover:bg-surface-600',
+                  )}
+                />
+                plan
+              </button>
+              {!isSending && (
+                <p className="text-[9px] font-mono text-surface-600 tabular-nums">
+                  ⌘K \u00A0·\u00A0 ⌘/
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

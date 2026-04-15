@@ -44,12 +44,12 @@ export function SessionLayout() {
 
   return (
     <div className="flex h-full bg-canvas text-surface-100 overflow-hidden">
-      {/* Left panel — resizable, hidden on narrow viewports */}
-      <div style={{ width: left.size, minWidth: left.size }} className="hidden md:flex flex-shrink-0">
+      {/* Left panel — resizable, hidden below lg (1024px) */}
+      <div style={{ width: left.size, minWidth: left.size }} className="hidden lg:flex flex-shrink-0 border-r border-surface-700/60">
         <LeftPanel />
       </div>
 
-      <ResizeHandle onMouseDown={left.onMouseDown} direction="horizontal" className="hidden md:flex" />
+      <ResizeHandle onMouseDown={left.onMouseDown} direction="horizontal" className="hidden lg:flex" />
 
       <main
         id="main-content"
@@ -60,7 +60,7 @@ export function SessionLayout() {
         <div
           role="tablist"
           aria-label="Middle panel view"
-          className="flex items-center h-9 shrink-0 border-b border-surface-800 bg-surface-900/30"
+          className="flex items-center h-9 shrink-0 border-b border-surface-700/80 bg-surface-900/40 px-2"
         >
           {(['conversation', 'devtools'] as MiddleTab[]).map((tab) => {
             const isActive = middleTab === tab
@@ -73,12 +73,12 @@ export function SessionLayout() {
                 aria-selected={isActive}
                 onClick={() => setMiddleTab(tab)}
                 className={cn(
-                  'flex items-center gap-2 px-4 h-full',
+                  'flex items-center gap-2 pl-0 pr-4 h-full',
                   'text-[10px] font-mono font-semibold tracking-[0.22em] uppercase',
                   'border-b transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/50',
                   isActive
                     ? 'border-brand-accent/80 text-surface-200'
-                    : 'border-transparent text-surface-600 hover:text-surface-400',
+                    : 'border-transparent text-surface-500 hover:text-surface-300',
                 )}
               >
                 {label}
@@ -99,7 +99,7 @@ export function SessionLayout() {
           })}
           <div className="flex-1" />
           {activeSessionId && middleTab === 'devtools' && (
-            <span className="text-[9px] font-mono text-surface-700 tracking-widest uppercase pr-4">
+            <span className="text-[9px] font-mono text-surface-700 tracking-widest uppercase">
               {activeSessionId.slice(0, 12)}
             </span>
           )}
@@ -128,10 +128,10 @@ export function SessionLayout() {
         )}
       </main>
 
-      <ResizeHandle onMouseDown={right.onMouseDown} direction="horizontal" className="hidden md:flex" />
+      <ResizeHandle onMouseDown={right.onMouseDown} direction="horizontal" className="hidden lg:flex" />
 
-      {/* Right panel — resizable, hidden on narrow viewports */}
-      <div style={{ width: right.size, minWidth: right.size }} className="hidden md:flex flex-shrink-0">
+      {/* Right panel — resizable, hidden below lg (1024px) */}
+      <div style={{ width: right.size, minWidth: right.size }} className="hidden lg:flex flex-shrink-0">
         <SessionRightPanel />
       </div>
     </div>

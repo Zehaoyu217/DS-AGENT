@@ -20,7 +20,7 @@ function statusClass(status: TodoStatus): string {
 
 function TodoRow({ item }: { item: TodoItem }): React.ReactElement {
   return (
-    <div className="flex items-start gap-2 py-1.5 border-b border-surface-800/50 last:border-0">
+    <div className="flex items-start gap-2 py-1.5 border-b border-surface-700/40 last:border-0">
       <span
         className={cn('text-[11px] font-mono mt-px flex-shrink-0', statusClass(item.status))}
         aria-label={item.status}
@@ -58,7 +58,7 @@ export function TodosPanel(): React.ReactElement {
           </span>
         )}
       </div>
-      <div className="border-t border-surface-800 mb-3" />
+      <div className="border-t border-surface-700/50 mb-3" />
       {todos.length > 0 ? (
         <div className="flex-1 min-h-0 overflow-y-auto">
           {/* in-progress first, then pending, then completed */}

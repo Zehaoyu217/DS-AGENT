@@ -423,7 +423,7 @@ export function TerminalPanel(): React.ReactElement {
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-canvas">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 pt-3 pb-2 border-b border-surface-800/60 shrink-0">
+      <div className="flex items-center justify-between px-3 pt-3 pb-2 border-b border-surface-700/50 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[9px] font-mono font-bold tracking-[0.18em] text-surface-500 uppercase">
             Progress

@@ -35,14 +35,14 @@ interface SuggestedPromptsProps {
 
 export function SuggestedPrompts({ onSelect }: SuggestedPromptsProps) {
   return (
-    <div className="flex flex-col border border-surface-800 divide-y divide-surface-800">
+    <div className="flex flex-col border border-surface-700/50 divide-y divide-surface-700/50">
       {PROMPTS.map((p) => {
         const Icon = p.icon
         return (
           <button
             key={p.label}
             onClick={() => onSelect(p.text)}
-            className="flex items-center gap-3 px-4 py-2.5 bg-transparent hover:bg-surface-900 text-left transition-colors group"
+            className="flex items-center gap-3 px-4 py-2.5 bg-transparent hover:bg-surface-800/60 text-left transition-colors group"
           >
             <Icon
               className="w-3.5 h-3.5 text-brand-accent-hover flex-shrink-0 group-hover:text-brand-400 transition-colors"

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { Message } from '@/lib/store'
 import { extractTextContent } from '@/lib/utils'
@@ -49,6 +49,8 @@ export function VirtualMessageList({
 }: VirtualMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const scrollHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const virtualizer = useVirtualizer({
     count: messages.length,
@@ -71,6 +73,10 @@ export function VirtualMessageList({
       isAtBottomRef.current = atBottom
       onScrollStateChange?.(atBottom, scrollToBottom)
     }
+    // Show scrollbar while scrolling, hide 1.2s after it stops
+    setIsScrolling(true)
+    if (scrollHideTimerRef.current) clearTimeout(scrollHideTimerRef.current)
+    scrollHideTimerRef.current = setTimeout(() => setIsScrolling(false), 1200)
   }, [onScrollStateChange, scrollToBottom])
 
   // Auto-scroll when new messages arrive, only if the user was already at bottom.
@@ -95,11 +101,15 @@ export function VirtualMessageList({
   const items = virtualizer.getVirtualItems()
 
   return (
-    <div ref={scrollRef} className="flex-1 overflow-y-auto" onScroll={handleScroll}>
+    <div
+      ref={scrollRef}
+      className={`flex-1 overflow-y-auto chat-scroll${isScrolling ? ' is-scrolling' : ''}`}
+      onScroll={handleScroll}
+    >
       {/* Spacer that gives the virtualizer its total height */}
       <div
         style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
-        className="max-w-3xl px-6 py-6 md:px-8 md:py-8 lg:px-10"
+        className="py-4"
       >
         {items.map((virtualItem) => {
           const message = messages[virtualItem.index]
@@ -115,7 +125,7 @@ export function VirtualMessageList({
                 right: 0,
                 transform: `translateY(${virtualItem.start}px)`,
               }}
-              className="pb-8"
+              className="px-2 pb-5"
             >
               <MessageBubble
                 message={message}

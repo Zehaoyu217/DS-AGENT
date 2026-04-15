@@ -36,9 +36,9 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
   }
 
   return (
-    <div className="rounded border border-surface-800 bg-surface-900/50 overflow-hidden">
+    <div className="rounded border border-surface-700/50 bg-surface-900/50 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-surface-800">
+      <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-surface-700/50">
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex-1 flex items-center gap-2 min-w-0"
@@ -107,7 +107,7 @@ export function ArtifactsPanel(): React.ReactElement {
       <p className="text-[10px] font-mono font-semibold tracking-widest text-surface-500 uppercase mb-2">
         Artifacts
       </p>
-      <div className="border-t border-surface-800 mb-3" />
+      <div className="border-t border-surface-700/50 mb-3" />
 
       {filtered.length === 0 ? (
         <div>

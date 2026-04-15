@@ -166,12 +166,12 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
   return (
     <article
       className={cn(
-        'group animate-fade-in pl-3',
+        'group animate-fade-in pl-3 pr-2 pt-2 pb-2 rounded-r-sm',
         isUser
-          ? 'border-l-2 border-surface-700/40'
+          ? 'border-l-2 border-green-500/50 bg-green-950/[0.04]'
           : isError
-            ? 'border-l-2 border-error/30'
-            : 'border-l-2 border-brand-accent/25',
+            ? 'border-l-2 border-error/50'
+            : 'border-l-2 border-brand-400/70',
       )}
       aria-label={isUser ? 'User' : isError ? 'Error from agent' : 'Agent'}
     >
@@ -180,12 +180,12 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
         <span
           className={cn(
             'text-[10px] font-mono font-semibold tracking-[0.18em] uppercase',
-            isUser ? 'text-surface-300' : isError ? 'text-red-400' : 'text-surface-400',
+            isUser ? 'text-green-400/80' : isError ? 'text-red-400' : 'text-brand-400',
           )}
         >
           {isUser ? 'USR' : isError ? 'ERR' : 'AGENT'}
         </span>
-        <span className="w-px h-2.5 bg-surface-800 flex-shrink-0" aria-hidden />
+        <span className="w-px h-2.5 bg-surface-700 flex-shrink-0" aria-hidden />
         <span className="text-[9px] font-mono text-surface-700 select-none tabular-nums">
           {formatDate(message.timestamp)}
         </span>

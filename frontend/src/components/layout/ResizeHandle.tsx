@@ -35,7 +35,7 @@ export function ResizeHandle({
       <div
         className={cn(
           'rounded-full transition-all duration-150',
-          'bg-surface-700/50 group-hover:bg-brand-accent/70 group-active:bg-brand-accent',
+          'bg-surface-600/60 group-hover:bg-brand-accent/70 group-active:bg-brand-accent',
           isH ? 'w-px h-8 group-hover:h-12' : 'h-px w-8 group-hover:w-12',
         )}
       />
