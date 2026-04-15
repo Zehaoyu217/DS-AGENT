@@ -37,7 +37,7 @@ make test-frontend    # vitest
 # Skills
 make skill-check      # Dependency manifest check
 make skill-eval       # Run all skill evals
-make skill-new name=X # Scaffold new skill
+make skill-new name=X [parent=Y] [type=reference]  # Scaffold new skill
 
 # Knowledge
 make wiki-lint        # Run wiki lint cycle
@@ -56,6 +56,20 @@ Backend (FastAPI :8000)
     ├── Context Manager (layer tracking, compaction)
     └── Data (DuckDB, dataset registry)
 ```
+
+## Skills System
+
+Skills are organized in a tree (nested directories). `SkillRegistry` discovers the
+tree recursively at startup and maintains:
+- `_roots`: Level-1 skills (for the system prompt catalog)
+- `_index`: flat name→SkillNode lookup (for permissive direct access)
+
+The system prompt shows only Level-1 skills with `[N sub-skills]` annotations on
+hubs. Loading a skill auto-appends its sub-skill catalog. Reference skills (Level 3,
+`[Reference]` prefix in description) are only visible after their parent is loaded.
+
+Sandbox bootstrap imports are generated dynamically from the registry tree via
+`SkillRegistry.generate_bootstrap_imports()`.
 
 ## Conventions
 
