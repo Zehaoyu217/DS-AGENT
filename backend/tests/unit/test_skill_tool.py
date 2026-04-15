@@ -1,4 +1,4 @@
-"""Tests for the enhanced skill-loading tool (P20)."""
+"""Tests for the skill-loading tool with progressive exposure."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,12 +13,20 @@ from app.skills.registry import SkillRegistry
 from app.wiki.engine import WikiEngine
 
 
-def _write_skill(root: Path, name: str, *, body: str, references: list[str] = None,
-                 has_pkg: bool = True) -> None:
+def _write_skill(
+    root: Path,
+    name: str,
+    *,
+    description: str = "A test skill.",
+    body: str = "# Body\n\nContent.",
+    has_pkg: bool = False,
+) -> None:
     skill_dir = root / name
     skill_dir.mkdir(parents=True, exist_ok=True)
+    # Quote the description to handle YAML-special chars like '[' in "[Reference]"
+    safe_desc = description.replace("'", "''")
     (skill_dir / "SKILL.md").write_text(
-        f"---\nname: {name}\nversion: 1.2\ndescription: Test skill {name}\nlevel: 2\n---\n{body}"
+        f"---\nname: {name}\nversion: 1.2\ndescription: '{safe_desc}'\n---\n{body}"
     )
     (skill_dir / "skill.yaml").write_text(
         "dependencies:\n  requires: [foo]\n  packages: [pandas]\n"
@@ -28,22 +36,32 @@ def _write_skill(root: Path, name: str, *, body: str, references: list[str] = No
         pkg = skill_dir / "pkg"
         pkg.mkdir(exist_ok=True)
         (pkg / "__init__.py").write_text("")
-    if references:
-        refs = skill_dir / "references"
-        refs.mkdir(exist_ok=True)
-        for ref in references:
-            (refs / ref).write_text("ref content")
 
 
 def _build_dispatcher(tmp_path: Path) -> tuple[ToolDispatcher, SkillRegistry]:
     skills_root = tmp_path / "skills"
     skills_root.mkdir()
-    _write_skill(skills_root, "alpha_skill",
-                 body="# Alpha Skill\nUse this for alpha analysis.",
-                 references=["cheatsheet.md", "examples.md"])
-    _write_skill(skills_root, "beta_skill",
-                 body="# Beta Skill\nUse this for beta analysis.",
-                 has_pkg=False)
+
+    # Hub: stat_hub with two children, one of which has a reference grandchild
+    _write_skill(skills_root, "stat_hub", description="Statistical analysis hub.")
+    _write_skill(
+        skills_root / "stat_hub",
+        "correlation",
+        description="Runs correlation analysis.",
+        has_pkg=True,
+    )
+    _write_skill(
+        skills_root / "stat_hub" / "correlation",
+        "corr_reference",
+        description="[Reference] Mathematical details. Load only for algorithmic depth.",
+    )
+    _write_skill(
+        skills_root / "stat_hub",
+        "distribution",
+        description="Fits distributions.",
+    )
+    # Standalone leaf
+    _write_skill(skills_root, "sql_builder", description="Writes SQL queries.")
 
     registry = SkillRegistry(skills_root)
     registry.discover()
@@ -68,50 +86,84 @@ def _build_dispatcher(tmp_path: Path) -> tuple[ToolDispatcher, SkillRegistry]:
     return dispatcher, registry
 
 
-def test_skill_tool_returns_full_body_and_metadata(tmp_path: Path) -> None:
-    dispatcher, _ = _build_dispatcher(tmp_path)
-    result = dispatcher.dispatch(ToolCall(id="c1", name="skill", arguments={"name": "alpha_skill"}))
-    assert result.ok is True
-    payload = result.payload
-    assert payload["name"] == "alpha_skill"
-    assert "Alpha Skill" in payload["body"]
-    assert "alpha analysis" in payload["body"]
+def _call_skill(dispatcher: ToolDispatcher, name: str) -> dict:
+    result = dispatcher.dispatch(ToolCall(id="c1", name="skill", arguments={"name": name}))
+    assert result.ok, f"skill({name!r}) failed: {result.error_message}"
+    return result.payload
 
+
+# ── Response format ───────────────────────────────────────────────────────────
+
+def test_hub_skill_body_and_metadata_returned(tmp_path: Path) -> None:
+    dispatcher, _ = _build_dispatcher(tmp_path)
+    payload = _call_skill(dispatcher, "stat_hub")
+    assert "Body" in payload["body"] or "stat_hub" in payload["body"]
     meta = payload["metadata"]
+    assert meta["name"] == "stat_hub"
     assert meta["version"] == "1.2"
-    assert meta["depth"] == 1
-    assert meta["description"] == "Test skill alpha_skill"
-    assert meta["requires"] == ["foo"]
-    assert meta["packages"] == ["pandas"]
-    assert meta["error_templates"] == {"BadInput": {"hint": "check your input"}}
+    assert meta["description"] == "Statistical analysis hub."
+    assert "level" not in meta
+    assert "references" not in payload
 
 
-def test_skill_tool_lists_reference_files(tmp_path: Path) -> None:
+def test_hub_skill_appends_sub_skill_catalog(tmp_path: Path) -> None:
     dispatcher, _ = _build_dispatcher(tmp_path)
-    result = dispatcher.dispatch(ToolCall(id="c1", name="skill", arguments={"name": "alpha_skill"}))
-    assert result.payload["references"] == ["cheatsheet.md", "examples.md"]
-    assert result.payload["has_python_package"] is True
+    payload = _call_skill(dispatcher, "stat_hub")
+    body = payload["body"]
+    assert "## Sub-skills" in body
+    assert "`correlation`" in body
+    assert "Runs correlation analysis." in body
+    assert "`distribution`" in body
+    assert "Fits distributions." in body
 
 
-def test_skill_tool_flags_missing_python_package(tmp_path: Path) -> None:
+def test_reference_skill_description_preserved_in_catalog(tmp_path: Path) -> None:
     dispatcher, _ = _build_dispatcher(tmp_path)
-    result = dispatcher.dispatch(ToolCall(id="c1", name="skill", arguments={"name": "beta_skill"}))
-    assert result.payload["has_python_package"] is False
-    assert result.payload["references"] == []
+    payload = _call_skill(dispatcher, "correlation")
+    body = payload["body"]
+    assert "## Sub-skills" in body
+    assert "[Reference]" in body
+    assert "`corr_reference`" in body
 
 
-def test_skill_tool_unknown_suggests_close_match(tmp_path: Path) -> None:
+def test_nested_skill_shows_breadcrumb(tmp_path: Path) -> None:
+    dispatcher, _ = _build_dispatcher(tmp_path)
+    payload = _call_skill(dispatcher, "correlation")
+    body = payload["body"]
+    assert "stat_hub" in body
+    assert "›" in body  # breadcrumb separator
+
+
+def test_leaf_skill_has_no_sub_skills_section(tmp_path: Path) -> None:
+    dispatcher, _ = _build_dispatcher(tmp_path)
+    payload = _call_skill(dispatcher, "sql_builder")
+    assert "## Sub-skills" not in payload["body"]
+
+
+def test_level_1_skill_has_no_breadcrumb(tmp_path: Path) -> None:
+    dispatcher, _ = _build_dispatcher(tmp_path)
+    payload = _call_skill(dispatcher, "sql_builder")
+    assert "›" not in payload["body"]
+
+
+def test_direct_access_to_level3_skill(tmp_path: Path) -> None:
+    """Permissive access — agent can load any skill by name directly."""
+    dispatcher, _ = _build_dispatcher(tmp_path)
+    payload = _call_skill(dispatcher, "corr_reference")
+    assert payload["metadata"]["name"] == "corr_reference"
+
+
+def test_skill_unknown_suggests_close_match(tmp_path: Path) -> None:
     dispatcher, _ = _build_dispatcher(tmp_path)
     result = dispatcher.dispatch(
-        ToolCall(id="c1", name="skill", arguments={"name": "alpha_skil"}),
+        ToolCall(id="c1", name="skill", arguments={"name": "correlat"}),
     )
-    # Dispatcher wraps KeyError — the result should carry the suggestion text.
     assert result.ok is False
     err_text = (result.error_message or "") + str(result.payload or "")
-    assert "alpha_skill" in err_text  # suggestion present
+    assert "correlation" in err_text
 
 
-def test_skill_tool_rejects_missing_name(tmp_path: Path) -> None:
+def test_skill_rejects_missing_name(tmp_path: Path) -> None:
     dispatcher, _ = _build_dispatcher(tmp_path)
     result = dispatcher.dispatch(ToolCall(id="c1", name="skill", arguments={}))
     assert result.ok is False

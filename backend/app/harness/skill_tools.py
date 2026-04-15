@@ -56,13 +56,11 @@ def register_core_tools(
     registry: SkillRegistry | None = None,
 ) -> None:
     def _load_skill_body(args: dict[str, Any]) -> dict:
-        """Return the full SKILL.md body plus metadata and reference files (P20).
+        """Return the SKILL.md body with breadcrumb header and sub-skill catalog.
 
-        The body is the complete markdown instructions with frontmatter
-        stripped — *not* a summary.  Metadata (version, level, dependencies,
-        error templates) helps the agent decide whether it has the
-        prerequisites wired, and the reference file list advertises any extra
-        prose the agent can opt in to later.
+        Progressive exposure: loading a skill automatically appends the catalog
+        of its direct children (system-generated from the registry tree).
+        The agent calls skill() on any child name to go deeper.
         """
         name = args.get("name")
         if not name or not isinstance(name, str):
@@ -70,8 +68,8 @@ def register_core_tools(
         if registry is None:
             raise RuntimeError("skill registry not wired")
 
-        skill = registry.get_skill(name)
-        if skill is None:
+        node = registry.get_skill(name)
+        if node is None:
             available = registry.list_skills()
             suggestions = _closest_skill_names(name, available)
             raise KeyError(
@@ -80,28 +78,40 @@ def register_core_tools(
                 f"Suggestions: {suggestions}"
             )
 
-        meta = skill.metadata
-        # package_path is None when the skill has no pkg/ directory.
-        has_package = (
-            skill.package_path is not None
-            and skill.package_path.exists()
-            and any(skill.package_path.iterdir())
-        )
-        # Derive references/ directory from pkg/ sibling, or from parent node.
-        references: list[str] = []
-        if skill.package_path is not None:
-            refs_path = skill.package_path.parent / "references"
-            if refs_path.exists():
-                references = sorted(
-                    p.name for p in refs_path.iterdir() if p.is_file()
-                )
+        meta = node.metadata
+        breadcrumb = registry.get_breadcrumb(name)
+        children = registry.get_children(name)
+
+        # Build the body: optional breadcrumb header + instructions + optional sub-skill catalog
+        parts: list[str] = []
+
+        # Breadcrumb header (only for skills below Level 1)
+        if node.depth > 1:
+            crumb = " › ".join(breadcrumb)
+            parts.append(f"# {crumb}\n")
+        else:
+            parts.append(f"# {name}\n")
+
+        parts.append(node.instructions)
+
+        # Auto-appended sub-skill catalog (system-generated, never authored)
+        if children:
+            catalog_lines = ["---", "## Sub-skills", ""]
+            for child in children:
+                child_desc = child.metadata.description.strip()
+                catalog_lines.append(f"- `{child.metadata.name}` — {child_desc}")
+            parts.append("\n".join(catalog_lines))
+
+        full_body = "\n\n".join(p.strip() for p in parts if p.strip())
+
+        has_package = node.package_path is not None and any(node.package_path.iterdir())
 
         return {
             "name": meta.name,
-            "body": skill.instructions,
+            "body": full_body,
             "metadata": {
+                "name": meta.name,
                 "version": meta.version,
-                "depth": skill.depth,
                 "description": meta.description,
                 "requires": list(meta.dependencies_requires),
                 "used_by": list(meta.dependencies_used_by),
@@ -109,7 +119,9 @@ def register_core_tools(
                 "error_templates": dict(meta.error_templates),
             },
             "has_python_package": has_package,
-            "references": references,
+            "depth": node.depth,
+            "breadcrumb": breadcrumb,
+            "child_count": len(children),
         }
 
     def _run_sandbox(args: dict[str, Any]) -> dict:
