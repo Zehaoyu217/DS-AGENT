@@ -1,7 +1,6 @@
 ---
 name: data_profiler
 description: Full-dataset profile. Runs before analysis; surfaces structured risks (missing, dupes, keys, outliers, dates, skew) with BLOCKER/HIGH/MEDIUM/LOW severity. Emits a machine-readable JSON artifact and a human-readable HTML report.
-level: 1
 version: '0.1'
 ---
 # data_profiler

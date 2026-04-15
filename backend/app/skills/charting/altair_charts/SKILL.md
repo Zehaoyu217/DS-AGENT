@@ -1,7 +1,6 @@
 ---
 name: altair_charts
 description: 20 pre-themed Altair chart templates (bar, grouped_bar, stacked_bar, bar_with_reference, lollipop, dumbbell, multi_line, actual_vs_forecast, area_cumulative, range_band, small_multiples, histogram, kde, boxplot, violin, ecdf, scatter_trend, correlation_heatmap, slope, waterfall). Theme resolves colors and strokes.
-level: 1
 version: '0.1'
 ---
 # altair_charts

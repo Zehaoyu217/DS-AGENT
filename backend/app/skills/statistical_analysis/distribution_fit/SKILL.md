@@ -1,7 +1,6 @@
 ---
 name: distribution_fit
 description: Auto-select distribution candidates from data shape, rank by AIC with BIC cross-check, GOF via KS + Anderson-Darling. Hill estimator for heavy tails.
-level: 2
 ---
 
 # Distribution Fit Skill

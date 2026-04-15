@@ -1,7 +1,6 @@
 ---
 name: sql_builder
 description: DuckDB query helpers — safe field quoting, paginated SELECTs, column stats.
-level: 1
 version: '0.1'
 ---
 # sql_builder

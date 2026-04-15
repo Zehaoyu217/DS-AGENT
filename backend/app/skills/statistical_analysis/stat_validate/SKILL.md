@@ -1,7 +1,6 @@
 ---
 name: stat_validate
 description: PASS/WARN/FAIL gate for any inferential claim. Checks effect size, sample size, multiple comparisons, Simpson's paradox, confounders, leakage. Must be called before promoting a Finding.
-level: 2
 ---
 
 # Stat Validate Skill

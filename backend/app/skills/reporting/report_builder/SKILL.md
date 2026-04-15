@@ -1,7 +1,6 @@
 ---
 name: report_builder
 description: Composes research_memo (default), analysis_brief, or full_report from promoted findings. Renders Markdown + HTML (editorial theme) + PDF. Blocks on stat_validate FAIL.
-level: 3
 version: 0.1.0
 ---
 

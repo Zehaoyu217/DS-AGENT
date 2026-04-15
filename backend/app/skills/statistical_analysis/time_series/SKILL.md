@@ -1,7 +1,6 @@
 ---
 name: time_series
 description: Stationarity, decomposition, anomaly detection, changepoints, lag correlation. Refuses non-stationary lag-corr without explicit override.
-level: 2
 ---
 
 # Time Series Skill

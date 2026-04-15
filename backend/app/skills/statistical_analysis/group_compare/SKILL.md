@@ -1,7 +1,6 @@
 ---
 name: group_compare
 description: Compares two or more groups on a numeric variable. Auto-selects t/Welch/Mann-Whitney/ANOVA/Kruskal by assumptions. Reports effect size first, p-value second, with bootstrap CI.
-level: 2
 ---
 
 # Group Compare Skill

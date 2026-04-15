@@ -1,7 +1,6 @@
 ---
 name: correlation
 description: Auto-selects Pearson/Spearman/Kendall/distance/partial correlation with bootstrap CI and nonlinear detection. Never silently drops NA.
-level: 2
 ---
 
 # Correlation Skill

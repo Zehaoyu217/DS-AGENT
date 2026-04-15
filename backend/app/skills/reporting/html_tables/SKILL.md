@@ -1,7 +1,6 @@
 ---
 name: html_tables
 description: Render a DataFrame as themed HTML with numeric right-align, semantic cell classes, and caption.
-level: 1
 version: '0.1'
 ---
 # html_tables

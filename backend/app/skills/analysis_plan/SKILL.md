@@ -1,7 +1,6 @@
 ---
 name: analysis_plan
 description: Scaffolds an ordered investigation plan (profile → hypothesize → analyze → validate → report) from a one-line question. Writes to wiki/working.md.
-level: 3
 version: 0.1.0
 ---
 

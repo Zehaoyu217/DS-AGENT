@@ -1,7 +1,6 @@
 ---
 name: dashboard_builder
 description: Composes KPI cards + chart artifacts into bento / grid / single_column dashboards. Exports standalone_html or a2ui. Max 12 sections, one theme per dashboard.
-level: 3
 version: 0.1.0
 ---
 
