@@ -54,7 +54,8 @@ def test_registry_excludes_evals(tmp_path: Path) -> None:
     registry.discover()
     skill = registry.get_skill("query_data")
     assert skill is not None
-    assert skill.evals_path is None  # evals are excluded from loaded skill
+    # evals/ is in _SKIP_DIRS so it is never discovered as a child skill.
+    assert skill.children == []
 
 
 def test_registry_returns_none_for_unknown_skill(tmp_path: Path) -> None:

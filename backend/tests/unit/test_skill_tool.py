@@ -79,7 +79,7 @@ def test_skill_tool_returns_full_body_and_metadata(tmp_path: Path) -> None:
 
     meta = payload["metadata"]
     assert meta["version"] == "1.2"
-    assert meta["level"] == 2
+    assert meta["depth"] == 1
     assert meta["description"] == "Test skill alpha_skill"
     assert meta["requires"] == ["foo"]
     assert meta["packages"] == ["pandas"]

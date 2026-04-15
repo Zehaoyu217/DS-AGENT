@@ -7,19 +7,41 @@ import pytest
 from app.skills.registry import SkillRegistry
 
 
-@pytest.fixture
-def skills_root(tmp_path: Path) -> Path:
-    skill_dir = tmp_path / "demo"
-    skill_dir.mkdir()
+def _write_skill(
+    root: Path,
+    name: str,
+    *,
+    description: str = "A skill.",
+    version: str = "0.1",
+    has_pkg: bool = False,
+) -> Path:
+    skill_dir = root / name
+    skill_dir.mkdir(parents=True, exist_ok=True)
     (skill_dir / "SKILL.md").write_text(
-        "---\n"
-        "name: demo\n"
-        "description: Minimal demo skill.\n"
-        "version: '0.3'\n"
-        "---\n"
-        "# Demo\n\nBody text.\n"
+        f"---\nname: {name}\ndescription: {description}\nversion: '{version}'\n---\n# {name}\n\nBody.\n"
     )
     (skill_dir / "skill.yaml").write_text(
+        "dependencies:\n  requires: []\n  used_by: []\n  packages: []\nerrors: {}\n"
+    )
+    if has_pkg:
+        pkg = skill_dir / "pkg"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("")
+    return skill_dir
+
+
+# ── Flat discovery (backward compat) ─────────────────────────────────────────
+
+def test_registry_discovers_flat_skill(tmp_path: Path) -> None:
+    _write_skill(tmp_path, "alpha")
+    registry = SkillRegistry(tmp_path)
+    registry.discover()
+    assert registry.get_skill("alpha") is not None
+
+
+def test_registry_reads_frontmatter(tmp_path: Path) -> None:
+    _write_skill(tmp_path, "demo", description="Minimal demo skill.", version="0.3")
+    (tmp_path / "demo" / "skill.yaml").write_text(
         "dependencies:\n"
         "  requires: [theme_config]\n"
         "  used_by: []\n"
@@ -30,81 +52,143 @@ def skills_root(tmp_path: Path) -> Path:
         "    guidance: provide {field}\n"
         "    recovery: supply the value and rerun\n"
     )
-    return tmp_path
-
-
-def test_registry_reads_metadata_from_skill_md_frontmatter(skills_root: Path) -> None:
-    registry = SkillRegistry(skills_root)
+    registry = SkillRegistry(tmp_path)
     registry.discover()
 
-    loaded = registry.get_skill("demo")
-    assert loaded is not None
-    assert loaded.metadata.name == "demo"
-    assert loaded.metadata.description == "Minimal demo skill."
-    assert loaded.metadata.version == "0.3"
-    assert loaded.metadata.dependencies_requires == ["theme_config"]
-    assert loaded.metadata.dependencies_packages == ["pandas"]
-    assert "BAD_INPUT" in loaded.metadata.error_templates
+    node = registry.get_skill("demo")
+    assert node is not None
+    assert node.metadata.name == "demo"
+    assert node.metadata.description == "Minimal demo skill."
+    assert node.metadata.version == "0.3"
+    assert node.metadata.dependencies_requires == ["theme_config"]
+    assert node.metadata.dependencies_packages == ["pandas"]
+    assert "BAD_INPUT" in node.metadata.error_templates
+    assert not hasattr(node.metadata, "level")
 
 
-def test_registry_body_excludes_frontmatter(skills_root: Path) -> None:
-    registry = SkillRegistry(skills_root)
+def test_registry_body_excludes_frontmatter(tmp_path: Path) -> None:
+    _write_skill(tmp_path, "demo")
+    registry = SkillRegistry(tmp_path)
     registry.discover()
-
-    instructions = registry.get_instructions("demo")
-    assert instructions is not None
-    assert instructions.startswith("# Demo")
-    assert "---" not in instructions.splitlines()[0]
+    node = registry.get_skill("demo")
+    assert node.instructions.startswith("# demo")
+    assert "---" not in node.instructions.splitlines()[0]
 
 
 def test_registry_ignores_dir_without_skill_md(tmp_path: Path) -> None:
     (tmp_path / "nope").mkdir()
     registry = SkillRegistry(tmp_path)
     registry.discover()
-    assert registry.list_skills() == []
+    assert registry.list_top_level() == []
 
 
-def test_registry_skips_skill_with_invalid_yaml_frontmatter(tmp_path: Path) -> None:
+def test_registry_skips_skill_with_invalid_yaml(tmp_path: Path) -> None:
     broken = tmp_path / "broken"
     broken.mkdir()
     (broken / "SKILL.md").write_text(
-        "---\n"
-        "name: broken\n"
-        "description: bad\n"
-        "  indent: wrong\n"  # bad YAML
-        "---\n"
-        "body\n"
+        "---\nname: broken\ndescription: bad\n  indent: wrong\n---\nbody\n"
     )
-    good = tmp_path / "good"
-    good.mkdir()
-    (good / "SKILL.md").write_text(
-        "---\n"
-        "name: good\n"
-        "description: fine\n"
-        "version: '0.1'\n"
-        "---\n"
-        "# Good\n"
-    )
-
+    _write_skill(tmp_path, "good")
     registry = SkillRegistry(tmp_path)
     registry.discover()
-
-    # Broken skill is skipped (no name recovered), good skill loads.
     assert registry.get_skill("broken") is None
     assert registry.get_skill("good") is not None
 
 
-def test_registry_skips_skill_with_non_mapping_frontmatter(tmp_path: Path) -> None:
-    scalar = tmp_path / "scalar"
-    scalar.mkdir()
-    (scalar / "SKILL.md").write_text(
-        "---\n"
-        "just a plain string\n"
-        "---\n"
-        "body\n"
-    )
+# ── Hierarchy ─────────────────────────────────────────────────────────────────
 
+def _make_hierarchy(tmp_path: Path) -> SkillRegistry:
+    """
+    hub/
+      SKILL.md
+      child_a/
+        SKILL.md
+        grandchild/
+          SKILL.md
+      child_b/
+        SKILL.md
+    standalone/
+      SKILL.md
+    """
+    _write_skill(tmp_path, "hub", description="Hub skill.")
+    _write_skill(tmp_path / "hub", "child_a", description="Child A.")
+    _write_skill(tmp_path / "hub" / "child_a", "grandchild", description="Grandchild.")
+    _write_skill(tmp_path / "hub", "child_b", description="Child B.")
+    _write_skill(tmp_path, "standalone", description="Standalone.")
     registry = SkillRegistry(tmp_path)
     registry.discover()
+    return registry
 
-    assert registry.list_skills() == []
+
+def test_list_top_level_returns_only_roots(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    names = [n.metadata.name for n in registry.list_top_level()]
+    assert set(names) == {"hub", "standalone"}
+
+
+def test_get_children_returns_direct_children(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    children = registry.get_children("hub")
+    names = {n.metadata.name for n in children}
+    assert names == {"child_a", "child_b"}
+
+
+def test_get_children_returns_empty_for_leaf(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    assert registry.get_children("standalone") == []
+    assert registry.get_children("child_b") == []
+
+
+def test_depth_is_computed_from_nesting(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    assert registry.get_skill("hub").depth == 1
+    assert registry.get_skill("child_a").depth == 2
+    assert registry.get_skill("grandchild").depth == 3
+    assert registry.get_skill("standalone").depth == 1
+
+
+def test_get_breadcrumb_root(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    assert registry.get_breadcrumb("hub") == ["hub"]
+
+
+def test_get_breadcrumb_nested(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    assert registry.get_breadcrumb("grandchild") == ["hub", "child_a", "grandchild"]
+
+
+def test_get_skill_permissive_access(tmp_path: Path) -> None:
+    """Any skill at any depth is accessible by name directly."""
+    registry = _make_hierarchy(tmp_path)
+    assert registry.get_skill("grandchild") is not None
+    assert registry.get_skill("child_a") is not None
+
+
+def test_parent_references_set_correctly(tmp_path: Path) -> None:
+    registry = _make_hierarchy(tmp_path)
+    grandchild = registry.get_skill("grandchild")
+    assert grandchild.parent.metadata.name == "child_a"
+    assert grandchild.parent.parent.metadata.name == "hub"
+    assert grandchild.parent.parent.parent is None
+
+
+def test_pkg_excluded_from_discovery(tmp_path: Path) -> None:
+    """pkg/ directory must never be discovered as a child skill."""
+    _write_skill(tmp_path, "alpha", has_pkg=True)
+    registry = SkillRegistry(tmp_path)
+    registry.discover()
+    alpha = registry.get_skill("alpha")
+    assert alpha is not None
+    assert alpha.children == []
+
+
+def test_generate_bootstrap_imports_includes_pkg_skills(tmp_path: Path) -> None:
+    _write_skill(tmp_path, "hub")
+    _write_skill(tmp_path / "hub", "leaf_with_pkg", has_pkg=True)
+    _write_skill(tmp_path / "hub", "leaf_no_pkg", has_pkg=False)
+    registry = SkillRegistry(tmp_path)
+    registry.discover()
+    imports = registry.generate_bootstrap_imports()
+    combined = "\n".join(imports)
+    assert "leaf_with_pkg" in combined
+    assert "leaf_no_pkg" not in combined

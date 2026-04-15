@@ -81,21 +81,27 @@ def register_core_tools(
             )
 
         meta = skill.metadata
-        references: list[str] = []
-        if skill.references_path and skill.references_path.exists():
-            references = sorted(
-                p.name for p in skill.references_path.iterdir() if p.is_file()
-            )
-        has_package = skill.package_path.exists() and any(
-            skill.package_path.iterdir()
+        # package_path is None when the skill has no pkg/ directory.
+        has_package = (
+            skill.package_path is not None
+            and skill.package_path.exists()
+            and any(skill.package_path.iterdir())
         )
+        # Derive references/ directory from pkg/ sibling, or from parent node.
+        references: list[str] = []
+        if skill.package_path is not None:
+            refs_path = skill.package_path.parent / "references"
+            if refs_path.exists():
+                references = sorted(
+                    p.name for p in refs_path.iterdir() if p.is_file()
+                )
 
         return {
             "name": meta.name,
             "body": skill.instructions,
             "metadata": {
                 "version": meta.version,
-                "level": meta.level,
+                "depth": skill.depth,
                 "description": meta.description,
                 "requires": list(meta.dependencies_requires),
                 "used_by": list(meta.dependencies_used_by),
