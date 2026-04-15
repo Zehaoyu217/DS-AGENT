@@ -289,6 +289,7 @@ function CompactBanner({ entry }: { entry: ToolCallEntry }) {
 
 function TerminalEntry({ entry }: { entry: ToolCallEntry }) {
   if (entry.name === '__compact__') return <CompactBanner entry={entry} />
+  // '__hook__' entries reserved for P23 hook SSE events (future: emit from backend)
 
   const isPending = entry.status === 'pending'
   const isError = entry.status === 'error'
