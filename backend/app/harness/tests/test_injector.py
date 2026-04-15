@@ -3,15 +3,25 @@ from __future__ import annotations
 from unittest.mock import MagicMock
 
 from app.harness.injector import InjectorInputs, PreTurnInjector
+from app.skills.base import SkillMetadata, SkillNode
 
 
-def _skill_registry_stub() -> MagicMock:
-    reg = MagicMock()
-    reg.list_skills.return_value = [
-        {"name": "correlation", "description": "Multi-method corr with CI."},
-        {"name": "group_compare", "description": "Effect-size-first comparison."},
-    ]
-    return reg
+def _make_node(name: str, desc: str, children: list[SkillNode] | None = None) -> SkillNode:
+    meta = SkillMetadata(name=name, version="1.0", description=desc)
+    node = SkillNode(metadata=meta, instructions="", package_path=None, depth=1, parent=None)
+    if children:
+        node.children.extend(children)
+    return node
+
+
+def _skill_registry_stub():
+    class _Stub:
+        def list_top_level(self) -> list[SkillNode]:
+            return [
+                _make_node("correlation", "Multi-method corr with CI."),
+                _make_node("group_compare", "Effect-size-first comparison."),
+            ]
+    return _Stub()
 
 
 def _gotcha_index_stub(text: str = "- **simpsons_paradox** — pooled vs stratified") -> MagicMock:
@@ -27,6 +37,7 @@ def test_injector_assembles_all_sections(tmp_path) -> None:
     wiki = MagicMock()
     wiki.working_digest.return_value = "WORKING DIGEST"
     wiki.index_digest.return_value = "INDEX DIGEST"
+    wiki.latest_session_notes.return_value = ""
 
     injector = PreTurnInjector(
         prompt_path=prompt_path,
@@ -52,6 +63,7 @@ def test_injector_omits_profile_when_absent(tmp_path) -> None:
     wiki = MagicMock()
     wiki.working_digest.return_value = ""
     wiki.index_digest.return_value = ""
+    wiki.latest_session_notes.return_value = ""
     injector = PreTurnInjector(
         prompt_path=prompt_path,
         wiki=wiki,
@@ -68,6 +80,7 @@ def test_injector_enforces_section_order(tmp_path) -> None:
     wiki = MagicMock()
     wiki.working_digest.return_value = "WORK"
     wiki.index_digest.return_value = "IDX"
+    wiki.latest_session_notes.return_value = ""
     injector = PreTurnInjector(
         prompt_path=prompt_path,
         wiki=wiki,
@@ -78,14 +91,14 @@ def test_injector_enforces_section_order(tmp_path) -> None:
     positions = {
         "STATIC": out.index("STATIC"),
         "## Operational State": out.index("## Operational State"),
-        "## Skill Menu": out.index("## Skill Menu"),
+        "## Skills": out.index("## Skills"),
         "## Statistical Gotchas": out.index("## Statistical Gotchas"),
         "## Active Dataset Profile": out.index("## Active Dataset Profile"),
     }
     assert (
         positions["STATIC"]
         < positions["## Operational State"]
-        < positions["## Skill Menu"]
+        < positions["## Skills"]
         < positions["## Statistical Gotchas"]
         < positions["## Active Dataset Profile"]
     )

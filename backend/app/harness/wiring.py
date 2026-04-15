@@ -108,7 +108,7 @@ class _SkillMenuAdapter:
     def __init__(self, registry: SkillRegistry) -> None:
         self._registry = registry
 
-    def list_top_level(self):  # type: ignore[override]
+    def list_top_level(self) -> list:
         return self._registry.list_top_level()
 
 
