@@ -59,7 +59,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        'shiki-container relative group my-3 rounded-lg overflow-hidden border border-surface-700 bg-[#0d1117]',
+        'shiki-container relative group my-3 rounded overflow-hidden border border-surface-700 bg-[#0d1117]',
         showLineNumbers && 'show-line-numbers',
         wordWrap && 'word-wrap-code',
         className,

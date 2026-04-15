@@ -54,7 +54,7 @@ export function IconRail() {
         )}
         style={
           isActive
-            ? { backgroundColor: 'rgba(139,92,246,0.12)' }
+            ? { backgroundColor: 'rgba(224,115,58,0.12)' }
             : undefined
         }
       >
@@ -69,7 +69,7 @@ export function IconRail() {
   return (
     <nav
       aria-label="Main navigation"
-      className="flex flex-col items-center w-12 h-full bg-surface-900 border-r border-surface-800 flex-shrink-0 py-2"
+      className="hidden md:flex flex-col items-center w-12 h-full bg-surface-900 border-r border-surface-800 flex-shrink-0 py-2"
     >
       {/* Top section icons */}
       <div className="flex flex-col items-center gap-0.5 flex-1">

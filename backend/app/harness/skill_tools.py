@@ -2,7 +2,19 @@
 from __future__ import annotations
 
 import dataclasses
+import difflib
 from typing import Any
+
+
+def _closest_skill_names(target: str, available: list[str], *, n: int = 5) -> list[str]:
+    """Return up to ``n`` closest matches from ``available`` to ``target``.
+
+    Uses difflib ratio so "correl" → "correlation", "timeseries" →
+    "time_series".  Empty list when nothing is close enough.
+    """
+    if not target or not available:
+        return []
+    return difflib.get_close_matches(target, available, n=n, cutoff=0.4)
 
 from app.artifacts.models import Artifact
 from app.artifacts.store import ArtifactStore
@@ -42,15 +54,55 @@ def register_core_tools(
     registry: SkillRegistry | None = None,
 ) -> None:
     def _load_skill_body(args: dict[str, Any]) -> dict:
+        """Return the full SKILL.md body plus metadata and reference files (P20).
+
+        The body is the complete markdown instructions with frontmatter
+        stripped — *not* a summary.  Metadata (version, level, dependencies,
+        error templates) helps the agent decide whether it has the
+        prerequisites wired, and the reference file list advertises any extra
+        prose the agent can opt in to later.
+        """
         name = args.get("name")
-        if not name:
-            raise ValueError("skill: 'name' required")
+        if not name or not isinstance(name, str):
+            raise ValueError("skill: 'name' (string) required")
         if registry is None:
             raise RuntimeError("skill registry not wired")
-        body = registry.get_instructions(name)
-        if body is None:
-            raise KeyError(f"skill: '{name}' not found")
-        return {"name": name, "body": body}
+
+        skill = registry.get_skill(name)
+        if skill is None:
+            available = registry.list_skills()
+            suggestions = _closest_skill_names(name, available)
+            raise KeyError(
+                f"skill: '{name}' not found. "
+                f"{len(available)} skills available. "
+                f"Suggestions: {suggestions}"
+            )
+
+        meta = skill.metadata
+        references: list[str] = []
+        if skill.references_path and skill.references_path.exists():
+            references = sorted(
+                p.name for p in skill.references_path.iterdir() if p.is_file()
+            )
+        has_package = skill.package_path.exists() and any(
+            skill.package_path.iterdir()
+        )
+
+        return {
+            "name": meta.name,
+            "body": skill.instructions,
+            "metadata": {
+                "version": meta.version,
+                "level": meta.level,
+                "description": meta.description,
+                "requires": list(meta.dependencies_requires),
+                "used_by": list(meta.dependencies_used_by),
+                "packages": list(meta.dependencies_packages),
+                "error_templates": dict(meta.error_templates),
+            },
+            "has_python_package": has_package,
+            "references": references,
+        }
 
     def _run_sandbox(args: dict[str, Any]) -> dict:
         code = str(args.get("code", ""))

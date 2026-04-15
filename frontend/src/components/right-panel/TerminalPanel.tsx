@@ -10,72 +10,71 @@ const STANDBY_MESSAGES = [
   'awaiting query...',
   'standing by...',
   'ready to analyze...',
-  'idle. ask me something...',
+  'monitoring for activity...',
   'systems nominal...',
   'all tools loaded...',
   'connected to DuckDB...',
-  'LLM is warm and waiting...',
+  'model loaded...',
 ]
 
 // ── Per-tool verb rotations ───────────────────────────────────────────────────
 
 const TOOL_VERBS: Record<string, string[]> = {
   execute_python: [
-    'Unleashing the snake...',
-    'Running Pythonic magic...',
-    'Crunching in Python...',
-    'Computing away...',
-    'import awesome_results...',
-    'def get_answers()...',
-    'Snake go brrrr...',
-    'Numpy doing numpy things...',
-    'Pandas are eating data...',
+    'executing script...',
+    'running computation...',
+    'crunching numbers...',
+    'computing...',
+    'loading dependencies...',
+    'evaluating...',
+    'processing data...',
+    'vectorizing...',
+    'reading dataframe...',
   ],
   query_duckdb: [
-    'Quacking through SQL...',
-    'Asking the ducks politely...',
-    'Querying the data pond...',
-    'SELECT-ing the good stuff...',
-    'JOINing the party...',
-    'GROUP BY... everything...',
+    'running query...',
+    'scanning tables...',
+    'executing SQL...',
+    'selecting rows...',
+    'joining tables...',
+    'aggregating results...',
   ],
   write_working: [
-    'Updating the scratchpad...',
-    'Writing thoughts down...',
-    'Recording findings...',
-    'Logging to working memory...',
-    'Noting it down...',
+    'updating scratchpad...',
+    'recording findings...',
+    'logging to working memory...',
+    'writing intermediate results...',
+    'noting observations...',
   ],
   delegate_subagent: [
-    'Spawning sub-agent...',
-    'Delegating to the team...',
-    'Launching specialist...',
-    'Coordinating work...',
+    'spawning sub-agent...',
+    'delegating task...',
+    'launching specialist...',
+    'coordinating work...',
   ],
 }
 
 const DEFAULT_VERBS = [
-  'Working on it...',
-  'Processing...',
-  'Thinking...',
-  'Computing...',
-  'Running tool...',
-  'Almost there...',
-  'Just a moment...',
+  'working...',
+  'processing...',
+  'computing...',
+  'running tool...',
+  'executing...',
+  'resolving...',
 ]
 
 const DONE_QUIPS = [
-  'Nailed it!',
-  'Done and dusted!',
-  'Boom!',
-  'Easy peasy!',
-  'Mission complete!',
-  'Another one bites the dust!',
-  'Ta-da!',
-  'Crushed it.',
-  'Analysis complete.',
-  'SQL delivered.',
-  'The data has spoken.',
+  'complete.',
+  'done.',
+  'ok.',
+  'succeeded.',
+  'finished.',
+  'result ready.',
+  'returned.',
+  'executed.',
+  'analysis complete.',
+  'sql delivered.',
+  'the data has spoken.',
 ]
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -138,7 +137,7 @@ function ElapsedBadge({
     <motion.span
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      className="text-[10px] text-emerald-400/70 font-mono tabular-nums shrink-0 bg-emerald-500/8 px-1.5 py-0.5 rounded-sm"
+      className="text-[10px] text-success font-mono tabular-nums shrink-0 bg-success-bg px-1.5 py-0.5 rounded-sm"
     >
       {display}
     </motion.span>
@@ -185,11 +184,11 @@ function PythonCodeBlock({
     : lines.slice(0, PREVIEW_LINES).join('\n') + (isLong ? '\n…' : '')
 
   return (
-    <div className="mt-1.5 rounded-sm bg-[#0b0e18] border border-violet-500/20 overflow-hidden">
-      <div className="flex items-center justify-between px-2 py-1 border-b border-violet-500/15 bg-violet-500/5">
+    <div className="mt-1.5 rounded-sm bg-surface-950 border border-brand-accent/20 overflow-hidden">
+      <div className="flex items-center justify-between px-2 py-1 border-b border-brand-accent/15 bg-brand-accent/5">
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-400/60" />
-          <span className="text-[9px] font-mono text-violet-400/70 tracking-wider">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-400/60" />
+          <span className="text-[9px] font-mono text-brand-400/70 tracking-wider">
             PYTHON
           </span>
           {isRunning && (
@@ -201,13 +200,13 @@ function PythonCodeBlock({
         {isLong && (
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="text-[9px] font-mono text-violet-400/50 hover:text-violet-400/80 transition-colors"
+            className="text-[9px] font-mono text-brand-400/50 hover:text-brand-400/80 transition-colors"
           >
             {expanded ? 'collapse' : 'expand'}
           </button>
         )}
       </div>
-      <pre className="text-[10px] font-mono text-violet-300/80 px-2.5 py-2 overflow-x-auto leading-relaxed whitespace-pre-wrap break-all">
+      <pre className="text-[10px] font-mono text-brand-300/80 px-2.5 py-2 overflow-x-auto leading-relaxed whitespace-pre-wrap break-all">
         {displayCode}
       </pre>
     </div>
@@ -252,7 +251,7 @@ function StatusDot({ status }: { status: ToolCallStatus }) {
   }
   if (status === 'ok') {
     return (
-      <span className="text-[11px] text-emerald-400/80 shrink-0 leading-none">✓</span>
+      <span className="text-[11px] text-success shrink-0 leading-none">✓</span>
     )
   }
   if (status === 'error') {
@@ -271,7 +270,26 @@ function doneQuipFor(id: string): string {
   return DONE_QUIPS[Math.abs(hash) % DONE_QUIPS.length]
 }
 
+function CompactBanner({ entry }: { entry: ToolCallEntry }) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex items-center gap-2 px-2 py-1 rounded border border-dashed border-surface-700/40 bg-surface-800/20"
+    >
+      <span className="text-[9px] font-mono text-surface-600 tracking-widest uppercase">
+        ⌃compact
+      </span>
+      <span className="text-[10px] font-mono text-surface-600 flex-1">{entry.preview}</span>
+      <span className="text-[9px] font-mono text-surface-700">s{entry.step}</span>
+    </motion.div>
+  )
+}
+
 function TerminalEntry({ entry }: { entry: ToolCallEntry }) {
+  if (entry.name === '__compact__') return <CompactBanner entry={entry} />
+
   const isPending = entry.status === 'pending'
   const isError = entry.status === 'error'
   const isBlocked = entry.status === 'blocked'
@@ -402,12 +420,12 @@ export function TerminalPanel(): React.ReactElement {
   }, [toolCallLog.length])
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-[#09090b]">
+    <div className="flex flex-col flex-1 min-h-0 bg-canvas">
       {/* Header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2 border-b border-surface-800/60 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[9px] font-mono font-bold tracking-[0.18em] text-surface-500 uppercase">
-            Terminal
+            Progress
           </span>
           {hasRunning && (
             <motion.span

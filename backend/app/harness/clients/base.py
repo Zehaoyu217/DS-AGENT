@@ -4,12 +4,31 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
 
+class RateLimitError(Exception):
+    """Raised when an upstream provider returns a rate-limit (HTTP 429).
+
+    Clients should raise this instead of a bare ``RuntimeError`` so the
+    fallback wrapper (``FallbackModelClient``) can catch rate-limit errors
+    specifically and try the next model in the chain.
+    """
+
+    def __init__(self, provider: str, model: str, detail: str = "") -> None:
+        self.provider = provider
+        self.model = model
+        self.detail = detail
+        super().__init__(
+            f"{provider} rate-limited on model '{model}'"
+            + (f": {detail}" if detail else "")
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class Message:
     role: str
     content: str
     name: str | None = None
     tool_use_id: str | None = None
+    tool_calls: tuple["ToolCall", ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True, slots=True)

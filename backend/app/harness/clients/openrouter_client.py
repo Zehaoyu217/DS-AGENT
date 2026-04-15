@@ -8,6 +8,7 @@ from typing import Any
 from app.harness.clients.base import (
     CompletionRequest,
     CompletionResponse,
+    RateLimitError,
     ToolCall,
 )
 from app.harness.config import ModelProfile
@@ -53,6 +54,25 @@ class OpenRouterClient:
                         "content": m.content,
                     }
                 )
+            elif m.role == "assistant" and m.tool_calls:
+                # Assistant message that made tool calls — must include tool_calls
+                # so the model can correctly interpret the subsequent tool results.
+                msg: dict[str, Any] = {
+                    "role": "assistant",
+                    "content": m.content or None,
+                    "tool_calls": [
+                        {
+                            "type": "function",
+                            "id": tc.id,
+                            "function": {
+                                "name": tc.name,
+                                "arguments": json.dumps(tc.arguments),
+                            },
+                        }
+                        for tc in m.tool_calls
+                    ],
+                }
+                messages.append(msg)
             else:
                 messages.append({"role": m.role, "content": m.content})
 
@@ -80,6 +100,12 @@ class OpenRouterClient:
     def complete(self, request: CompletionRequest) -> CompletionResponse:
         url = f"{self._base_url()}/chat/completions"
         resp = self._http.post(url, json=self._payload(request), headers=self._headers())
+        if resp.status_code == 429:
+            raise RateLimitError(
+                provider="openrouter",
+                model=self.profile.model_id,
+                detail=resp.text[:500],
+            )
         if resp.status_code != 200:
             raise RuntimeError(f"openrouter HTTP {resp.status_code}: {resp.text}")
         data = resp.json()

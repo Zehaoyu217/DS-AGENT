@@ -18,10 +18,10 @@ export function ScratchpadPanel(): React.ReactElement {
         </div>
       ) : (
         <div>
-          <p className="text-xs font-mono text-surface-500">No scratchpad content yet.</p>
-          <p className="text-xs font-mono text-surface-600 mt-1 leading-relaxed">
-            Agent reasoning and findings will appear here when the agent calls{' '}
-            <span className="text-surface-400">write_working</span>.
+          <p className="text-[10px] font-mono text-surface-600 italic">no scratchpad content yet</p>
+          <p className="text-[9px] font-mono text-surface-700 italic mt-1 leading-relaxed">
+            agent reasoning and notes appear here via{' '}
+            <span className="text-surface-600 not-italic">write_working</span>
           </p>
         </div>
       )}

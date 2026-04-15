@@ -1,11 +1,20 @@
 # backend/app/harness/sandbox_bootstrap.py
 from __future__ import annotations
 
+import os
 from pathlib import Path
+
+# Absolute path to the backend directory — injected into subprocess sys.path
+# so that `config.*` and `app.*` packages are importable from the temp-file sandbox.
+_BACKEND_DIR = str(Path(__file__).resolve().parent.parent.parent)
 
 _SKILL_IMPORTS: list[str] = [
     "import sys",
     "import os",
+    # Ensure the backend directory is on sys.path so that config.* and app.*
+    # packages are importable even when the sandbox runs from a temp file.
+    f"if {_BACKEND_DIR!r} not in sys.path:",
+    f"    sys.path.insert(0, {_BACKEND_DIR!r})",
     "import json",
     "import numpy as np",
     "import pandas as pd",
@@ -50,25 +59,32 @@ def build_sandbox_bootstrap(
     return "\n".join(parts) + "\n"
 
 
+# Absolute path — computed at import time so sandbox subprocesses find the DB
+# regardless of their working directory.
+_MAIN_DB_PATH = str(
+    Path(__file__).resolve().parent.parent.parent / "data" / "duckdb" / "eval.db"
+)
+
+
 def build_duckdb_globals(
     session_id: str,
-    dataset_path: str | Path | None,
+    dataset_path: str | Path | None = None,
+    db_path: str = _MAIN_DB_PATH,
 ) -> str:
-    """Build a Python preamble for the sandbox that wires up a DuckDB session.
+    """Build a Python preamble for the sandbox that wires up DuckDB access.
 
-    Opens (or creates) ``data/sessions/{session_id}.duckdb`` and, when
-    *dataset_path* is provided, reads the file into a pandas DataFrame and
-    registers it as a DuckDB table named ``"dataset"``.
+    Connects read-only to the shared ``data/duckdb/analytical.db`` so the
+    agent can query all loaded tables (bank_macro_panel, bank_wide, etc.)
+    from the start — no file upload required.
 
-    The returned string is valid Python source intended to be prepended to
-    user code inside the sandbox subprocess.  It exposes:
+    When *dataset_path* is provided (user uploaded a file), also reads it
+    into ``df`` for direct pandas access.
 
-    * ``df``        – pandas DataFrame (or ``None`` when no dataset)
-    * ``conn``      – the open DuckDB connection for this session
-    * ``save_artifact(name, data)`` – writes JSON to
-                      ``data/artifacts/{session_id}/{name}.json``
+    Exposes:
+    * ``conn``   – read-only DuckDB connection to the shared database
+    * ``df``     – pandas DataFrame from uploaded file, or ``None``
+    * ``save_artifact(name, data)`` – writes JSON artifact to disk
     """
-    db_path = f"data/sessions/{session_id}.duckdb"
     artifact_dir = f"data/artifacts/{session_id}"
 
     parts: list[str] = list(_SKILL_IMPORTS) + [
@@ -78,22 +94,16 @@ def build_duckdb_globals(
         f"_ARTIFACT_DIR = {artifact_dir!r}",
         "",
         "import pathlib as _pathlib",
-        "_pathlib.Path(_DB_PATH).parent.mkdir(parents=True, exist_ok=True)",
-        "conn = duckdb.connect(_DB_PATH)",
+        # Connect read-only — safe for concurrent sandbox processes
+        "conn = duckdb.connect(_DB_PATH, read_only=True)",
         "",
     ]
 
     if dataset_path:
         path = str(Path(dataset_path))
         suffix = Path(dataset_path).suffix.lower()
-        if suffix == ".csv":
-            read_expr = f"pd.read_csv({path!r})"
-        else:
-            read_expr = f"pd.read_parquet({path!r})"
-        parts += [
-            f"df = {read_expr}",
-            'conn.register("dataset", df)',
-        ]
+        read_expr = f"pd.read_csv({path!r})" if suffix == ".csv" else f"pd.read_parquet({path!r})"
+        parts.append(f"df = {read_expr}")
     else:
         parts.append("df = None")
 

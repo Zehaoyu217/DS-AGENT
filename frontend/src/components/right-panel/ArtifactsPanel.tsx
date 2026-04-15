@@ -111,9 +111,9 @@ export function ArtifactsPanel(): React.ReactElement {
 
       {filtered.length === 0 ? (
         <div>
-          <p className="text-xs font-mono text-surface-500">No artifacts yet.</p>
-          <p className="text-xs font-mono text-surface-600 mt-1 leading-relaxed">
-            Charts, tables, and diagrams generated during analysis appear here.
+          <p className="text-[10px] font-mono text-surface-600 italic">no artifacts yet</p>
+          <p className="text-[9px] font-mono text-surface-700 italic mt-1 leading-relaxed">
+            charts, tables, and diagrams appear here as the agent generates them
           </p>
         </div>
       ) : (

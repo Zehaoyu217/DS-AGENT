@@ -10,6 +10,7 @@ from app.harness.clients.base import (
     ModelClient,
     ToolSchema,
 )
+from app.harness.compactor import MicroCompactor
 from app.harness.dispatcher import ToolDispatcher, ToolResult
 from app.harness.guardrails.end_of_turn import end_of_turn
 from app.harness.guardrails.post_tool import post_tool
@@ -30,8 +31,13 @@ class LoopOutcome:
 
 
 class AgentLoop:
-    def __init__(self, dispatcher: ToolDispatcher) -> None:
+    def __init__(
+        self,
+        dispatcher: ToolDispatcher,
+        compactor: MicroCompactor | None = None,
+    ) -> None:
         self._dispatcher = dispatcher
+        self._compactor = compactor or MicroCompactor()
 
     def run(
         self,
@@ -52,6 +58,7 @@ class AgentLoop:
 
         for step in range(1, max_steps + 1):
             steps = step
+            messages, _ = self._compactor.maybe_compact(messages)
             resp = client.complete(CompletionRequest(
                 system=system, messages=tuple(messages),
                 tools=tools, max_tokens=2048,
@@ -62,7 +69,11 @@ class AgentLoop:
                 stop_reason = resp.stop_reason or "end_turn"
                 break
 
-            messages.append(Message(role="assistant", content=resp.text or ""))
+            messages.append(Message(
+                role="assistant",
+                content=resp.text or "",
+                tool_calls=tuple(resp.tool_calls),
+            ))
             for call in resp.tool_calls:
                 pre_findings = pre_tool_gate(
                     call, turn_trace=state.as_trace(),
@@ -162,6 +173,21 @@ class AgentLoop:
                 payload={"session_id": session_id, "step": steps},
             )
 
+            messages, compact_report = self._compactor.maybe_compact(messages)
+            if compact_report.triggered:
+                yield StreamEvent(
+                    type="micro_compact",
+                    payload={
+                        "step": steps,
+                        "dropped_messages": compact_report.dropped_messages,
+                        "chars_before": compact_report.chars_before,
+                        "chars_after": compact_report.chars_after,
+                        "tokens_before": compact_report.tokens_before,
+                        "tokens_after": compact_report.tokens_after,
+                        "artifact_refs": list(compact_report.artifact_refs),
+                    },
+                )
+
             resp = client.complete(CompletionRequest(
                 system=system, messages=tuple(messages),
                 tools=tools, max_tokens=2048,
@@ -172,7 +198,11 @@ class AgentLoop:
                 stop_reason = resp.stop_reason or "end_turn"
                 break
 
-            messages.append(Message(role="assistant", content=resp.text or ""))
+            messages.append(Message(
+                role="assistant",
+                content=resp.text or "",
+                tool_calls=tuple(resp.tool_calls),
+            ))
             for call in resp.tool_calls:
                 yield StreamEvent(
                     type="tool_call",
@@ -244,6 +274,14 @@ class AgentLoop:
                             type="scratchpad_delta",
                             payload={"content": new_pad},
                         )
+                # Emit todos_update when todo_write succeeds so the frontend
+                # task panel refreshes in real time (P19).
+                if call.name == "todo_write" and result.ok:
+                    new_todos = (result.payload or {}).get("todos", [])
+                    yield StreamEvent(
+                        type="todos_update",
+                        payload={"todos": new_todos},
+                    )
                 state.record_tool(
                     name=call.name,
                     result_payload=(result.payload

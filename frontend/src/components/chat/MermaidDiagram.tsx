@@ -1,42 +1,43 @@
 import { useRef, useEffect, useState } from 'react'
 import mermaid from 'mermaid'
+import { TOKENS } from '@/lib/design-tokens'
 
 mermaid.initialize({
   startOnLoad: false,
   theme: 'base',
   themeVariables: {
-    background: '#09090b',
-    primaryColor: '#18181b',
-    primaryTextColor: '#f4f4f5',
-    primaryBorderColor: '#8b5cf6',
-    lineColor: '#52525b',
-    secondaryColor: '#27272a',
-    secondaryTextColor: '#a1a1aa',
-    secondaryBorderColor: '#8b5cf6',
-    tertiaryColor: '#09090b',
-    tertiaryTextColor: '#a1a1aa',
-    tertiaryBorderColor: '#52525b',
-    edgeLabelBackground: '#18181b',
-    titleColor: '#f4f4f5',
-    textColor: '#a1a1aa',
-    clusterBkg: '#09090b',
-    clusterBorder: 'rgba(139,92,246,0.2)',
+    background: TOKENS.bgPrimary,
+    primaryColor: TOKENS.bgSecondary,
+    primaryTextColor: TOKENS.textPrimary,
+    primaryBorderColor: TOKENS.info,
+    lineColor: TOKENS.textMuted,
+    secondaryColor: TOKENS.bgElevated,
+    secondaryTextColor: TOKENS.textSecondary,
+    secondaryBorderColor: TOKENS.info,
+    tertiaryColor: TOKENS.bgPrimary,
+    tertiaryTextColor: TOKENS.textSecondary,
+    tertiaryBorderColor: TOKENS.textMuted,
+    edgeLabelBackground: TOKENS.bgSecondary,
+    titleColor: TOKENS.textPrimary,
+    textColor: TOKENS.textSecondary,
+    clusterBkg: TOKENS.bgPrimary,
+    clusterBorder: 'rgba(59,130,246,0.2)',
     fontFamily: 'JetBrains Mono, ui-monospace, monospace',
-    noteTextColor: '#f4f4f5',
-    noteBkgColor: '#18181b',
-    noteBorderColor: 'rgba(139,92,246,0.3)',
-    actorBkg: '#18181b',
-    actorBorder: 'rgba(139,92,246,0.4)',
-    actorTextColor: '#f4f4f5',
-    actorLineColor: '#52525b',
-    signalColor: '#a1a1aa',
-    signalTextColor: '#f4f4f5',
-    labelBoxBkgColor: '#18181b',
-    labelBoxBorderColor: 'rgba(139,92,246,0.3)',
-    labelTextColor: '#f4f4f5',
-    loopTextColor: '#a1a1aa',
-    activationBorderColor: '#8b5cf6',
-    activationBkgColor: 'rgba(139,92,246,0.12)',
+    noteTextColor: TOKENS.textPrimary,
+    noteBkgColor: TOKENS.bgSecondary,
+    noteBorderColor: 'rgba(59,130,246,0.3)',
+    actorBkg: TOKENS.bgSecondary,
+    actorBorder: 'rgba(59,130,246,0.4)',
+    actorTextColor: TOKENS.textPrimary,
+    actorLineColor: TOKENS.textMuted,
+    signalColor: TOKENS.textSecondary,
+    signalTextColor: TOKENS.textPrimary,
+    labelBoxBkgColor: TOKENS.bgSecondary,
+    labelBoxBorderColor: 'rgba(59,130,246,0.3)',
+    labelTextColor: TOKENS.textPrimary,
+    loopTextColor: TOKENS.textSecondary,
+    activationBorderColor: TOKENS.info,
+    activationBkgColor: 'rgba(59,130,246,0.12)',
   },
 })
 
@@ -89,10 +90,10 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
 
   if (error) {
     return (
-      <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-red-950/40 border border-red-800/40">
+      <div className="flex items-start gap-2 px-3 py-2 rounded bg-error-bg border border-error/40">
         <div>
-          <p className="text-xs font-mono font-semibold text-red-400 mb-0.5">Diagram error</p>
-          <p className="text-[10px] font-mono text-red-400/70 leading-relaxed break-words">{error}</p>
+          <p className="text-xs font-mono font-semibold text-error mb-0.5">Diagram error</p>
+          <p className="text-[10px] font-mono text-error/70 leading-relaxed break-words">{error}</p>
         </div>
       </div>
     )
@@ -103,7 +104,7 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   return (
     <div
       ref={containerRef}
-      className="flex justify-center overflow-auto my-2 rounded-lg bg-surface-850 border border-surface-700/60 p-3"
+      className="flex justify-center overflow-auto my-2 rounded bg-surface-850 border border-surface-700/60 p-3"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   )

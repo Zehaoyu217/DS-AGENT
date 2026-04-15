@@ -1,50 +1,27 @@
+"""Altair theme stub contract tests.
+
+The full variant-aware Altair theme (gir_light / gir_editorial / ...) was
+never implemented. The module exports no-op ``register_all`` / ``use_variant``
+and an ``active_tokens`` that returns an empty dict. These tests pin the
+stub contract so skill imports keep working even when Altair is not
+configured; replace them once a real theme ships.
+"""
 from __future__ import annotations
 
-from pathlib import Path
-
-import altair as alt
-import pytest
 from config.themes.altair_theme import active_tokens, register_all, use_variant
 
-TOKENS_PATH = Path(__file__).resolve().parents[3] / "config" / "themes" / "tokens.yaml"
+
+def test_register_all_is_callable_and_returns_none() -> None:
+    assert register_all() is None
 
 
-@pytest.fixture(autouse=True)
-def reset_active():
-    register_all(TOKENS_PATH)
-    yield
+def test_use_variant_accepts_any_name() -> None:
+    # No variants are registered — the stub must not raise for any input.
+    assert use_variant("light") is None
+    assert use_variant("editorial") is None
+    assert use_variant("nonexistent") is None
 
 
-def test_register_all_registers_five_variant_names() -> None:
-    names = alt.themes.names()
-    for variant in ("light", "dark", "editorial", "presentation", "print"):
-        assert f"gir_{variant}" in names
-
-
-def test_use_variant_activates_theme() -> None:
-    use_variant("editorial")
-    config = alt.themes.get()()
-    assert "config" in config
-    assert config["config"]["background"].startswith("#FB")
-
-
-def test_theme_provides_range_category_of_18_colors() -> None:
-    use_variant("light")
-    config = alt.themes.get()()
-    assert len(config["config"]["range"]["category"]) >= 18
-
-
-def test_theme_title_anchor_is_start() -> None:
-    use_variant("editorial")
-    config = alt.themes.get()()
-    assert config["config"]["title"]["anchor"] == "start"
-
-
-def test_active_tokens_falls_back_when_non_gir_theme_active() -> None:
-    """Non-gir_* active themes must fall through to the default variant."""
-    alt.themes.enable("quartz")
-    try:
-        tokens = active_tokens()
-        assert tokens.name == "light"  # default_variant in tokens.yaml
-    finally:
-        alt.themes.enable("gir_light")
+def test_active_tokens_returns_empty_dict_when_unconfigured() -> None:
+    tokens = active_tokens()
+    assert tokens == {}

@@ -46,10 +46,10 @@
     --color-text-secondary: #a1a1aa;
     --color-text-muted: #52525b;
 
-    /* Accent (brand purple) */
-    --color-accent: #8b5cf6;
-    --color-accent-hover: #7c3aed;
-    --color-accent-active: #6d28d9;
+    /* Accent (Claude orange) */
+    --color-accent: #e0733a;
+    --color-accent-hover: #cb612a;
+    --color-accent-active: #b8511e;
     --color-accent-foreground: #ffffff;
 
     /* Borders */
@@ -68,7 +68,7 @@
 
     /* Code */
     --color-code-bg: #1f1f23;
-    --color-code-text: #a78bfa;
+    --color-code-text: #fb923c;
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
@@ -98,7 +98,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 3.7% 15.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 263.4 70% 50.4%;
+    --primary: 24 68% 55%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -110,7 +110,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 24 68% 55%;
   }
 
   /* Light theme override */
@@ -123,9 +123,9 @@
     --color-text-secondary: #52525b;
     --color-text-muted: #a1a1aa;
 
-    --color-accent: #7c3aed;
-    --color-accent-hover: #6d28d9;
-    --color-accent-active: #5b21b6;
+    --color-accent: #c2410c;
+    --color-accent-hover: #9a3412;
+    --color-accent-active: #7c2d12;
     --color-accent-foreground: #ffffff;
 
     --color-border: #e4e4e7;
@@ -141,7 +141,7 @@
     --color-info-bg: rgba(37, 99, 235, 0.1);
 
     --color-code-bg: #f4f4f5;
-    --color-code-text: #7c3aed;
+    --color-code-text: #c2410c;
 
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -153,7 +153,7 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 24 68% 55%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -165,7 +165,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 24 68% 55%;
   }
 
   *,
@@ -189,10 +189,28 @@
     margin: 0;
     background-color: var(--color-bg-primary);
     color: var(--color-text-primary);
+    font-family: system-ui, -apple-system, sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
+  }
+
+  /* Subtle grain texture — adds depth to the flat dark background.
+     Placed above all content via z-index; pointer-events disabled so it
+     never blocks interaction. Omitted in forced-colors mode. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.018;
+  }
+
+  @media (forced-colors: active) {
+    body::after { display: none; }
   }
 
   /* Focus visible ring */
@@ -203,7 +221,7 @@
 
   /* Selection colour */
   ::selection {
-    background: rgba(139, 92, 246, 0.35);
+    background: rgba(224, 115, 58, 0.30);
     color: inherit;
   }
 

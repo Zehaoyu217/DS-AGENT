@@ -99,6 +99,11 @@ export interface ModelsResponse {
   groups: ModelGroup[]
 }
 
+export interface DataInfo {
+  db_name: string
+  tables: string[]
+}
+
 async function request<T>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   path: string,
@@ -170,6 +175,9 @@ export const backend = {
   },
   models: {
     list: (): Promise<ModelsResponse> => request<ModelsResponse>('GET', '/api/models'),
+  },
+  data: {
+    info: (): Promise<DataInfo> => request<DataInfo>('GET', '/api/data/info'),
   },
   slash: {
     list: (): Promise<SlashCommand[]> =>

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Bot } from 'lucide-react'
 import { useChatStore } from '@/lib/store'
 import { extractTextContent } from '@/lib/utils'
 import { VirtualMessageList } from './VirtualMessageList'
 import { ScrollToBottom } from './ScrollToBottom'
 import { SuggestedPrompts } from './SuggestedPrompts'
+
+const CHAT_SUBMIT_EVENT = 'chat:submit'
 
 interface ChatWindowProps {
   conversationId: string
@@ -17,6 +18,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     s.conversations.find((c) => c.id === conversationId),
   )
   const setDraftInput = useChatStore((s) => s.setDraftInput)
+  const deleteMessage = useChatStore((s) => s.deleteMessage)
 
   const messages = conversation?.messages ?? []
   const isStreaming = messages.some((m) => m.status === 'streaming')
@@ -30,6 +32,21 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const [unreadCount, setUnreadCount] = useState(0)
   const prevMessageCountRef = useRef(messages.length)
   const scrollToBottomFnRef = useRef<(() => void) | null>(null)
+
+  const handleRegenerate = useCallback(
+    (messageId: string) => {
+      const msgs = conversation?.messages ?? []
+      const idx = msgs.findIndex((m) => m.id === messageId)
+      if (idx < 1) return
+      const preceding = msgs[idx - 1]
+      if (preceding.role !== 'user') return
+      const userText = extractTextContent(preceding.content)
+      deleteMessage(conversationId, messageId)
+      setDraftInput(userText)
+      window.dispatchEvent(new CustomEvent(CHAT_SUBMIT_EVENT))
+    },
+    [conversation?.messages, conversationId, deleteMessage, setDraftInput],
+  )
 
   const handleScrollStateChange = useCallback(
     (atBottom: boolean, scrollToBottomFn: () => void) => {
@@ -71,20 +88,27 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-6">
-        <div
-          className="w-12 h-12 rounded-full bg-brand-600/20 flex items-center justify-center"
-          aria-hidden="true"
-        >
-          <Bot className="w-6 h-6 text-brand-400" aria-hidden="true" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-surface-100">How can I help?</h2>
-          <p className="text-sm text-surface-400 mt-1">
-            Send a message to begin chatting with the agent.
+      <div className="flex-1 flex flex-col justify-center px-6 md:px-8 lg:px-10">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-[11px] font-mono tracking-[0.25em] text-surface-500 uppercase">
+              Analytical Agent
+            </span>
+            <span className="w-px h-3 bg-surface-800 flex-shrink-0" aria-hidden />
+            <span className="text-[11px] font-mono tracking-[0.18em] text-brand-accent/60 uppercase">
+              Ready
+            </span>
+          </div>
+          <p className="text-[11px] font-mono text-surface-600 mb-5 leading-relaxed">
+            Query datasets, run Python, produce charts and diagnostic reports.
+            <br />
+            Type <span className="text-surface-400">/</span> for commands or start with a prompt below.
           </p>
+          <p className="text-[10px] font-mono tracking-[0.22em] text-surface-700 uppercase mb-3">
+            Quick queries
+          </p>
+          <SuggestedPrompts onSelect={(text) => setDraftInput(text)} />
         </div>
-        <SuggestedPrompts onSelect={(text) => setDraftInput(text)} />
       </div>
     )
   }
@@ -101,6 +125,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         isStreaming={isStreaming}
         conversationId={conversationId}
         onScrollStateChange={handleScrollStateChange}
+        onRegenerate={handleRegenerate}
       />
 
       {/* Scroll-to-bottom floating button, centred above the input */}

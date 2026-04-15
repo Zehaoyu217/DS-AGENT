@@ -1,14 +1,5 @@
 import { memo, useCallback, useState } from 'react'
-import {
-  AlertCircle,
-  Bot,
-  Check,
-  ChevronDown,
-  Copy,
-  User,
-  Wrench,
-} from 'lucide-react'
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
+import { Check, Copy, RotateCcw, Wrench } from 'lucide-react'
 import type { Message, Artifact } from '@/lib/store'
 import { useChatStore } from '@/lib/store'
 import type { ContentBlock, ToolUseContent } from '@/lib/types'
@@ -22,33 +13,32 @@ import { DataTable } from '@/components/right-panel/DataTable'
 interface MessageBubbleProps {
   message: Message
   conversationId?: string
+  onRegenerate?: () => void
 }
 
 function StreamingCursor() {
   return (
     <span
       aria-hidden="true"
-      className="inline-block w-1.5 h-4 bg-current ml-0.5 align-middle animate-[streaming-cursor_1s_infinite]"
+      className="inline-block w-[2px] h-[14px] bg-brand-400 ml-0.5 align-middle animate-[streaming-cursor_1s_infinite]"
     />
   )
 }
 
 /**
- * Placeholder renderer for tool_use blocks. Our backend doesn't emit these yet,
- * so this is forward-compat only — keeps the component safe if a ContentBlock
- * of type `tool_use` ever arrives without crashing the render path.
+ * Placeholder renderer for tool_use blocks. Forward-compat only.
  */
 function ToolUsePlaceholder({ block }: { block: ToolUseContent }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-surface-700/60 bg-surface-850 px-3 py-2 text-xs text-surface-400">
-      <Wrench className="w-3.5 h-3.5 text-brand-400" aria-hidden />
-      <span className="font-mono">[tool call: {block.name}]</span>
+    <div className="flex items-center gap-2 border-l-2 border-surface-700 pl-3 py-1 text-xs text-surface-500">
+      <Wrench className="w-3 h-3 text-brand-accent/60 flex-shrink-0" aria-hidden />
+      <span className="font-mono text-surface-600">{block.name}</span>
     </div>
   )
 }
 
 /**
- * Render a single artifact inline inside a chat bubble.
+ * Render a single artifact inline.
  */
 function InlineArtifact({ artifact }: { artifact: Artifact }) {
   if (artifact.format === 'vega-lite') {
@@ -87,19 +77,12 @@ function AssistantContent({
       .map((b) => b.text)
       .join('')
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <div
-          className={cn(
-            'rounded-2xl px-4 py-3 text-sm rounded-tl-sm',
-            isError
-              ? 'bg-red-950 border border-red-800 text-red-200'
-              : 'bg-surface-800 text-surface-100',
-          )}
-        >
+      <div className="flex flex-col gap-3 w-full">
+        <div className={cn(isError ? 'text-red-300' : 'text-surface-100')}>
           {text ? (
             <MarkdownContent content={text} />
           ) : isStreaming ? null : (
-            <span className="text-surface-400 italic">(empty response)</span>
+            <span className="text-surface-700 italic text-xs font-mono">empty response</span>
           )}
           {isStreaming && <StreamingCursor />}
         </div>
@@ -111,15 +94,12 @@ function AssistantContent({
   }
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-3 w-full">
       {blocks.map((block, i) => {
         if (block.type === 'text') {
           if (!block.text.trim()) return null
           return (
-            <div
-              key={i}
-              className="rounded-2xl px-4 py-3 text-sm bg-surface-800 text-surface-100 rounded-tl-sm"
-            >
+            <div key={i} className="text-surface-100">
               <MarkdownContent content={block.text} />
               {isStreaming && i === blocks.length - 1 && <StreamingCursor />}
             </div>
@@ -131,7 +111,6 @@ function AssistantContent({
         }
 
         if (block.type === 'chart') {
-          // Fallback for old chart blocks not yet migrated to artifact store
           return <VegaChart key={i} spec={block.spec} />
         }
 
@@ -139,12 +118,14 @@ function AssistantContent({
           return <SubagentCard key={i} entry={block} />
         }
 
-        // tool_result blocks: no standalone rendering (pairs with tool_use).
         return null
       })}
 
       {isStreaming && blocks[blocks.length - 1]?.type === 'tool_use' && (
-        <div className="px-2 py-1 text-xs text-surface-500 animate-pulse">Working…</div>
+        <div className="flex items-center gap-1.5 py-1">
+          <span className="w-1 h-1 rounded-full bg-brand-accent animate-pulse" />
+          <span className="text-[10px] font-mono text-surface-600 tracking-wider">working</span>
+        </div>
       )}
 
       {inlineArtifacts.map((artifact) => (
@@ -154,21 +135,18 @@ function AssistantContent({
   )
 }
 
-export const MessageBubble = memo(function MessageBubble({ message }: MessageBubbleProps) {
+export const MessageBubble = memo(function MessageBubble({ message, onRegenerate }: MessageBubbleProps) {
   const isUser = message.role === 'user'
   const isError = message.status === 'error'
-  // Our backend doesn't stream yet; status === 'sending' (pending) drives the cursor as forward-compat.
   const isStreaming = message.status === 'streaming' || message.status === 'sending'
 
   const [copied, setCopied] = useState(false)
 
-  // Resolve inline artifacts from the store for this message
   const allArtifacts = useChatStore((s) => s.artifacts)
   const inlineArtifacts: Artifact[] = (message.artifactIds ?? [])
     .map((id) => allArtifacts.find((a) => a.id === id))
     .filter((a): a is Artifact => a !== undefined)
 
-  // Normalise content to a blocks array so the assistant path always handles both shapes.
   const blocks: ContentBlock[] = Array.isArray(message.content)
     ? (message.content as ContentBlock[])
     : [{ type: 'text', text: message.content }]
@@ -187,95 +165,78 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessageBub
 
   return (
     <article
-      className={cn('group flex gap-3 animate-fade-in', isUser && 'flex-row-reverse')}
-      aria-label={isUser ? 'You' : isError ? 'Error from assistant' : 'Assistant'}
+      className={cn(
+        'group animate-fade-in pl-3',
+        isUser
+          ? 'border-l-2 border-surface-700/40'
+          : isError
+            ? 'border-l-2 border-error/30'
+            : 'border-l-2 border-brand-accent/25',
+      )}
+      aria-label={isUser ? 'User' : isError ? 'Error from agent' : 'Agent'}
     >
-      {/* Avatar — purely decorative, role conveyed by article label */}
-      <div
-        aria-hidden="true"
-        className={cn(
-          'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5',
-          isUser
-            ? 'bg-brand-600 text-white'
-            : isError
-              ? 'bg-red-900 text-red-300'
-              : 'bg-surface-700 text-surface-300',
-        )}
-      >
-        {isUser ? (
-          <User className="w-4 h-4" aria-hidden="true" />
-        ) : isError ? (
-          <AlertCircle className="w-4 h-4" aria-hidden="true" />
-        ) : (
-          <Bot className="w-4 h-4" aria-hidden="true" />
+      {/* Role + timestamp */}
+      <div className="flex items-center gap-2 mb-2">
+        <span
+          className={cn(
+            'text-[10px] font-mono font-semibold tracking-[0.18em] uppercase',
+            isUser ? 'text-surface-300' : isError ? 'text-red-400' : 'text-surface-400',
+          )}
+        >
+          {isUser ? 'USR' : isError ? 'ERR' : 'AGENT'}
+        </span>
+        <span className="w-px h-2.5 bg-surface-800 flex-shrink-0" aria-hidden />
+        <span className="text-[9px] font-mono text-surface-700 select-none tabular-nums">
+          {formatDate(message.timestamp)}
+        </span>
+        {isStreaming && (
+          <span className="flex items-center gap-1">
+            <span className="w-1 h-1 rounded-full bg-brand-accent animate-pulse" aria-hidden />
+            <span className="text-[9px] font-mono text-brand-accent/70 tracking-wider">streaming</span>
+          </span>
         )}
       </div>
 
-      {/* Content + hover actions */}
-      <div className={cn('flex-1 min-w-0 max-w-2xl', isUser && 'flex flex-col items-end')}>
-        <div className="relative">
-          {isUser ? (
-            <div className="rounded-2xl px-4 py-3 text-sm bg-brand-600 text-white rounded-tr-sm">
-              <p className="whitespace-pre-wrap break-words">{textOnly}</p>
-            </div>
-          ) : (
-            <AssistantContent blocks={blocks} isStreaming={isStreaming} isError={isError} inlineArtifacts={inlineArtifacts} />
-          )}
-        </div>
+      {/* Content */}
+      <div className={cn('text-[13px] leading-[1.75]', isUser ? 'text-surface-200' : '')}>
+        {isUser ? (
+          <p className="whitespace-pre-wrap break-words">{textOnly}</p>
+        ) : (
+          <AssistantContent
+            blocks={blocks}
+            isStreaming={isStreaming}
+            isError={isError}
+            inlineArtifacts={inlineArtifacts}
+          />
+        )}
+      </div>
 
-        {/* Hover action row */}
-        <div
-          className={cn(
-            'flex items-center gap-1 mt-1 px-1',
-            'opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity',
-            isUser ? 'flex-row-reverse' : 'flex-row',
-          )}
+      {/* Hover action row */}
+      <div className="flex items-center gap-1 mt-2.5 opacity-40 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+        <button
+          onClick={handleCopy}
+          aria-label={copied ? 'Copied' : 'Copy message'}
+          className="flex items-center gap-1.5 px-2 py-0.5 rounded text-surface-600 hover:text-surface-300 hover:bg-surface-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60"
         >
-          <span className="text-xs text-surface-600 select-none">
-            {formatDate(message.timestamp)}
-          </span>
-
-          <button
-            onClick={handleCopy}
-            aria-label={copied ? 'Copied' : 'Copy message'}
-            className="p-1 rounded text-surface-500 hover:text-surface-300 hover:bg-surface-700 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500"
-          >
-            {copied ? (
-              <Check className="w-3.5 h-3.5 text-green-400" />
-            ) : (
-              <Copy className="w-3.5 h-3.5" />
-            )}
-          </button>
-
-          {/* Assistant-only: single-action dropdown (copy). Retry/edit are deferred
-              until the chat API supports them. */}
-          {!isUser && (
-            <DropdownMenuPrimitive.Root>
-              <DropdownMenuPrimitive.Trigger asChild>
-                <button
-                  aria-label="More message actions"
-                  className="p-1 rounded text-surface-500 hover:text-surface-300 hover:bg-surface-700 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-500"
-                >
-                  <ChevronDown className="w-3.5 h-3.5" aria-hidden />
-                </button>
-              </DropdownMenuPrimitive.Trigger>
-              <DropdownMenuPrimitive.Portal>
-                <DropdownMenuPrimitive.Content
-                  align="start"
-                  sideOffset={4}
-                  className="z-50 min-w-32 bg-surface-800 border border-surface-700 rounded-lg shadow-xl p-1 text-sm animate-fade-in"
-                >
-                  <DropdownMenuPrimitive.Item
-                    onSelect={handleCopy}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded text-surface-300 hover:bg-surface-700 hover:text-surface-100 cursor-pointer focus:outline-none focus:bg-surface-700"
-                  >
-                    <Copy className="w-3.5 h-3.5" aria-hidden /> Copy
-                  </DropdownMenuPrimitive.Item>
-                </DropdownMenuPrimitive.Content>
-              </DropdownMenuPrimitive.Portal>
-            </DropdownMenuPrimitive.Root>
+          {copied ? (
+            <Check className="w-3 h-3 text-green-400" aria-hidden />
+          ) : (
+            <Copy className="w-3 h-3" aria-hidden />
           )}
-        </div>
+          <span className="text-[9px] font-mono tracking-wider">
+            {copied ? 'copied' : 'copy'}
+          </span>
+        </button>
+        {!isUser && onRegenerate && (
+          <button
+            onClick={onRegenerate}
+            aria-label="Regenerate response"
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded text-surface-600 hover:text-surface-300 hover:bg-surface-800 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60"
+          >
+            <RotateCcw className="w-3 h-3" aria-hidden />
+            <span className="text-[9px] font-mono tracking-wider">retry</span>
+          </button>
+        )}
       </div>
     </article>
   )

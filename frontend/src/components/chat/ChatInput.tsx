@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { nanoid } from 'nanoid'
-import { Send } from 'lucide-react'
+import { Send, Square } from 'lucide-react'
 import { useChatStore } from '@/lib/store'
 import { useDevtoolsStore } from '@/stores/devtools'
 import { streamChatMessage } from '@/lib/api-chat'
@@ -23,6 +23,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const [slashLocked, setSlashLocked] = useState(false)
   const slashFetchRef = useRef<Promise<SlashCommand[]> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const conversation = useChatStore((s) =>
     s.conversations.find((c) => c.id === conversationId),
@@ -35,9 +36,15 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const clearToolCallLog = useChatStore((s) => s.clearToolCallLog)
   const setScratchpad = useChatStore((s) => s.setScratchpad)
   const clearScratchpad = useChatStore((s) => s.clearScratchpad)
+  const setTodos = useChatStore((s) => s.setTodos)
+  const clearTodos = useChatStore((s) => s.clearTodos)
   const setRightPanelTab = useChatStore((s) => s.setRightPanelTab)
   const addArtifact = useChatStore((s) => s.addArtifact)
   const clearArtifacts = useChatStore((s) => s.clearArtifacts)
+  const draftInput = useChatStore((s) => s.draftInput)
+  const setDraftInput = useChatStore((s) => s.setDraftInput)
+  const planMode = useChatStore((s) => s.planMode)
+  const togglePlanMode = useChatStore((s) => s.togglePlanMode)
 
   const adjustHeight = useCallback(() => {
     const el = textareaRef.current
@@ -45,6 +52,17 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     el.style.height = 'auto'
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`
   }, [])
+
+  // Sync draftInput from store → local state (used by suggested prompts and regenerate).
+  useEffect(() => {
+    if (!draftInput) return
+    setInput(draftInput)
+    setDraftInput('')
+    requestAnimationFrame(() => {
+      adjustHeight()
+      textareaRef.current?.focus()
+    })
+  }, [draftInput, setDraftInput, adjustHeight])
 
   // Slash menu visibility — only when value starts with "/" AND the user
   // hasn't just picked a command (slashLocked). Locking closes the menu after
@@ -118,6 +136,10 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     adjustHeight()
   }
 
+  const handleStop = useCallback(() => {
+    abortControllerRef.current?.abort()
+  }, [])
+
   const handleSubmit = useCallback(async () => {
     const text = input.trim()
     if (!text || isSending) return
@@ -125,6 +147,8 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     setInput('')
     setError(null)
     setIsSending(true)
+    const controller = new AbortController()
+    abortControllerRef.current = controller
 
     // Reset textarea height after clearing
     requestAnimationFrame(() => adjustHeight())
@@ -155,9 +179,10 @@ export function ChatInput({ conversationId }: ChatInputProps) {
       status: 'sending',
     })
 
-    // Clear tool call log, scratchpad, and artifacts from any previous turn
+    // Clear tool call log, scratchpad, todos, and artifacts from any previous turn
     clearToolCallLog()
     clearScratchpad()
+    clearTodos()
     clearArtifacts()
 
     // Map from tool call entry ID → store entry ID so we can update on result
@@ -168,7 +193,10 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     let finalResponseText = ''
 
     try {
-      const stream = streamChatMessage(text, conversation?.sessionId ?? null)
+      const stream = streamChatMessage(text, conversation?.sessionId ?? null, {
+        planMode,
+        signal: controller.signal,
+      })
       for await (const event of stream) {
         if (event.type === 'turn_start') {
           if (event.session_id) finalSessionId = event.session_id
@@ -248,6 +276,20 @@ export function ChatInput({ conversationId }: ChatInputProps) {
           setRightPanelTab('artifacts')
         } else if (event.type === 'scratchpad_delta') {
           setScratchpad(event.content ?? '')
+        } else if (event.type === 'todos_update') {
+          setTodos(event.todos ?? [])
+        } else if (event.type === 'micro_compact') {
+          const saved = (event.tokens_before ?? 0) - (event.tokens_after ?? 0)
+          const now = Date.now()
+          pushToolCall({
+            step: event.step ?? 0,
+            name: '__compact__',
+            inputPreview: '',
+            status: 'ok',
+            preview: `compacted ${event.dropped_messages ?? 0} msgs · ~${saved.toLocaleString()} tokens freed`,
+            startedAt: now,
+            finishedAt: now,
+          })
         } else if (event.type === 'turn_end') {
           const responseText = event.final_text ?? ''
           finalResponseText = responseText
@@ -323,6 +365,15 @@ export function ChatInput({ conversationId }: ChatInputProps) {
           })
       }
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        // User stopped generation — mark message complete with whatever arrived
+        updateMessage(conversationId, assistantId, {
+          content: finalResponseText || '',
+          status: 'complete',
+        })
+        if (finalSessionId) setConversationSessionId(conversationId, finalSessionId)
+        return
+      }
       const message = err instanceof Error ? err.message : 'Request failed'
       updateMessage(conversationId, assistantId, {
         content: message,
@@ -330,6 +381,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
       })
       setError(message)
     } finally {
+      abortControllerRef.current = null
       setIsSending(false)
     }
   }, [
@@ -345,11 +397,21 @@ export function ChatInput({ conversationId }: ChatInputProps) {
     clearToolCallLog,
     setScratchpad,
     clearScratchpad,
+    setTodos,
+    clearTodos,
     setRightPanelTab,
     addArtifact,
     clearArtifacts,
     adjustHeight,
+    planMode,
   ])
+
+  // Listen for programmatic submit events (e.g. regenerate from MessageBubble).
+  useEffect(() => {
+    const handler = () => { handleSubmit() }
+    window.addEventListener('chat:submit', handler)
+    return () => window.removeEventListener('chat:submit', handler)
+  }, [handleSubmit])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (showSlashMenu && filteredCommands.length > 0) {
@@ -388,13 +450,14 @@ export function ChatInput({ conversationId }: ChatInputProps) {
   const canSubmit = !!input.trim() && !isSending
 
   return (
-    <div className="border-t border-surface-800 bg-surface-900/50 backdrop-blur-sm px-4 py-3">
-      <div className="max-w-3xl mx-auto relative">
+    <div className="border-t border-surface-800/80 bg-canvas px-4 py-4 md:px-6">
+      <div className="max-w-3xl relative">
         {error && (
           <div
             role="alert"
-            className="mb-2 rounded-md border border-red-900/60 bg-red-950/40 px-3 py-2 text-xs text-red-300"
+            className="mb-3 flex items-center gap-2 text-[11px] font-mono text-red-400"
           >
+            <span className="text-error select-none" aria-hidden>!</span>
             {error}
           </div>
         )}
@@ -405,7 +468,7 @@ export function ChatInput({ conversationId }: ChatInputProps) {
             aria-label="Slash commands"
             className={cn(
               'absolute bottom-full left-0 right-0 mb-2 z-30',
-              'rounded-lg border border-surface-700 bg-surface-900 shadow-lg',
+              'border border-surface-800 bg-surface-900 shadow-2xl',
               'max-h-64 overflow-y-auto py-1',
             )}
           >
@@ -418,21 +481,20 @@ export function ChatInput({ conversationId }: ChatInputProps) {
                   aria-selected={isActive}
                   onMouseEnter={() => setSlashHighlight(index)}
                   onMouseDown={(e) => {
-                    // Use mousedown so the textarea keeps focus.
                     e.preventDefault()
                     pickSlashCommand(cmd)
                   }}
                   className={cn(
-                    'flex items-baseline gap-3 px-3 py-2 cursor-pointer text-sm',
+                    'flex items-baseline gap-3 px-4 py-2 cursor-pointer',
                     isActive
                       ? 'bg-surface-800 text-surface-100'
-                      : 'text-surface-300 hover:bg-surface-800/70',
+                      : 'text-surface-400 hover:bg-surface-800/60',
                   )}
                 >
-                  <span className="font-mono text-brand-400 flex-shrink-0">
+                  <span className="font-mono text-[11px] text-brand-400 flex-shrink-0">
                     {cmd.label}
                   </span>
-                  <span className="text-xs text-surface-500 truncate">
+                  <span className="text-[11px] font-mono text-surface-600 truncate">
                     {cmd.description}
                   </span>
                 </li>
@@ -441,12 +503,15 @@ export function ChatInput({ conversationId }: ChatInputProps) {
           </ul>
         )}
 
-        <div
-          className={cn(
-            'flex items-end gap-2 rounded-xl border bg-surface-800 px-3 py-2',
-            'border-surface-700 focus-within:border-brand-500 transition-colors',
-          )}
-        >
+        <div className="flex items-end gap-3">
+          {/* Terminal prompt glyph */}
+          <span
+            className="font-mono text-surface-700 text-sm select-none flex-shrink-0 pb-[3px]"
+            aria-hidden
+          >
+            ›
+          </span>
+
           <label htmlFor="chat-input" className="sr-only">
             Message
           </label>
@@ -456,37 +521,93 @@ export function ChatInput({ conversationId }: ChatInputProps) {
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="Send a message…"
+            placeholder="Enter a prompt…"
             rows={1}
             disabled={isSending}
             aria-label="Message"
             className={cn(
-              'flex-1 resize-none bg-transparent text-sm text-surface-100',
-              'placeholder:text-surface-500 focus:outline-none',
-              'min-h-[24px] max-h-[200px] py-0.5',
-              'disabled:opacity-60',
+              'flex-1 resize-none bg-transparent',
+              'text-[13px] font-mono text-surface-100',
+              'placeholder:text-surface-800',
+              'focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60',
+              'min-h-[24px] max-h-[200px] leading-[1.75]',
+              'disabled:opacity-50',
             )}
           />
 
-          <button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            aria-label="Send message"
-            type="button"
-            className={cn(
-              'p-1.5 rounded-lg transition-colors flex-shrink-0',
-              canSubmit
-                ? 'bg-brand-600 text-white hover:bg-brand-700'
-                : 'bg-surface-700 text-surface-500 cursor-not-allowed',
-            )}
-          >
-            <Send className="w-4 h-4" aria-hidden="true" />
-          </button>
+          {isSending ? (
+            <button
+              onClick={handleStop}
+              aria-label="Stop generation"
+              type="button"
+              className="p-2.5 transition-colors flex-shrink-0 mb-0.5 text-surface-500 hover:text-error"
+            >
+              <Square className="w-4 h-4" aria-hidden="true" />
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              aria-label="Send message"
+              type="button"
+              className={cn(
+                'p-1 transition-colors flex-shrink-0 mb-0.5',
+                canSubmit
+                  ? 'text-brand-accent hover:text-brand-400'
+                  : 'text-surface-800 cursor-not-allowed',
+              )}
+            >
+              <Send className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
+          )}
         </div>
 
-        <p className="mt-1.5 px-1 text-xs text-surface-600">
-          Press Enter to send, Shift+Enter for a new line.
-        </p>
+        <div className="mt-2 flex items-center justify-between gap-4">
+          <p className="text-[9px] font-mono tracking-[0.18em] text-surface-600 uppercase">
+            {!input.trim() && !isSending
+              ? 'type / for commands'
+              : 'Enter · Send \u00A0/\u00A0 Shift+Enter · New line'}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={togglePlanMode}
+              disabled={isSending}
+              role="switch"
+              aria-checked={planMode}
+              aria-label="Plan mode — propose a plan instead of executing tools"
+              title={
+                planMode
+                  ? 'Plan Mode ON — agent will propose a plan and wait for approval'
+                  : 'Plan Mode OFF — agent will execute tools as needed'
+              }
+              className={cn(
+                'group flex items-center gap-1.5 select-none',
+                'font-mono text-[9px] tracking-[0.25em] uppercase',
+                'border px-2 py-1 transition-colors',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-accent/60',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                planMode
+                  ? 'border-brand-accent/70 text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/15'
+                  : 'border-surface-800 text-surface-600 hover:text-surface-400 hover:border-surface-700',
+              )}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'inline-block w-1.5 h-1.5 rounded-full transition-colors',
+                  planMode ? 'bg-brand-accent' : 'bg-surface-700 group-hover:bg-surface-600',
+                )}
+              />
+              plan
+            </button>
+            {!isSending && (
+              <p className="text-[9px] font-mono text-surface-600 tabular-nums">
+                ⌘K \u00A0·\u00A0 ⌘/
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

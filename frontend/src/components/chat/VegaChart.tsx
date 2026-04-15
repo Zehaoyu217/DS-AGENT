@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import embed, { type Result } from 'vega-embed'
+import { CHART_COLOR_SCALE } from '@/lib/design-tokens'
 
 interface VegaChartProps {
   spec: string | Record<string, unknown>
@@ -44,10 +45,7 @@ const DARK_THEME_CONFIG = {
     strokeWidth: 0,
   },
   range: {
-    category: [
-      '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444',
-      '#3b82f6', '#ec4899', '#14b8a6', '#f97316', '#6366f1',
-    ],
+    category: [...CHART_COLOR_SCALE],
   },
 }
 
@@ -185,7 +183,7 @@ export function VegaChart({ spec }: VegaChartProps) {
 
   if (error) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-950/40 border border-red-800/40 text-xs text-red-400 font-mono">
+      <div className="flex items-center gap-2 px-3 py-2 rounded bg-error-bg border border-error/40 text-xs text-error font-mono">
         Chart error: {error}
       </div>
     )
@@ -209,7 +207,7 @@ export function VegaChart({ spec }: VegaChartProps) {
   return (
     <div
       style={aspectStyle}
-      className="my-2 rounded-lg overflow-hidden bg-surface-850 border border-surface-700/60"
+      className="my-2 rounded overflow-hidden bg-surface-850 border border-surface-700/60"
     >
       <div ref={containerRef} className="w-full h-full [&_svg]:w-full [&_svg]:h-full" />
     </div>

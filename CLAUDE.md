@@ -107,7 +107,7 @@ Tight grid, monospace everywhere it makes sense, data density as a virtue. Refer
 
 - Typography does the heavy lifting. Caps + slashes + weights create hierarchy without decorative chrome.
 - JetBrains Mono is not just for code blocks — it's the voice of the UI at the system level (labels, metadata, status, timestamps).
-- Near-black backgrounds (`#09090b`, `#18181b`) with purple (`#8b5cf6`) as the only color that matters.
+- Near-black backgrounds (`#09090b`, `#18181b`) with orange (`#e0733a`) as the primary accent — Claude's brand color, the one chromatic signal in the system.
 - Borders are subtle lines that separate information, not decorative frames.
 - Dark mode only. Light mode exists in the codebase but is not a design priority.
 - Motion is functional: instant feedback, not spectacle. No easing curves that feel "designed."
@@ -122,6 +122,6 @@ Tight grid, monospace everywhere it makes sense, data density as a virtue. Refer
 
 4. **Every state is visible** — loading, streaming, error, success, latency — all surfaced legibly. No spinner-and-pray. Power users need to know what the system is doing at all times.
 
-5. **Dark is not a mode — it's the product** — design for the dark theme as if the light theme doesn't exist. High contrast within the dark palette; the purple accent should feel intentional, not decorative.
+5. **Dark is not a mode — it's the product** — design for the dark theme as if the light theme doesn't exist. High contrast within the dark palette; the orange accent should feel intentional, not decorative.
 
 > Full context in `.impeccable.md` at project root.

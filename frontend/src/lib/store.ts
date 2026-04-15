@@ -6,6 +6,14 @@ import { extractTextContent } from './utils'
 import type { ContentBlock } from './types'
 import { backend, type Conversation as BackendConversation } from './api-backend'
 
+export type TodoStatus = 'pending' | 'in_progress' | 'completed'
+
+export interface TodoItem {
+  id: string
+  content: string
+  status: TodoStatus
+}
+
 export interface Artifact {
   id: string
   type: 'chart' | 'table' | 'diagram' | 'profile' | 'analysis' | 'file'
@@ -75,8 +83,13 @@ interface ChatState {
   rightPanelTab: RightPanelTab
   toolCallLog: ToolCallEntry[]
   scratchpad: string
+  todos: TodoItem[]
   artifacts: Artifact[]
   activeSection: SectionId
+  // Plan mode gates dangerous tools (execute_python, save_artifact, ...) and
+  // injects a plan-only instruction into the system prompt. Backend enforces
+  // the gate; this flag only controls the UI affordance + request payload.
+  planMode: boolean
 
   createConversation: () => string
   setActiveConversation: (id: string) => void
@@ -96,13 +109,18 @@ interface ChatState {
   clearToolCallLog: () => void
   setScratchpad: (content: string) => void
   clearScratchpad: () => void
+  setTodos: (todos: TodoItem[]) => void
+  clearTodos: () => void
   setDraftInput: (s: string) => void
+  deleteMessage: (conversationId: string, messageId: string) => void
   updateSettings: (patch: Partial<Settings>) => void
   openSettings: () => void
   openSearch: () => void
   setActiveSection: (section: SectionId) => void
   addArtifact: (artifact: Artifact) => void
   clearArtifacts: () => void
+  setPlanMode: (enabled: boolean) => void
+  togglePlanMode: () => void
 }
 
 const DEFAULT_CONVERSATION_TITLE = 'New Conversation'
@@ -121,8 +139,10 @@ export const useChatStore = create<ChatState>()(
       rightPanelTab: 'tools' as RightPanelTab,
       toolCallLog: [] as ToolCallEntry[],
       scratchpad: '',
+      todos: [] as TodoItem[],
       artifacts: [] as Artifact[],
       activeSection: 'chat' as SectionId,
+      planMode: false,
 
       createConversation: () => {
         const id = nanoid()
@@ -268,8 +288,18 @@ export const useChatStore = create<ChatState>()(
       clearToolCallLog: () => set({ toolCallLog: [] }),
       setScratchpad: (content) => set({ scratchpad: content }),
       clearScratchpad: () => set({ scratchpad: '' }),
+      setTodos: (todos) => set({ todos }),
+      clearTodos: () => set({ todos: [] }),
 
       setDraftInput: (s) => set({ draftInput: s }),
+
+      deleteMessage: (conversationId, messageId) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c
+            return { ...c, messages: c.messages.filter((m) => m.id !== messageId) }
+          }),
+        })),
 
       updateSettings: (patch) =>
         set((state) => ({ settings: { ...state.settings, ...patch } })),
@@ -297,6 +327,9 @@ export const useChatStore = create<ChatState>()(
         }),
 
       clearArtifacts: () => set({ artifacts: [] }),
+
+      setPlanMode: (enabled) => set({ planMode: enabled }),
+      togglePlanMode: () => set((state) => ({ planMode: !state.planMode })),
     }),
     {
       name: 'chat-store-v2',
@@ -320,6 +353,7 @@ export const useChatStore = create<ChatState>()(
         sidebarWidth: state.sidebarWidth,
         sidebarTab: state.sidebarTab,
         settings: state.settings,
+        planMode: state.planMode,
       }),
     },
   ),

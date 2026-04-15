@@ -29,7 +29,6 @@ def test_build_duckdb_globals_csv_dataset(tmp_path: object) -> None:
     preamble = build_duckdb_globals("test-session-csv", fake_path)
     assert "pd.read_csv" in preamble
     assert "df =" in preamble
-    assert 'conn.register("dataset"' in preamble
 
 
 def test_build_duckdb_globals_parquet_dataset() -> None:
@@ -37,7 +36,6 @@ def test_build_duckdb_globals_parquet_dataset() -> None:
     preamble = build_duckdb_globals("test-session-pq", fake_path)
     assert "pd.read_parquet" in preamble
     assert "df =" in preamble
-    assert 'conn.register("dataset"' in preamble
 
 
 def test_build_duckdb_globals_runs_in_subprocess() -> None:

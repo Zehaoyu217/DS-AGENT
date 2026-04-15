@@ -8,8 +8,8 @@ interface SubagentCardProps {
 }
 
 function StatusIcon({ status }: { status: A2aContent['status'] }) {
-  if (status === 'complete') return <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-  if (status === 'error') return <XCircle className="w-3.5 h-3.5 text-red-400" />
+  if (status === 'complete') return <CheckCircle className="w-3.5 h-3.5 text-success" />
+  if (status === 'error') return <XCircle className="w-3.5 h-3.5 text-error" />
   return <Clock className="w-3.5 h-3.5 text-surface-400 animate-pulse" />
 }
 
@@ -19,9 +19,9 @@ export function SubagentCard({ entry }: SubagentCardProps): React.ReactElement {
   return (
     <div
       className={cn(
-        'rounded-lg border text-sm',
+        'rounded border text-sm',
         entry.status === 'error'
-          ? 'border-red-900/50 bg-red-950/20'
+          ? 'border-error/30 bg-error-bg'
           : 'border-surface-700/60 bg-surface-850/60',
       )}
     >

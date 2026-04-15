@@ -34,7 +34,7 @@ fix test infrastructure, wire frontend tabs, right panel, streaming, A2A, and ev
 
 | Phase | Deliverable | Status |
 |-------|-------------|--------|
-| P7 | OS-platform layout: icon rail + section router | **PARTIAL** — components built, App.tsx not updated |
+| P7 | OS-platform layout: icon rail + section router | **complete** — App.tsx wired, all 7 sections routed |
 | P8 | Skills Explorer: hierarchy + Python source + dep graph | **PARTIAL** — section + backend endpoints exist |
 | P9 | Monitoring Dashboard: agent cards grid, live status | **MOSTLY DONE** |
 | P10 | Prompts Registry: all prompts with layer/token metadata | **PARTIAL** |
@@ -47,14 +47,14 @@ fix test infrastructure, wire frontend tabs, right panel, streaming, A2A, and ev
 
 | Phase | Deliverable | Status |
 |-------|-------------|--------|
-| P15 | **CRITICAL**: Wire full harness to chat_api.py | **pending** |
-| P16 | Connect OS platform routing in App.tsx | **pending** |
-| P17 | Proactive MicroCompact in agent loop | **pending** |
-| P18 | Structured session memory (cross-session continuity) | **pending** |
-| P19 | In-session task tracking | **pending** |
-| P20 | Full SKILL.md loading (load_skill tool) | **pending** |
-| P21 | Token budget awareness in system prompt | **pending** |
-| P22 | Plan Mode gate | **pending** |
+| P15 | **CRITICAL**: Wire full harness to chat_api.py | **complete** — already wired (confirmed code review) |
+| P16 | Connect OS platform routing in App.tsx | **complete** — IconRail + SectionContent router wired |
+| P17 | Proactive MicroCompact in agent loop | **complete** — backend already wired; frontend adds `micro_compact` event type, compact banner in TerminalPanel |
+| P18 | Structured session memory (cross-session continuity) | **complete** — `latest_session_notes()` in WikiEngine + `_session_memory_section()` in injector |
+| P19 | In-session task tracking | **complete** — `todos_update` SSE, store, TodosPanel, Tasks tab |
+| P20 | Full SKILL.md loading (load_skill tool) | **complete** — `skill` tool in chat_api + `_load_skill_body` in skill_tools |
+| P21 | Token budget awareness in system prompt | **complete** — `_token_budget_section()` in injector |
+| P22 | Plan Mode gate | **complete** — `_plan_mode_section()` in injector + `filter_tools_for_plan_mode()` |
 
 ---
 

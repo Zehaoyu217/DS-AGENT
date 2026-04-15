@@ -142,6 +142,8 @@ export interface ChatStreamEvent {
     | 'tool_call'
     | 'tool_result'
     | 'scratchpad_delta'
+    | 'todos_update'
+    | 'micro_compact'
     | 'turn_end'
     | 'error'
     | 'a2a_start'
@@ -174,6 +176,14 @@ export interface ChatStreamEvent {
   summary?: string
   // scratchpad_delta
   content?: string
+  // todos_update
+  todos?: Array<{ id: string; content: string; status: 'pending' | 'in_progress' | 'completed' }>
+  // micro_compact
+  dropped_messages?: number
+  chars_before?: number
+  chars_after?: number
+  tokens_before?: number
+  tokens_after?: number
   // artifact event fields
   id?: string
   title?: string
@@ -184,23 +194,47 @@ export interface ChatStreamEvent {
   created_at?: number
 }
 
+export interface StreamChatOptions {
+  datasetPath?: string | null
+  /**
+   * When true, tell the backend to suppress side-effecting tools and run in
+   * plan-only mode. Backend enforces this via tool filtering in `chat_api.py`
+   * and a system-prompt rider; the flag here only controls the request
+   * payload so the two sides stay in sync.
+   */
+  planMode?: boolean
+  signal?: AbortSignal
+}
+
 /**
  * Stream chat events from POST /api/chat/stream.
  * Yields one ChatStreamEvent per SSE frame; ends when the stream closes.
+ *
+ * Legacy positional signature (`message, sessionId, datasetPath, signal`)
+ * is preserved for backwards compatibility — callers that need `planMode`
+ * must use the options-object form.
  */
 export async function* streamChatMessage(
   message: string,
   sessionId: string | null,
-  datasetPath?: string | null,
+  datasetPathOrOptions?: string | null | StreamChatOptions,
+  legacySignal?: AbortSignal,
 ): AsyncGenerator<ChatStreamEvent> {
+  const options: StreamChatOptions =
+    typeof datasetPathOrOptions === 'object' && datasetPathOrOptions !== null
+      ? datasetPathOrOptions
+      : { datasetPath: datasetPathOrOptions ?? null, signal: legacySignal }
+
   const res = await fetch(`${BASE_URL}/chat/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       message,
       session_id: sessionId,
-      dataset_path: datasetPath ?? null,
+      dataset_path: options.datasetPath ?? null,
+      plan_mode: options.planMode ?? false,
     }),
+    signal: options.signal,
   })
   if (!res.ok) {
     const body = await res.text()

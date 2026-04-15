@@ -50,15 +50,15 @@ def _get_system_prompt() -> str:
 
 
 def _get_tool_schemas() -> list[dict]:
-    from app.api.chat_api import _EXECUTE_PYTHON, _WRITE_WORKING  # noqa: PLC0415
-    tools = []
-    for tool in (_EXECUTE_PYTHON, _WRITE_WORKING):
-        tools.append({
+    from app.api.chat_api import _CHAT_TOOLS  # noqa: PLC0415
+    return [
+        {
             "name": tool.name,
             "description": tool.description,
             "input_schema": tool.input_schema,
-        })
-    return tools
+        }
+        for tool in _CHAT_TOOLS
+    ]
 
 
 def _get_injector_template() -> str:

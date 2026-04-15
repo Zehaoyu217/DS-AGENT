@@ -90,3 +90,45 @@ class WikiEngine:
                     lines.append(f"- [{stem}]({stem}.md) — {title}")
             lines.append("")
         (self.root / "index.md").write_text("\n".join(lines))
+
+    # ── session notes (P18) ──────────────────────────────────────────────────
+
+    def write_session_notes(self, session_id: str, notes: str) -> Path:
+        """Write the structured 9-section session notes for a session.
+
+        Overwrites on every turn: the notes file always reflects the latest
+        turn's summary, not a per-turn log (log.md handles chronology).
+        """
+        safe_id = _safe_session_filename(session_id)
+        folder = self.root / "sessions"
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f"{safe_id}.md"
+        path.write_text(notes)
+        return path
+
+    def latest_session_notes(self, exclude_session_id: str = "") -> str:
+        """Return the most-recently-modified session notes, or '' if none exist.
+
+        ``exclude_session_id`` skips the current session so we don't inject
+        a session's own notes back into itself mid-run.
+        """
+        folder = self.root / "sessions"
+        if not folder.exists():
+            return ""
+        exclude_stem = _safe_session_filename(exclude_session_id) if exclude_session_id else ""
+        candidates = [
+            f for f in folder.glob("*.md")
+            if f.stem != exclude_stem
+        ]
+        if not candidates:
+            return ""
+        latest = max(candidates, key=lambda f: f.stat().st_mtime)
+        return latest.read_text(encoding="utf-8")
+
+
+def _safe_session_filename(session_id: str) -> str:
+    """Reduce a session id to a safe filename (alnum/-/_)."""
+    if not session_id:
+        return "unknown"
+    cleaned = "".join(c if (c.isalnum() or c in "-_") else "-" for c in session_id)
+    return cleaned[:96] or "unknown"

@@ -2,21 +2,26 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.chat_api import router as chat_router
-from app.api.datasets_api import router as datasets_router
+from app.api.data_status_api import router as data_status_router
 from app.api.context_api import router as context_router
 from app.api.conversations_api import router as conversations_router
+from app.api.datasets_api import router as datasets_router
 from app.api.files_api import router as files_router
 from app.api.health import router as health_router
 from app.api.models_api import router as models_router
-from app.api.settings_api import router as settings_router
 from app.api.prompts_api import router as prompts_router
+from app.api.settings_api import router as settings_router
 from app.api.skills_api import router as skills_router
 from app.api.slash_api import router as slash_router
 from app.api.sop_api import router as sop_router
+from app.api.todos_api import router as todos_router
 from app.api.trace_api import router as trace_router
 
 
 def create_app() -> FastAPI:
+    from app.data.db_init import initialize_db
+    initialize_db()
+
     app = FastAPI(
         title="Analytical Agent",
         version="0.1.0",
@@ -44,5 +49,7 @@ def create_app() -> FastAPI:
     app.include_router(skills_router)
     app.include_router(slash_router)
     app.include_router(datasets_router)
+    app.include_router(data_status_router)
+    app.include_router(todos_router)
 
     return app

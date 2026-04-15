@@ -36,6 +36,8 @@ export interface VirtualMessageListProps {
    * smooth scroll to bottom, exposed up so `ScrollToBottom` can fire it.
    */
   onScrollStateChange?: (isAtBottom: boolean, scrollToBottom: () => void) => void
+  /** Called when the user clicks "retry" on an assistant message. */
+  onRegenerate?: (messageId: string) => void
 }
 
 export function VirtualMessageList({
@@ -43,6 +45,7 @@ export function VirtualMessageList({
   isStreaming,
   conversationId,
   onScrollStateChange,
+  onRegenerate,
 }: VirtualMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
@@ -96,7 +99,7 @@ export function VirtualMessageList({
       {/* Spacer that gives the virtualizer its total height */}
       <div
         style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
-        className="max-w-3xl mx-auto px-4 py-6"
+        className="max-w-3xl px-6 py-6 md:px-8 md:py-8 lg:px-10"
       >
         {items.map((virtualItem) => {
           const message = messages[virtualItem.index]
@@ -112,9 +115,13 @@ export function VirtualMessageList({
                 right: 0,
                 transform: `translateY(${virtualItem.start}px)`,
               }}
-              className="pb-6"
+              className="pb-8"
             >
-              <MessageBubble message={message} conversationId={conversationId} />
+              <MessageBubble
+                message={message}
+                conversationId={conversationId}
+                onRegenerate={onRegenerate ? () => onRegenerate(message.id) : undefined}
+              />
             </div>
           )
         })}

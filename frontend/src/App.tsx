@@ -3,7 +3,6 @@ import { AnnouncerProvider } from '@/components/a11y/Announcer'
 import { SkipToContent } from '@/components/a11y/SkipToContent'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ShortcutsHelp } from '@/components/shortcuts/ShortcutsHelp'
-import { IconRail } from '@/components/layout/IconRail'
 import { ThemeProvider, useTheme } from '@/components/layout/ThemeProvider'
 import {
   CommandRegistryProvider,
@@ -11,9 +10,10 @@ import {
 } from '@/hooks/useCommandRegistry'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CMD } from '@/lib/shortcuts'
-import { useChatStore } from '@/lib/store'
 import { MonitorPage } from '@/pages/MonitorPage'
-import { ChatSection } from '@/sections/ChatSection'
+import { SessionLayout } from '@/components/session/SessionLayout'
+import { IconRail } from '@/components/layout/IconRail'
+import { useChatStore } from '@/lib/store'
 import { AgentsSection } from '@/sections/AgentsSection'
 import { SkillsSection } from '@/sections/SkillsSection'
 import { PromptsSection } from '@/sections/PromptsSection'
@@ -31,14 +31,9 @@ function useHashRoute(): string {
   return hash
 }
 
-/**
- * Registers the default command set and wires up the global keyboard listener.
- * Must render inside <CommandRegistryProvider> and <ThemeProvider>.
- */
 function ShortcutWiring() {
   const { registerCommand, openPalette, openHelp } = useCommandRegistry()
   const { theme, setTheme } = useTheme()
-  const toggleSidebar = useChatStore((s) => s.toggleSidebar)
 
   useKeyboardShortcuts()
 
@@ -55,25 +50,12 @@ function ShortcutWiring() {
         icon: 'Search',
       }),
       registerCommand({
-        id: CMD.TOGGLE_SIDEBAR,
-        keys: ['mod+b'],
-        label: 'Toggle sidebar',
-        description: 'Show or hide the navigation sidebar',
-        category: 'View',
-        action: toggleSidebar,
-        global: true,
-        icon: 'PanelLeftClose',
-      }),
-      registerCommand({
         id: CMD.TOGGLE_THEME,
         keys: [],
         label: 'Toggle theme',
-        description: 'Cycle through light, dark, and system themes',
+        description: 'Switch between dark and light themes',
         category: 'Theme',
-        action: () => {
-          const next = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark'
-          setTheme(next)
-        },
+        action: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
         icon: 'Sun',
       }),
       registerCommand({
@@ -87,21 +69,20 @@ function ShortcutWiring() {
         icon: 'HelpCircle',
       }),
     ]
-
     return () => {
       for (const dispose of disposers) dispose()
     }
-  }, [registerCommand, openPalette, openHelp, toggleSidebar, theme, setTheme])
+  }, [registerCommand, openPalette, openHelp, theme, setTheme])
 
   return null
 }
 
-function ActiveSection() {
+function SectionContent() {
   const activeSection = useChatStore((s) => s.activeSection)
 
   switch (activeSection) {
     case 'chat':
-      return <ChatSection />
+      return <SessionLayout />
     case 'agents':
       return <AgentsSection />
     case 'skills':
@@ -115,7 +96,7 @@ function ActiveSection() {
     case 'settings':
       return <SettingsSection />
     default:
-      return <ChatSection />
+      return <SessionLayout />
   }
 }
 
@@ -133,10 +114,10 @@ export default function App() {
         <CommandRegistryProvider>
           <SkipToContent />
           <ShortcutWiring />
-          <div className="flex h-dvh bg-surface-950 text-surface-100 overflow-hidden">
+          <div className="flex h-dvh overflow-hidden bg-canvas text-surface-100">
             <IconRail />
-            <div className="flex-1 min-w-0 overflow-hidden">
-              <ActiveSection />
+            <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
+              <SectionContent />
             </div>
           </div>
           <CommandPalette />

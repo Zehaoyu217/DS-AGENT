@@ -69,7 +69,7 @@ const MdCodeBlock = memo(function MdCodeBlock({
   }, [code])
 
   return (
-    <div className="shiki-container relative group my-3 rounded-lg overflow-hidden border border-surface-700 bg-[#0d1117]">
+    <div className="shiki-container relative group my-3 rounded overflow-hidden border border-surface-700 bg-[#0d1117]">
       {/* Header bar */}
       <div className="flex items-center justify-between px-3 py-1.5 bg-surface-850 border-b border-surface-700">
         <span className="text-xs text-surface-500 font-mono select-none">
