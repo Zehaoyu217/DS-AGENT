@@ -9,7 +9,7 @@ from app.evals.types import AgentTrace
 
 def test_judge_config_defaults() -> None:
     config = JudgeConfig()
-    assert config.model == "qwen3.5:9b"
+    assert config.model == "gemma4:e2b"
     assert config.base_url == "http://localhost:11434"
     assert config.temperature == 0.0
 

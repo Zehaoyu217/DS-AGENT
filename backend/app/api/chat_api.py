@@ -946,35 +946,9 @@ def chat_stream_endpoint(payload: ChatRequest) -> StreamingResponse:
                         final_text = payload_data.get("final_text", "") or ""
                 yield line
 
+            # publish_llm_call is now emitted per-turn by loop.py run_stream().
+            # We only need to publish the final_output sentinel here.
             with contextlib.suppress(Exception):
-                publish_llm_call(
-                    step_id="s1",
-                    turn=1,
-                    model=model_id,
-                    temperature=0.0,
-                    max_tokens=2048,
-                    prompt_text=payload.message,
-                    sections=[
-                        PromptSection(
-                            source="user_query", lines="1-1", text=payload.message,
-                        ),
-                        PromptSection(
-                            source="system_prompt",
-                            lines="1-1",
-                            text=_get_system_prompt(plan_mode=payload.plan_mode),
-                        ),
-                    ],
-                    response_text=final_text,
-                    tool_calls=[],
-                    stop_reason="end_turn",
-                    input_tokens=_estimate_tokens(
-                        payload.message + _get_system_prompt(plan_mode=payload.plan_mode)
-                    ),
-                    output_tokens=_estimate_tokens(final_text),
-                    cache_read_tokens=0,
-                    cache_creation_tokens=0,
-                    latency_ms=0,
-                )
                 publish_final_output(
                     output_text=final_text, final_grade=None, judge_dimensions={},
                 )

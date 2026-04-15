@@ -62,6 +62,21 @@ def _probe_ollama() -> str:
             f"Judge model '{_REQUIRED_MODEL}' not pulled on {_OLLAMA_URL} — "
             f"run `ollama pull {_REQUIRED_MODEL}` to enable these tests"
         )
+    # Verify the model actually loads (resource constraints may prevent it even
+    # when it's listed in /api/tags).
+    try:
+        gen_resp = httpx.post(
+            f"{_OLLAMA_URL}/api/generate",
+            json={"model": _REQUIRED_MODEL, "prompt": "hi", "stream": False},
+            timeout=30.0,
+        )
+    except (httpx.HTTPError, OSError) as exc:
+        return f"Judge model '{_REQUIRED_MODEL}' generate probe failed: {exc}"
+    if gen_resp.status_code != 200:
+        return (
+            f"Judge model '{_REQUIRED_MODEL}' failed to load on {_OLLAMA_URL} "
+            f"(HTTP {gen_resp.status_code}) — likely resource contention"
+        )
     return _CACHE_SENTINEL_READY
 
 

@@ -15,7 +15,7 @@ from app.evals.types import AgentTrace, DimensionGrade
 class JudgeConfig:
     """Configuration for the LLM judge."""
 
-    model: str = "qwen3.5:9b"
+    model: str = "gemma4:e2b"
     base_url: str = "http://localhost:11434"
     temperature: float = 0.0
 

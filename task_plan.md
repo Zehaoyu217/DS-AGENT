@@ -85,6 +85,18 @@ within testpaths, so fixtures will still be available to data_profiler tests.
 
 ---
 
+### Eval Readiness Phases (from audit 2026-04-15)
+
+| Phase | Deliverable | Status |
+|-------|-------------|--------|
+| EVAL-1 | Fix LLM judge model (qwen3.5:9b → gemma4:e2b) | **complete** |
+| EVAL-2 | Publish tool_call + scratchpad_write events from loop.py | **complete** |
+| EVAL-3 | Per-turn LLM call recording in loop.py run_stream() | **complete** |
+| EVAL-4 | RealAgentAdapter — connects eval framework to real backend | **complete** |
+| EVAL-5 | Eval conftest probe: verify model loads, not just listed | **complete** |
+
+---
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |

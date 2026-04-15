@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Generator
 from dataclasses import dataclass, field
 
@@ -196,11 +197,46 @@ class AgentLoop:
                     },
                 )
 
+            _llm_start = time.monotonic()
             resp = client.complete(CompletionRequest(
                 system=system, messages=tuple(messages),
                 tools=tools, max_tokens=2048,
             ))
+            _llm_ms = int((time.monotonic() - _llm_start) * 1000)
             final_text = resp.text
+
+            # ── Per-turn LLM call trace event ─────────────────────────────
+            try:
+                from app.trace.events import PromptSection
+                from app.trace.publishers import publish_llm_call as _pub_llm
+                _prompt_text = "\n\n".join(
+                    f"[{m.role.upper()}]: {m.content or ''}" for m in messages
+                )
+                _pub_llm(
+                    step_id=f"s{steps}",
+                    turn=steps,
+                    model=getattr(client, "name", "unknown"),
+                    temperature=0.0,
+                    max_tokens=2048,
+                    prompt_text=_prompt_text[:4096],
+                    sections=[
+                        PromptSection(source="system_prompt", lines="1-1", text=system[:2048]),
+                        PromptSection(source="user_query", lines="1-1", text=_prompt_text[:2048]),
+                    ],
+                    response_text=(resp.text or "")[:4096],
+                    tool_calls=[
+                        {"name": tc.name, "input": tc.arguments}
+                        for tc in (resp.tool_calls or [])
+                    ],
+                    stop_reason=resp.stop_reason or "end_turn",
+                    input_tokens=resp.usage.get("input_tokens", 0),
+                    output_tokens=resp.usage.get("output_tokens", 0),
+                    cache_read_tokens=resp.usage.get("cache_read_input_tokens", 0),
+                    cache_creation_tokens=resp.usage.get("cache_creation_input_tokens", 0),
+                    latency_ms=_llm_ms,
+                )
+            except Exception:  # noqa: BLE001 — trace must never crash the loop
+                pass
 
             if not resp.tool_calls:
                 stop_reason = resp.stop_reason or "end_turn"
@@ -269,12 +305,29 @@ class AgentLoop:
                     )
 
                 self._hook_runner.run_pre(call.name, call.arguments, session_id=session_id)
+                _dispatch_start = time.monotonic()
                 result: ToolResult = self._dispatcher.dispatch(call)
+                _dispatch_ms = int((time.monotonic() - _dispatch_start) * 1000)
                 self._hook_runner.run_post(
                     call.name,
                     result.payload if isinstance(result.payload, dict) else {},
                     session_id=session_id,
                 )
+
+                # ── Tool call trace event ──────────────────────────────────
+                try:
+                    from app.trace.publishers import publish_tool_call as _pub_tc
+                    _tool_out = result.payload if isinstance(result.payload, dict) else {"value": result.payload}
+                    _pub_tc(
+                        turn=steps,
+                        tool_name=call.name,
+                        tool_input=dict(call.arguments),
+                        tool_output=str(_tool_out)[:4096],
+                        duration_ms=_dispatch_ms,
+                        error=None if result.ok else str(result.payload)[:512],
+                    )
+                except Exception:  # noqa: BLE001
+                    pass
                 report = post_tool(result)
                 for aid in report.new_artifact_ids:
                     state.record_artifact(aid)
@@ -288,6 +341,11 @@ class AgentLoop:
                             type="scratchpad_delta",
                             payload={"content": new_pad},
                         )
+                        try:
+                            from app.trace.publishers import publish_scratchpad_write as _pub_sw
+                            _pub_sw(turn=steps, key="working.md", value_preview=new_pad[:200])
+                        except Exception:  # noqa: BLE001
+                            pass
                 # Emit todos_update when todo_write succeeds so the frontend
                 # task panel refreshes in real time (P19).
                 if call.name == "todo_write" and result.ok:
