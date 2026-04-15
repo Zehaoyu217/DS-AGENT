@@ -31,8 +31,13 @@ Entry shape:
 
 ## [Unreleased]
 
-Milestone in progress: **M1 — Agent Capability Upgrade** (branch `feat/agent-capability-upgrade`).
-Goal: ship a data-scientist-grade agent with a skills runtime, composition skills (plan → analysis → report/dashboard), unified charting theme, and a guardrailed LangGraph harness.
+No entries yet.
+
+---
+
+## [M1 — Agent Capability Upgrade] - 2026-04-15
+
+Shipped on branch `feat/v2-os-platform`. Goal: ship a data-scientist-grade agent with a skills runtime, composition skills (plan → analysis → report/dashboard), unified charting theme, a guardrailed LangGraph harness, and the long-session primitives (MicroCompact, session memory, task tracking, token budget, Plan Mode, OpenRouter 429 fallback).
 
 ### Added
 
@@ -49,13 +54,13 @@ Goal: ship a data-scientist-grade agent with a skills runtime, composition skill
 - Frontend 3-panel shell with DevTools-in-sidebar and message rendering. (`frontend/`) — `85b856f`
 - Frontend P3 command palette, keyboard shortcuts, and a11y pass. (`frontend/`) — `1e56bdb`
 - Frontend P4-P7: typed `api-backend` client; sidebar History / Settings / Files tabs wired to BE1; chat input slash menu with `/api/slash` commands; chat turns persisted to `/api/conversations` fire-and-forget. (`frontend/`) — `45831ff`
-- **P21** `TokenBudget` section in the system prompt — surfaces `max_tokens`, `compact_threshold`, `char_budget`, and `keep_recent_tool_results` so the model knows the budget alongside the `MicroCompactor`'s enforcement signal. (`harness/injector.py`) — _pending_
-- **P22** Plan Mode two-layer gate — backend filters execute_python / save_artifact / promote_finding / delegate_subagent from the tool menu and rewrites the system prompt when `plan_mode=true`; frontend surfaces a terminal-aesthetic switch in `<ChatInput/>` with an orange accent badge and threads the flag through `streamChatMessage`. Store flag persists across reloads. (`backend/app/api/chat_api.py`, `backend/app/harness/injector.py`, `frontend/src/components/chat/ChatInput.tsx`, `frontend/src/lib/store.ts`, `frontend/src/lib/api.ts`) — _pending_
-- **P23** OpenRouter 429 fallback chain — `FallbackModelClient` wraps a primary model with an ordered list from `OPENROUTER_FALLBACK_MODELS`; triggers only on `RateLimitError` so non-rate-limit failures (bad API key, network, malformed payload) surface immediately instead of silently burning fallback quota. Structural `ModelClient` surface preserved so existing trace/logging call sites are unchanged. (`harness/clients/fallback_client.py`, `harness/clients/base.py`, `harness/clients/openrouter_client.py`, `api/chat_api.py`) — _pending_
+- **P21** `TokenBudget` section in the system prompt — surfaces `max_tokens`, `compact_threshold`, `char_budget`, and `keep_recent_tool_results` so the model knows the budget alongside the `MicroCompactor`'s enforcement signal. (`harness/injector.py`) — `23c77be`
+- **P22** Plan Mode two-layer gate — backend filters execute_python / save_artifact / promote_finding / delegate_subagent from the tool menu and rewrites the system prompt when `plan_mode=true`; frontend surfaces a terminal-aesthetic switch in `<ChatInput/>` with an orange accent badge and threads the flag through `streamChatMessage`. Store flag persists across reloads. (`backend/app/api/chat_api.py`, `backend/app/harness/injector.py`, `frontend/src/components/chat/ChatInput.tsx`, `frontend/src/lib/store.ts`, `frontend/src/lib/api.ts`) — `23c77be`
+- **P23** OpenRouter 429 fallback chain — `FallbackModelClient` wraps a primary model with an ordered list from `OPENROUTER_FALLBACK_MODELS`; triggers only on `RateLimitError` so non-rate-limit failures (bad API key, network, malformed payload) surface immediately instead of silently burning fallback quota. Structural `ModelClient` surface preserved so existing trace/logging call sites are unchanged. (`harness/clients/fallback_client.py`, `harness/clients/base.py`, `harness/clients/openrouter_client.py`, `api/chat_api.py`) — `23c77be`
 
 ### Fixed
 
-- `/api/chat/stream` now wraps its SSE generator in `TraceSession`, so every streamed turn writes a YAML trace under `TRACE_DIR`. Previously only the non-streaming `/api/chat` endpoint produced traces, which made DevTools' Timeline and Prompt sub-tabs 404 on `/api/trace/traces/{id}/...` for every streamed session (the common case). Regression pinned by integration test. (`backend/app/api/chat_api.py`, `backend/tests/integration/test_stream_trace.py`) — _pending_
+- `/api/chat/stream` now wraps its SSE generator in `TraceSession`, so every streamed turn writes a YAML trace under `TRACE_DIR`. Previously only the non-streaming `/api/chat` endpoint produced traces, which made DevTools' Timeline and Prompt sub-tabs 404 on `/api/trace/traces/{id}/...` for every streamed session (the common case). Regression pinned by integration test. (`backend/app/api/chat_api.py`, `backend/tests/integration/test_stream_trace.py`) — `23c77be`
 - Append-turn lost-update race — per-conversation `threading.Lock` serializes read-modify-write on `/api/conversations/{id}/turns`. (`backend/app/api/conversations_api.py`) — `e889f1b`
 - Cold-start conversation now persists to the backend so the happy-path first message isn't dropped by the 404 guard on `/turns`. (`frontend/src/components/chat/ChatLayout.tsx`) — `e889f1b`
 - Slash menu no longer re-fires on second Enter — picking a command locks the menu closed until the input is edited, so Enter submits the message instead of re-executing. (`frontend/src/components/chat/ChatInput.tsx`) — `5b0cb00`
