@@ -61,11 +61,9 @@ ifdef type
 	@printf -- "---\nname: $(name)\ndescription: '[Reference] Describe what this documents and when to load it.'\nversion: '0.1'\n---\n# $(name)\n\nReference documentation.\n\n## Contents\n\n...\n" > $(SKILL_DIR)/SKILL.md
 else
 	@mkdir -p $(SKILL_DIR)/pkg
-	@mkdir -p $(SKILL_DIR)/references
 	@mkdir -p $(SKILL_DIR)/tests
-	@mkdir -p $(SKILL_DIR)/evals/fixtures
 	@touch $(SKILL_DIR)/pkg/__init__.py
-	@printf -- "---\nname: $(name)\ndescription: ''\nlevel: 1\nversion: '0.1'\n---\n# $(name)\n\nOne-paragraph overview.\n\n## When to use\n\n...\n\n## Contract\n\n...\n" > $(SKILL_DIR)/SKILL.md
+	@printf -- "---\nname: $(name)\ndescription: 'One-line description of what this skill does.'\nversion: '0.1'\n---\n# $(name)\n\nOne-paragraph overview.\n\n## When to use\n\n...\n\n## Contract\n\n...\n" > $(SKILL_DIR)/SKILL.md
 endif
 	@printf "dependencies:\n  requires: []\n  used_by: []\n  packages: []\nerrors: {}\n" > $(SKILL_DIR)/skill.yaml
 	@echo "Skill scaffolded at $(SKILL_DIR)/"
