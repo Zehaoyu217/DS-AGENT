@@ -22,8 +22,8 @@ def test_plan_chart_report_dashboard_end_to_end(tmp_path: Path, monkeypatch) -> 
     assert "profile" in [s.slug for s in plan_result.steps]
 
     # 2. Charts
-    from app.skills.altair_charts.pkg.actual_vs_forecast import actual_vs_forecast
-    from app.skills.altair_charts.pkg.grouped_bar import grouped_bar
+    from app.skills.charting.altair_charts.pkg.actual_vs_forecast import actual_vs_forecast
+    from app.skills.charting.altair_charts.pkg.grouped_bar import grouped_bar
 
     ts = pd.DataFrame(
         {
@@ -40,8 +40,8 @@ def test_plan_chart_report_dashboard_end_to_end(tmp_path: Path, monkeypatch) -> 
     assert chart_bar.to_dict()["encoding"]["xOffset"]["field"] == "period"
 
     # 3. Report
-    from app.skills.report_builder.pkg import build as report_build_mod
-    from app.skills.report_builder.pkg.build import (
+    from app.skills.reporting.report_builder.pkg import build as report_build_mod
+    from app.skills.reporting.report_builder.pkg.build import (
         Finding,
         FindingSection,
         Methodology,
@@ -76,8 +76,8 @@ def test_plan_chart_report_dashboard_end_to_end(tmp_path: Path, monkeypatch) -> 
     assert rep.paths["md"].exists()
 
     # 4. Dashboard
-    from app.skills.dashboard_builder.pkg import build as dash_build_mod
-    from app.skills.dashboard_builder.pkg.build import (
+    from app.skills.reporting.dashboard_builder.pkg import build as dash_build_mod
+    from app.skills.reporting.dashboard_builder.pkg.build import (
         DashboardSpec,
         KPICard,
         SectionSpec,
