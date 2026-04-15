@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import logging
+from collections import deque
 from pathlib import Path
 
 import yaml
 
 from app.skills.base import SkillMetadata, SkillNode
+
+_log = logging.getLogger(__name__)
 
 
 def _split_frontmatter(text: str) -> tuple[dict, str]:
@@ -100,6 +104,12 @@ class SkillRegistry:
             parent=parent,
         )
 
+        if name in self._index:
+            _log.warning(
+                "Skill name collision: '%s' at %s shadows earlier entry — check for duplicate name: fields",
+                name,
+                dir,
+            )
         self._index[name] = node
         if parent is None:
             self._roots.append(node)
@@ -165,9 +175,9 @@ class SkillRegistry:
     def _iter_all(self) -> list[SkillNode]:
         """BFS over all nodes in the tree."""
         result: list[SkillNode] = []
-        queue = list(self._roots)
+        queue: deque[SkillNode] = deque(self._roots)
         while queue:
-            node = queue.pop(0)
+            node = queue.popleft()
             result.append(node)
             queue.extend(node.children)
         return result
