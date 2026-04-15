@@ -139,3 +139,88 @@ def test_safe_session_filename_strips_unsafe_chars() -> None:
     assert _safe_session_filename("") == "unknown"
     # Length cap.
     assert len(_safe_session_filename("x" * 500)) <= 96
+
+
+# --- New tests for min-turns guard, Worklog, and 3000-char cap ---
+
+def test_notes_skipped_for_trivial_turn() -> None:
+    """No tools called, turn_index=1 → notes must NOT be written."""
+    wiki = MagicMock()
+    bus = MagicMock()
+    state = TurnState(dataset_loaded=False)  # no tools called
+    wrap = TurnWrapUp(wiki=wiki, event_bus=bus)
+    wrap.finalize(state=state, final_text="hi", session_id="s1", turn_index=1)
+    wiki.write_session_notes.assert_not_called()
+
+
+def test_notes_written_when_tools_used_on_turn_1() -> None:
+    """Tools called on turn 1 → notes SHOULD be written."""
+    wiki = MagicMock()
+    bus = MagicMock()
+    state = TurnState(dataset_loaded=False)
+    state.record_tool("execute_python", {}, "ok")
+    wrap = TurnWrapUp(wiki=wiki, event_bus=bus)
+    wrap.finalize(state=state, final_text="result", session_id="s2", turn_index=1)
+    wiki.write_session_notes.assert_called_once()
+
+
+def test_notes_written_on_turn_2_without_tools() -> None:
+    """turn_index=2 with no tools → notes SHOULD be written (turn threshold met)."""
+    wiki = MagicMock()
+    bus = MagicMock()
+    state = TurnState(dataset_loaded=False)
+    wrap = TurnWrapUp(wiki=wiki, event_bus=bus)
+    wrap.finalize(state=state, final_text="hi again", session_id="s3", turn_index=2)
+    wiki.write_session_notes.assert_called_once()
+
+
+def test_notes_capped_at_3000_chars() -> None:
+    """Notes must be ≤ 3000 chars when written."""
+    wiki = MagicMock()
+    bus = MagicMock()
+    state = TurnState(dataset_loaded=False)
+    state.record_tool("execute_python", {}, "ok")
+    # Bloat final_text to force notes over 3000 chars.
+    wrap = TurnWrapUp(wiki=wiki, event_bus=bus)
+    wrap.finalize(
+        state=state,
+        final_text="x" * 3000,
+        session_id="cap-test",
+        turn_index=2,
+    )
+    assert wiki.write_session_notes.called
+    written = wiki.write_session_notes.call_args[0][1]
+    assert len(written) <= 3000
+
+
+def test_worklog_auto_populated_from_trace() -> None:
+    """Worklog section lists each tool call with step index and status."""
+    state = TurnState()
+    state.record_tool("execute_python", {}, "ok")
+    state.record_tool("save_artifact", {"artifact_id": "a1"}, "ok")
+    state.record_tool("stat_validate.validate", {}, "error")
+    md = _render_session_notes(
+        session_id="wl-test",
+        turn_index=3,
+        final_text="done",
+        state=state,
+        promoted_finding_ids=[],
+    )
+    assert "## Worklog" in md
+    assert "step 1: `execute_python` → ok" in md
+    assert "step 2: `save_artifact` → ok" in md
+    assert "step 3: `stat_validate.validate` → error" in md
+
+
+def test_worklog_placeholder_when_no_tools() -> None:
+    """Worklog shows placeholder when no tools were called."""
+    state = TurnState()
+    md = _render_session_notes(
+        session_id="wl-empty",
+        turn_index=0,
+        final_text="",
+        state=state,
+        promoted_finding_ids=[],
+    )
+    assert "## Worklog" in md
+    assert "_no tool activity_" in md

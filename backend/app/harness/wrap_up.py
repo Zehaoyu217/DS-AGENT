@@ -46,6 +46,7 @@ _SESSION_SECTIONS: tuple[str, ...] = (
     "Open Questions",
     "Next Steps",
     "Errors / Blockers",
+    "Worklog",
     "Meta",
 )
 
@@ -99,6 +100,14 @@ def _render_session_notes(
     )
     error_lines = "\n".join(f"- {e}" for e in errors) if errors else "_no errors_"
 
+    worklog_lines: list[str] = []
+    for step, evt in enumerate(trace, start=1):
+        tname = str(evt.get("tool", ""))
+        status = str(evt.get("status", ""))
+        if tname:
+            worklog_lines.append(f"- step {step}: `{tname}` → {status}")
+    worklog = "\n".join(worklog_lines) if worklog_lines else "_no tool activity_"
+
     stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
     parts = [
         f"# Session Notes — `{session_id}`",
@@ -128,6 +137,9 @@ def _render_session_notes(
         error_lines,
         "",
         f"## {_SESSION_SECTIONS[8]}",
+        worklog,
+        "",
+        f"## {_SESSION_SECTIONS[9]}",
         f"- session_id: `{session_id}`",
         f"- turn_index: {turn_index}",
         f"- last_turn_final_text: {final_text[:160]}"
@@ -229,21 +241,28 @@ class TurnWrapUp:
             f"artifacts={list(state.artifact_ids())} promoted={promoted}"
         )
 
-        # Structured 9-section session notes (P18).  Best-effort: a missing
+        # Structured 10-section session notes (P18).  Best-effort: a missing
         # or broken wiki should never crash the wrap-up.
+        #
+        # Skip trivial turns (single exchange, no tool activity) to avoid
+        # filling the wiki with nine "—" sections for every greeting.
+        _has_tool_activity = len(state.as_trace()) > 0
         notes_written = False
-        try:
-            notes = _render_session_notes(
-                session_id=session_id,
-                turn_index=turn_index,
-                final_text=final_text,
-                state=state,
-                promoted_finding_ids=promoted,
-            )
-            self._wiki.write_session_notes(session_id, notes)
-            notes_written = True
-        except Exception:  # noqa: BLE001 — structured notes must never fail the turn
-            notes_written = False
+        if turn_index >= 2 or _has_tool_activity:
+            try:
+                notes = _render_session_notes(
+                    session_id=session_id,
+                    turn_index=turn_index,
+                    final_text=final_text,
+                    state=state,
+                    promoted_finding_ids=promoted,
+                )
+                if len(notes) > 3000:
+                    notes = notes[:2997] + "…"
+                self._wiki.write_session_notes(session_id, notes)
+                notes_written = True
+            except Exception:  # noqa: BLE001 — structured notes must never fail the turn
+                notes_written = False
 
         self._bus.emit({
             "type": "turn_completed",
