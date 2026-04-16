@@ -50,9 +50,10 @@ class CompletionRequest:
     system: str
     messages: tuple[Message, ...]
     tools: tuple[ToolSchema, ...] = field(default_factory=tuple)
-    max_tokens: int = 2048
+    max_tokens: int = 4096
     temperature: float | None = None
     thinking_budget: int | None = None
+    tool_choice: str | None = None  # "required", "auto", "none", or None (provider default)
 
 
 @dataclass(frozen=True, slots=True)

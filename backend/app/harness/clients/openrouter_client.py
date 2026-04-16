@@ -95,11 +95,29 @@ class OpenRouterClient:
                 }
                 for t in request.tools
             ]
+            if request.tool_choice is not None:
+                payload["tool_choice"] = request.tool_choice
         return payload
 
     def complete(self, request: CompletionRequest) -> CompletionResponse:
         url = f"{self._base_url()}/chat/completions"
-        resp = self._http.post(url, json=self._payload(request), headers=self._headers())
+        payload = self._payload(request)
+        resp = self._http.post(url, json=payload, headers=self._headers())
+        if resp.status_code == 429:
+            raise RateLimitError(
+                provider="openrouter",
+                model=self.profile.model_id,
+                detail=resp.text[:500],
+            )
+        # Some models reject tool_choice="required" with a 4xx error.
+        # Retry once without it so the loop keeps running.
+        if resp.status_code in (400, 422) and "tool_choice" in payload:
+            logger.debug(
+                "openrouter %s rejected tool_choice (%s); retrying without it",
+                self.profile.model_id, resp.status_code,
+            )
+            payload.pop("tool_choice", None)
+            resp = self._http.post(url, json=payload, headers=self._headers())
         if resp.status_code == 429:
             raise RateLimitError(
                 provider="openrouter",

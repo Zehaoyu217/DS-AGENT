@@ -59,20 +59,52 @@ class AgentLoop:
         final_text = ""
         steps = 0
         stop_reason = "end_turn"
+        _synthesis_injected = False  # True after we inject a synthesis prompt
 
         for step in range(1, max_steps + 1):
             steps = step
             messages, _ = self._compactor.maybe_compact(messages)
+            # Force tool use on the first step when no tool results are in context yet.
+            # After a synthesis prompt is injected, strip tools so the model MUST write text.
+            has_tool_results = any(m.role == "tool" for m in messages)
+            if _synthesis_injected:
+                # Fresh minimal context for synthesis — avoids free-model context overflow.
+                req_messages = _build_synthesis_messages(user_message, messages)
+                req_tools: tuple[ToolSchema, ...] = ()
+                req_tool_choice = None
+            elif tools and not has_tool_results:
+                req_messages = messages
+                req_tools = tools
+                req_tool_choice = "required"
+            else:
+                req_messages = messages
+                req_tools = tools
+                req_tool_choice = None
+            # On synthesis retry use a minimal system prompt so the model doesn't
+            # follow "always use tools" instructions from the full data-analyst prompt.
+            req_system = _SYNTHESIS_SYSTEM if _synthesis_injected else system
             resp = client.complete(CompletionRequest(
-                system=system, messages=tuple(messages),
-                tools=tools, max_tokens=2048,
+                system=req_system, messages=tuple(req_messages),
+                tools=req_tools, max_tokens=4096,
+                tool_choice=req_tool_choice,
             ))
             final_text = resp.text
 
             if not resp.tool_calls:
+                # If the model went silent after making tool calls, inject a synthesis
+                # prompt once and retry — this time with a fresh minimal context.
+                if (
+                    not final_text.strip()
+                    and has_tool_results
+                    and not _synthesis_injected
+                    and steps < max_steps
+                ):
+                    _synthesis_injected = True
+                    continue
                 stop_reason = resp.stop_reason or "end_turn"
                 break
 
+            _synthesis_injected = False  # reset if model made tool calls
             messages.append(Message(
                 role="assistant",
                 content=resp.text or "",
@@ -175,6 +207,7 @@ class AgentLoop:
         final_text = ""
         steps = 0
         stop_reason = "end_turn"
+        _synthesis_injected = False  # True after we inject a synthesis prompt
 
         for steps in range(1, max_steps + 1):
             yield StreamEvent(
@@ -198,19 +231,57 @@ class AgentLoop:
                 )
 
             _llm_start = time.monotonic()
+            # Force tool use on the first step when no tool results are in context yet.
+            # After a synthesis prompt is injected, use a fresh minimal context to avoid
+            # free-model context overflow causing silent empty responses.
+            has_tool_results = any(m.role == "tool" for m in messages)
+            if _synthesis_injected:
+                req_messages = _build_synthesis_messages(user_message, messages)
+                req_tools: tuple[ToolSchema, ...] = ()
+                req_tool_choice = None
+            elif tools and not has_tool_results:
+                req_messages = messages
+                req_tools = tools
+                req_tool_choice = "required"
+            else:
+                req_messages = messages
+                req_tools = tools
+                req_tool_choice = None
+            # On synthesis retry use a minimal system prompt so the model doesn't
+            # follow "always use tools" instructions from the full data-analyst prompt.
+            req_system = _SYNTHESIS_SYSTEM if _synthesis_injected else system
             resp = client.complete(CompletionRequest(
-                system=system, messages=tuple(messages),
-                tools=tools, max_tokens=2048,
+                system=req_system, messages=tuple(req_messages),
+                tools=req_tools, max_tokens=4096,
+                tool_choice=req_tool_choice,
             ))
             _llm_ms = int((time.monotonic() - _llm_start) * 1000)
             final_text = resp.text
 
             # ── Per-turn LLM call trace event ─────────────────────────────
+            # Also yield a debug_step stream event so the eval adapter can log
+            # per-step outcomes without needing to inspect backend logs.
+            yield StreamEvent(
+                type="debug_step",
+                payload={
+                    "step": steps,
+                    "synthesis": _synthesis_injected,
+                    "tool_choice": req_tool_choice,
+                    "n_req_msgs": len(req_messages),
+                    "n_tools": len(req_tools),
+                    "resp_len": len(final_text or ""),
+                    "resp_tool_calls": len(resp.tool_calls),
+                    "stop_reason": resp.stop_reason,
+                    "input_tokens": resp.usage.get("input_tokens", 0),
+                    "output_tokens": resp.usage.get("output_tokens", 0),
+                    "latency_ms": _llm_ms,
+                },
+            )
             try:
                 from app.trace.events import PromptSection
                 from app.trace.publishers import publish_llm_call as _pub_llm
                 _prompt_text = "\n\n".join(
-                    f"[{m.role.upper()}]: {m.content or ''}" for m in messages
+                    f"[{m.role.upper()}]: {m.content or ''}" for m in req_messages
                 )
                 _pub_llm(
                     step_id=f"s{steps}",
@@ -239,9 +310,21 @@ class AgentLoop:
                 pass
 
             if not resp.tool_calls:
+                # If the model went silent after making tool calls, retry once using a
+                # fresh minimal context (_build_synthesis_messages) so free models aren't
+                # overwhelmed by the full bloated conversation history.
+                if (
+                    not final_text.strip()
+                    and has_tool_results
+                    and not _synthesis_injected
+                    and steps < max_steps
+                ):
+                    _synthesis_injected = True
+                    continue
                 stop_reason = resp.stop_reason or "end_turn"
                 break
 
+            _synthesis_injected = False  # reset if model made tool calls
             messages.append(Message(
                 role="assistant",
                 content=resp.text or "",
@@ -423,3 +506,43 @@ def _arg_preview(arguments: dict[str, object], max_len: int = 120) -> str:
     """Return a short human-readable preview of tool arguments."""
     text = json.dumps(arguments)
     return text[:max_len] + ("…" if len(text) > max_len else "")
+
+
+_SYNTHESIS_SYSTEM = (
+    "You are a helpful data analyst. The user asked a question and you already ran "
+    "Python queries to gather data. Write a complete, clear markdown response that "
+    "directly answers their question using the results provided. Do not call any tools."
+)
+
+
+def _build_synthesis_messages(
+    user_message: str,
+    messages: list[Message],
+    keep_results: int = 3,
+    result_chars: int = 800,
+) -> list[Message]:
+    """Build a minimal fresh message list for the synthesis step.
+
+    Free models often return empty text when the full conversation history is
+    very long (many tool call / result pairs).  This helper extracts the last
+    ``keep_results`` tool-result payloads, inlines them as a compact summary,
+    and wraps the original user question into a fresh two-message conversation.
+    The model only sees a short context, so it can synthesise without hitting
+    context-window or attention limits.
+    """
+    tool_msgs = [m for m in messages if m.role == "tool"]
+    recent = tool_msgs[-keep_results:]
+    snippets: list[str] = []
+    for i, m in enumerate(recent, 1):
+        content = (m.content or "")[:result_chars]
+        snippets.append(f"Result {i}:\n{content}")
+    summary = "\n\n".join(snippets) if snippets else "(no query results available)"
+    synthesis_user = (
+        f"You ran several data queries. Here are the most recent results:\n\n"
+        f"{summary}\n\n"
+        f"Now write a complete markdown response answering the user's original question:\n"
+        f'"{user_message}"\n\n'
+        f"Include the specific numbers you found, cite any artifact IDs you saved, "
+        f"and include any charts, tables, or diagrams requested."
+    )
+    return [Message(role="user", content=synthesis_user)]
