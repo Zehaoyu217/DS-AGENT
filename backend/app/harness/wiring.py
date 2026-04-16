@@ -7,6 +7,14 @@ the same instances; this module builds them lazily and caches them.
 
 All accessors are idempotent: first call constructs, subsequent calls reuse.
 Tests can override paths via the ``CCAGENT_*`` environment variables.
+
+Runtime data paths default to subdirectories of ``CCAGENT_HOME`` (``~/.ccagent``
+by default — see ``app.core.home``). Override individual paths with:
+  CCAGENT_ARTIFACT_DB   — SQLite DB for artifacts
+  CCAGENT_ARTIFACT_DISK — directory for large artifact blobs
+  CCAGENT_WIKI_ROOT     — wiki root directory
+  CCAGENT_SKILLS_ROOT   — skills package directory (source, not data)
+  CCAGENT_PROMPT_PATH   — path to the base system prompt markdown
 """
 from __future__ import annotations
 
@@ -15,17 +23,17 @@ from pathlib import Path
 from threading import RLock
 
 from app.artifacts.store import ArtifactStore
+from app.core.home import artifacts_db_path, artifacts_disk_path, wiki_root_path
 from app.harness.injector import PreTurnInjector
 from app.knowledge.gotchas import GotchaIndex, load_index
 from app.skills.registry import SkillRegistry
 from app.wiki.engine import WikiEngine
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 _BACKEND_ROOT = Path(__file__).resolve().parents[2]
+_REPO_ROOT = Path(__file__).resolve().parents[3]
 
-_DEFAULT_ARTIFACT_DB = _BACKEND_ROOT / "data" / "artifacts.db"
-_DEFAULT_ARTIFACT_DISK = _BACKEND_ROOT / "data" / "artifacts"
-_DEFAULT_WIKI_ROOT = _REPO_ROOT / "knowledge" / "wiki"
+# Skills root and prompt path are source-code paths, not runtime data —
+# they stay relative to the repo rather than CCAGENT_HOME.
 _DEFAULT_SKILLS_ROOT = _BACKEND_ROOT / "app" / "skills"
 _DEFAULT_PROMPT_PATH = _REPO_ROOT / "prompts" / "data_scientist.md"
 
@@ -48,8 +56,8 @@ def get_artifact_store() -> ArtifactStore:
         return _artifact_store
     with _lock:
         if _artifact_store is None:
-            db = _path_from_env("CCAGENT_ARTIFACT_DB", _DEFAULT_ARTIFACT_DB)
-            disk = _path_from_env("CCAGENT_ARTIFACT_DISK", _DEFAULT_ARTIFACT_DISK)
+            db = _path_from_env("CCAGENT_ARTIFACT_DB", artifacts_db_path())
+            disk = _path_from_env("CCAGENT_ARTIFACT_DISK", artifacts_disk_path())
             db.parent.mkdir(parents=True, exist_ok=True)
             disk.mkdir(parents=True, exist_ok=True)
             _artifact_store = ArtifactStore(db_path=db, disk_root=disk)
@@ -62,7 +70,7 @@ def get_wiki_engine() -> WikiEngine:
         return _wiki_engine
     with _lock:
         if _wiki_engine is None:
-            root = _path_from_env("CCAGENT_WIKI_ROOT", _DEFAULT_WIKI_ROOT)
+            root = _path_from_env("CCAGENT_WIKI_ROOT", wiki_root_path())
             root.mkdir(parents=True, exist_ok=True)
             (root / "findings").mkdir(exist_ok=True)
             (root / "hypotheses").mkdir(exist_ok=True)

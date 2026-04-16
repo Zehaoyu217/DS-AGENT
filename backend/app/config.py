@@ -4,7 +4,14 @@ from pydantic_settings import BaseSettings
 
 
 class AppConfig(BaseSettings):
-    """Application configuration loaded from environment variables."""
+    """Application configuration loaded from environment variables.
+
+    Runtime data paths are controlled by ``CCAGENT_HOME`` (default ``~/.ccagent``).
+    See ``app.core.home`` for the full path-helper API. The fields below that
+    reference paths (sandbox_state_root, duckdb_path, wiki_root) are convenience
+    overrides; in production prefer setting ``CCAGENT_HOME`` and relying on the
+    derived defaults in ``wiring.py``.
+    """
 
     environment: str = "development"
     host: str = "127.0.0.1"

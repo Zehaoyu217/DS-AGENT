@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field
 
 from app.artifacts.events import get_event_bus
 from app.config import get_config
+from app.core.home import traces_path
 from app.context.manager import ContextLayer, session_registry
 from app.data.db_init import get_data_context
 from app.harness.a2a import register_delegate_tool
@@ -814,7 +815,8 @@ def _run_wrap_up(
 
 
 def _traces_dir() -> Path:
-    return Path(os.environ.get("TRACE_DIR", "traces"))
+    raw = os.environ.get("TRACE_DIR")
+    return Path(raw) if raw else traces_path()
 
 
 def _make_trace_id(conversation_id: str | None) -> str:
