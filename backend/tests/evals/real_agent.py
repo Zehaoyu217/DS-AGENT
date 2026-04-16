@@ -131,6 +131,20 @@ class RealAgentAdapter:
                                 f"{event.get('preview', '')[:200]}"
                             )
 
+                    elif event_type == "debug_step":
+                        import sys as _sys
+                        p = event
+                        _sys.stderr.write(
+                            f"[DEBUG step={p.get('step')} synth={p.get('synthesis')} "
+                            f"tool_choice={p.get('tool_choice')!r} "
+                            f"n_tools={p.get('n_tools')} n_msgs={p.get('n_req_msgs')} "
+                            f"resp_len={p.get('resp_len')} tool_calls={p.get('resp_tool_calls')} "
+                            f"stop={p.get('stop_reason')!r} "
+                            f"in_tok={p.get('input_tokens')} out_tok={p.get('output_tokens')} "
+                            f"ms={p.get('latency_ms')}]\n"
+                        )
+                        _sys.stderr.flush()
+
                     elif event_type == "turn_end":
                         final_output = event.get("final_text", "") or ""
 

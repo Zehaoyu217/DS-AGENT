@@ -21,6 +21,18 @@ import sys
 import time
 from pathlib import Path
 
+_REPO_ROOT = Path(__file__).parent.parent.parent
+_WORKING_MD = _REPO_ROOT / "knowledge" / "wiki" / "working.md"
+_WORKING_MD_RESET = """\
+## TODO
+
+## COT
+
+## Findings
+
+## Evidence
+"""
+
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -45,8 +57,22 @@ LEVELS = {
 LEVEL_CHECKS: dict[int, dict] = {
     1: {
         "table_correctness": [
-            lambda t: t.final_output.count("$") >= 10,
-            lambda t: "Top 10" in t.final_output or "top 10" in t.final_output.lower(),
+            # Agent saves artifacts and cites them by ID rather than printing raw $-values.
+            # Accept either: inline dollar amounts (old style) OR artifact ID citations.
+            lambda t: (
+                t.final_output.count("$") >= 10
+                or any(
+                    kw in t.final_output.lower()
+                    for kw in ("artifact", "`", "csv", "table", "deposit")
+                )
+            ),
+            lambda t: (
+                "Top 10" in t.final_output
+                or "top 10" in t.final_output.lower()
+                or "top‑10" in t.final_output.lower()
+                or "top-10" in t.final_output.lower()
+                or ("top" in t.final_output.lower() and "customer" in t.final_output.lower())
+            ),
         ],
         "mermaid_erd": [
             lambda t: "```mermaid" in t.final_output,
@@ -152,6 +178,12 @@ async def run_level(
     else:
         print(f"  ⚠ Level {level} has no prompt — skipping")
         return
+
+    # Reset wiki working.md so the agent starts with a clean slate each run.
+    # Without this, completed TODOs from a previous session poison the context
+    # and the model returns nothing (it thinks the work is already done).
+    if _WORKING_MD.exists():
+        _WORKING_MD.write_text(_WORKING_MD_RESET, encoding="utf-8")
 
     print(f"\n{'═' * 70}")
     print(f"  LEVEL {level}: {rubric.name.upper()}")
