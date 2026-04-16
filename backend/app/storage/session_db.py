@@ -112,6 +112,24 @@ class SearchResult:
     timestamp: float
 
 
+@dataclass
+class CronJobRecord:
+    """Thin storage-layer mirror of a cron_jobs row.
+
+    Fields map 1:1 to the DB columns.  The scheduler layer converts these
+    to/from its own ``CronJob`` Pydantic model — no cross-layer import needed.
+    """
+
+    id: str
+    schedule: str
+    prompt: str
+    enabled: bool
+    created_at: float
+    last_run_at: float | None
+    next_run_at: float | None
+    last_session_id: str | None
+
+
 def _jitter_retry(fn: Any, max_attempts: int = 15) -> Any:
     """Retry on SQLite lock errors with random backoff (20–150ms)."""
     for attempt in range(max_attempts):
@@ -228,6 +246,54 @@ class SessionDB:
 
         _jitter_retry(_update)
 
+    def list_cron_jobs(self, enabled_only: bool = False) -> list[CronJobRecord]:
+        """Return all cron job rows, optionally filtering to enabled ones only."""
+        with self._connect() as conn:
+            if enabled_only:
+                rows = conn.execute(
+                    "SELECT * FROM cron_jobs WHERE enabled=1 ORDER BY created_at"
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM cron_jobs ORDER BY created_at"
+                ).fetchall()
+            return [_row_to_cron_job(row) for row in rows]
+
+    def upsert_cron_job(self, job: Any) -> None:
+        """Insert or replace a cron_jobs row from a CronJob-like object."""
+
+        def _upsert() -> None:
+            with self._connect() as conn:
+                conn.execute(
+                    """INSERT OR REPLACE INTO cron_jobs
+                       (id, schedule, prompt, enabled, created_at,
+                        last_run_at, next_run_at, last_session_id)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        job.id,
+                        job.schedule,
+                        job.prompt,
+                        int(job.enabled),
+                        job.created_at,
+                        getattr(job, "last_run_at", None),
+                        getattr(job, "next_run_at", None),
+                        getattr(job, "last_session_id", None),
+                    ),
+                )
+                self._checkpoint(conn)
+
+        _jitter_retry(_upsert)
+
+    def delete_cron_job(self, job_id: str) -> None:
+        """Delete a cron_jobs row by id."""
+
+        def _delete() -> None:
+            with self._connect() as conn:
+                conn.execute("DELETE FROM cron_jobs WHERE id=?", (job_id,))
+                self._checkpoint(conn)
+
+        _jitter_retry(_delete)
+
     def update_cron_job(self, job_id: str, **kwargs: Any) -> None:
         """Upsert arbitrary fields on a cron_jobs row."""
         if not kwargs:
@@ -323,6 +389,19 @@ def _row_to_session(row: sqlite3.Row) -> Session:
         step_count=row["step_count"] or 0,
         input_tokens=row["input_tokens"] or 0,
         output_tokens=row["output_tokens"] or 0,
+    )
+
+
+def _row_to_cron_job(row: sqlite3.Row) -> CronJobRecord:
+    return CronJobRecord(
+        id=row["id"],
+        schedule=row["schedule"],
+        prompt=row["prompt"],
+        enabled=bool(row["enabled"]),
+        created_at=row["created_at"],
+        last_run_at=row["last_run_at"],
+        next_run_at=row["next_run_at"],
+        last_session_id=row["last_session_id"],
     )
 
 

@@ -27,6 +27,7 @@ from app.harness.turn_state import TurnState
 
 if TYPE_CHECKING:
     from app.harness.injector import InjectorInputs, PreTurnInjector
+    from app.harness.semantic_compactor import SemanticCompactor
 
 # ── Parallel tool execution policy ────────────────────────────────────────────
 
@@ -73,10 +74,14 @@ class AgentLoop:
         dispatcher: ToolDispatcher,
         compactor: MicroCompactor | None = None,
         hook_runner: HookRunner | None = None,
+        semantic_compactor: SemanticCompactor | None = None,
+        model_context_limit: int = 200_000,
     ) -> None:
         self._dispatcher = dispatcher
         self._compactor = compactor or MicroCompactor()
         self._hook_runner = hook_runner or HookRunner()
+        self._semantic_compactor = semantic_compactor
+        self._model_context_limit = model_context_limit
 
     def run(
         self,
@@ -113,6 +118,13 @@ class AgentLoop:
         for step in range(1, max_steps + 1):
             steps = step
             messages, _ = self._compactor.maybe_compact(messages)
+            # Stage 2: semantic compaction when still over 80 % after micro-compact.
+            if self._semantic_compactor is not None:
+                _est_tok = sum(len(getattr(m, "content", None) or "") for m in messages) // 4
+                if self._semantic_compactor.should_compact(messages, _est_tok, self._model_context_limit):
+                    _sc = self._semantic_compactor.compact(messages, client)
+                    if _sc.turns_summarized > 0:
+                        messages = _sc.messages
             # Force tool use on the first step when no tool results are in context yet.
             # After a synthesis prompt is injected, strip tools so the model MUST write text.
             has_tool_results = any(m.role == "tool" for m in messages)
@@ -316,6 +328,24 @@ class AgentLoop:
                         "artifact_refs": list(compact_report.artifact_refs),
                     },
                 )
+
+            # Stage 2: semantic compaction when still over 80 % after micro-compact.
+            if self._semantic_compactor is not None:
+                _est_tok = sum(len(getattr(m, "content", None) or "") for m in messages) // 4
+                if self._semantic_compactor.should_compact(messages, _est_tok, self._model_context_limit):
+                    _sc = self._semantic_compactor.compact(messages, client)
+                    if _sc.turns_summarized > 0:
+                        messages = _sc.messages
+                        yield StreamEvent(
+                            type="semantic_compact",
+                            payload={
+                                "step": steps,
+                                "turns_summarized": _sc.turns_summarized,
+                                "tokens_before": _sc.tokens_before,
+                                "tokens_after": _sc.tokens_after,
+                                "summary_preview": _sc.summary_preview,
+                            },
+                        )
 
             _llm_start = time.monotonic()
             # Force tool use on the first step when no tool results are in context yet.

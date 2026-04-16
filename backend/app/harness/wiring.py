@@ -45,6 +45,7 @@ _wiki_engine: WikiEngine | None = None
 _skill_registry: SkillRegistry | None = None
 _gotcha_index: GotchaIndex | None = None
 _pre_turn_injector: PreTurnInjector | None = None
+_cron_engine: Any = None  # CronEngine — late import avoids APScheduler at import time
 
 
 def _path_from_env(env_var: str, default: Path) -> Path:
@@ -246,9 +247,64 @@ def get_pre_turn_injector() -> PreTurnInjector:
     return _pre_turn_injector
 
 
+class _MinimalCronFactory:
+    """Minimal AgentFactory for cron job execution.
+
+    Builds a bare-bones loop (no registered tools) backed by the Anthropic API.
+    For production use with the full data-science tool catalog, supply a custom
+    factory via ``get_cron_engine(agent_factory=...)``.
+    """
+
+    def build_loop(self, session_id: str) -> Any:
+        from app.harness.dispatcher import ToolDispatcher  # noqa: PLC0415
+        from app.harness.loop import AgentLoop  # noqa: PLC0415
+
+        return AgentLoop(dispatcher=ToolDispatcher())
+
+    def build_client(self) -> Any:
+        import anthropic  # noqa: PLC0415
+
+        from app.harness.clients.anthropic_client import AnthropicClient  # noqa: PLC0415
+        from app.harness.config import ModelProfile  # noqa: PLC0415
+
+        profile = ModelProfile(
+            name="cron-worker",
+            provider="anthropic",
+            model_id="claude-haiku-4-5-20251001",
+            tier="standard",
+        )
+        return AnthropicClient(profile=profile, api_client=anthropic.Anthropic())
+
+    def build_system(self) -> str:
+        try:
+            return get_pre_turn_injector().build_static()
+        except Exception:  # noqa: BLE001
+            return "You are a helpful AI assistant running a scheduled analysis job."
+
+
+def get_cron_engine(agent_factory: Any = None) -> Any:
+    """Return the process-wide CronEngine singleton.
+
+    Pass *agent_factory* the first time to override the default minimal factory.
+    Subsequent calls with a factory argument are ignored (singleton is already built).
+    """
+    global _cron_engine
+    if _cron_engine is not None:
+        return _cron_engine
+    with _lock:
+        if _cron_engine is None:
+            from app.scheduler.engine import CronEngine  # noqa: PLC0415
+
+            _cron_engine = CronEngine(
+                session_db=get_session_db(),
+                agent_factory=agent_factory or _MinimalCronFactory(),
+            )
+    return _cron_engine
+
+
 def reset_singletons_for_tests() -> None:
     """Clear cached singletons so tests get fresh instances."""
-    global _artifact_store, _session_db, _wiki_engine, _skill_registry, _gotcha_index, _pre_turn_injector
+    global _artifact_store, _session_db, _wiki_engine, _skill_registry, _gotcha_index, _pre_turn_injector, _cron_engine
     with _lock:
         _artifact_store = None
         _session_db = None
@@ -256,3 +312,4 @@ def reset_singletons_for_tests() -> None:
         _skill_registry = None
         _gotcha_index = None
         _pre_turn_injector = None
+        _cron_engine = None

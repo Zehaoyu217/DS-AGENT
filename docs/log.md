@@ -43,6 +43,8 @@ Entry shape:
 - **H3 Injection guard**: `injection_guard.py` scans wiki / session-notes content against 10 regex patterns before injection; on match, the block is silently skipped and a warning is logged. (`harness/injection_guard.py`, `harness/injector.py`) — H3
 - **H3 Cache-preservation split**: `PreTurnInjector` gains `build_static()` (base prompt + skills + gotchas, called once per session) and `build_dynamic()` (wiki state + profile + budget, merged into user message each turn); `AgentLoop.run()` / `run_stream()` accept optional `injector` + `injector_inputs` to drive the split automatically. (`harness/injector.py`, `harness/loop.py`) — H3
 - **H3 Parallel tool dispatch**: `PARALLEL_SAFE_TOOLS` and `NEVER_PARALLEL_TOOLS` frozensets define the policy; `_should_parallelize()` heuristic; when all calls in a batch are safe, `AgentLoop` dispatches them via `ThreadPoolExecutor`. (`harness/loop.py`) — H3
+- **H4 Semantic compactor**: LLM-based stage-2 compaction triggers at 80 % of `model_context_limit` after `MicroCompactor` runs; protects head (first 2 turns) and tail (last 3 turns); emits `semantic_compact` SSE event with token deltas and summary preview. (`harness/semantic_compactor.py`, `harness/loop.py`) — H4
+- **H4 APScheduler cron engine**: in-process `BackgroundScheduler` for recurring agent jobs; `CronEngine` + `CronJobRecord` + `parse_schedule` (natural-language aliases + regex "every N hours/minutes"); jobs persisted in `sessions.db`; job runs create sessions with `source="cron"`; REST API at `GET/POST /api/scheduler/jobs`, `GET/PUT/DELETE /api/scheduler/jobs/{id}`, `POST /api/scheduler/jobs/{id}/run`; engine starts/stops via FastAPI lifespan. (`scheduler/`, `api/scheduler_api.py`, `main.py`, `storage/session_db.py`) — H4
 
 ### Fixed
 
