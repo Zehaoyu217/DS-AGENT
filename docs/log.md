@@ -31,7 +31,19 @@ Entry shape:
 
 ## [Unreleased]
 
-No entries yet.
+### Added
+
+- **Progressive Skill Exposure**: skill system restructured from flat catalog to hierarchical tree. `SkillRegistry` discovers skills recursively and maintains `_roots` (Level-1 for system prompt) and `_index` (flat lookup). System prompt now shows only Level-1 skills with `[N sub-skills]` annotations; loading a skill auto-appends its sub-skill catalog (~65% per-turn token reduction). New `SkillNode` dataclass carries depth, parent, children, and breadcrumb. Hub skills (`statistical_analysis`, `charting`, `reporting`) collapse leaf skills under a shared entry point. (`skills/registry.py`, `harness/injector.py`, `harness/skill_tools.py`) — `9331ae8`…`0443799`
+- **`skill-new` sub-skill scaffolding**: `make skill-new name=X parent=Y` creates nested skill with hub `__init__.py`; `type=reference` variant skips `pkg/` and prefixes description with `[Reference]`. (`Makefile`, `docs/skill-creation.md`) — `ffd36b1`
+- **Dynamic sandbox bootstrap imports** generated from registry tree via `SkillRegistry.generate_bootstrap_imports()` — new skills auto-appear in sandbox without manual edits to `_SKILL_IMPORTS`. (`harness/sandbox_bootstrap.py`) — `4f521af`
+- **Agent loop synthesis injection**: after completing tool calls, injects a synthesis prompt and strips tools so the model is forced to write a response. First-step `tool_choice=required` ensures the agent always starts by calling a tool. (`harness/loop.py`) — `e438b30`
+- **`tool_choice` field** on `CompletionRequest`; `OpenRouterClient` propagates it and gracefully retries without it on 400/422 (some models reject it). (`harness/clients/`) — `e438b30`
+
+### Fixed
+
+- `skills_api` `/manifest` and `/{name}/detail` crashed with `AttributeError` after `level` was removed from `SkillMetadata` — replaced with `node.depth`. (`api/skills_api.py`) — `b845412`
+- Nested skill `skill_dir` resolution used flat path `skills_root/name` — fixed to use `node.package_path.parent` so sub-skills are found at any depth. (`api/skills_api.py`) — `b845412`
+- Sandbox bootstrap multi-line import strings caused `IndentationError` when the skills-only filter stripped continuation lines — collapsed to single-line imports. (`harness/sandbox_bootstrap.py`) — `2a0125e`
 
 ---
 
