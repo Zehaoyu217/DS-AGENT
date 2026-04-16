@@ -22,8 +22,8 @@ class ToolDispatcher:
     def __init__(self) -> None:
         self._handlers: dict[str, ToolHandler] = {}
 
-    def register(self, name: str, handler: ToolHandler) -> None:
-        if name in self._handlers:
+    def register(self, name: str, handler: ToolHandler, *, override: bool = False) -> None:
+        if name in self._handlers and not override:
             raise ValueError(f"tool '{name}' already registered")
         self._handlers[name] = handler
 

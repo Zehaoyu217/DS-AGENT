@@ -40,8 +40,25 @@ class _Wiki(Protocol):
     def latest_session_notes(self, exclude_session_id: str = "") -> str: ...
 
 
-class _GotchaIndex(Protocol):
-    def as_injection(self) -> str: ...
+def _has_content_beyond_headers(text: str) -> bool:
+    """Return True only when *text* contains at least one non-blank, non-heading,
+    non-placeholder line.
+
+    Prevents the ``## Operational State`` block from being injected when
+    ``working.md`` or ``index.md`` hold nothing but the auto-generated header
+    skeleton (e.g. ``# Working`` or ``_(no pages yet)_`` index sections).
+    """
+    _PLACEHOLDER = "_(no pages yet)_"
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("#"):
+            continue
+        if stripped == _PLACEHOLDER:
+            continue
+        return True
+    return False
 
 
 class PreTurnInjector:
@@ -50,29 +67,42 @@ class PreTurnInjector:
         prompt_path: str | Path,
         wiki: _Wiki,
         skill_registry: _SkillRegistry,
-        gotcha_index: _GotchaIndex,
     ) -> None:
         self._prompt_path = Path(prompt_path)
         self._wiki = wiki
         self._skills = skill_registry
-        self._gotchas = gotcha_index
+        # Cache the static base prompt — it never changes at runtime, so
+        # re-reading the file on every turn is unnecessary I/O.
+        self._static_cache: str | None = None
+        # Cache the rendered skill menu — the registry tree is fixed at startup,
+        # so rebuilding the string on every turn is pure waste.
+        self._skill_menu_cache: str | None = None
 
     def _static(self) -> str:
-        return self._prompt_path.read_text(encoding="utf-8").rstrip()
+        if self._static_cache is None:
+            self._static_cache = self._prompt_path.read_text(encoding="utf-8").rstrip()
+        return self._static_cache
 
     def _operational_state(self) -> str:
         working = self._wiki.working_digest()
         idx = self._wiki.index_digest()
         body = []
-        if working:
+        # Only inject a section when there is real content — skip header-only
+        # or all-placeholder files (e.g. fresh ``# Working`` / empty index).
+        if working and _has_content_beyond_headers(working):
             body.append("### working.md\n\n" + working)
-        if idx:
+        if idx and _has_content_beyond_headers(idx):
             body.append("### index.md\n\n" + idx)
         if not body:
             return ""
         return "\n\n## Operational State\n\n" + "\n\n".join(body)
 
     def _skill_menu(self) -> str:
+        if self._skill_menu_cache is None:
+            self._skill_menu_cache = self._build_skill_menu()
+        return self._skill_menu_cache
+
+    def _build_skill_menu(self) -> str:
         roots = self._skills.list_top_level()
         if not roots:
             return ""
@@ -88,12 +118,6 @@ class PreTurnInjector:
             annotation = f" [{child_count} sub-skills]" if child_count > 0 else ""
             lines.append(f"- `{node.metadata.name}` — {desc}{annotation}")
         return "\n\n## Skills\n\n" + preamble + "\n\n" + "\n".join(lines)
-
-    def _gotchas_section(self) -> str:
-        body = self._gotchas.as_injection().strip()
-        if not body:
-            return ""
-        return "\n\n## Statistical Gotchas\n\n" + body
 
     def _profile_section(self, summary: str | None) -> str:
         if not summary:
@@ -144,9 +168,11 @@ class PreTurnInjector:
                 "re-fetch via `get_artifact`."
             ),
             "- Prefer `save_artifact` over dumping full tables or stdout "
-            "into the conversation. Cite the artifact id in findings.",
+            "into the conversation; cite the artifact id in findings. "
+            "Exception: when the user explicitly asks to 'show', 'display', or 'list' "
+            "a table, include it inline (≤20 rows as markdown) AND save as artifact.",
             "- Keep tool outputs small: print heads, summaries, or a single "
-            "aggregate — not the raw data.",
+            "aggregate — not raw data unless explicitly requested.",
         ]
         return "\n\n" + "\n".join(lines)
 
@@ -156,7 +182,6 @@ class PreTurnInjector:
             self._operational_state(),
             self._session_memory_section(inputs.session_id),
             self._skill_menu(),
-            self._gotchas_section(),
             self._profile_section(inputs.active_profile_summary),
             self._token_budget_section(inputs.token_budget),
             self._plan_mode_section(inputs.plan_mode),

@@ -17,6 +17,8 @@ const FORMAT_BADGE: Record<string, string> = {
   'mermaid': 'mermaid',
   'table-json': 'table',
   'html': 'html',
+  'csv': 'csv',
+  'text': 'text',
 }
 
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
@@ -77,6 +79,10 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
             <MermaidDiagram code={artifact.content} />
           ) : artifact.format === 'table-json' ? (
             <DataTable content={artifact.content} />
+          ) : artifact.format === 'csv' || artifact.format === 'text' ? (
+            <pre className="text-[11px] font-mono text-surface-300 overflow-auto max-h-64 whitespace-pre-wrap">
+              {artifact.content}
+            </pre>
           ) : (
             <div
               className="text-xs text-surface-400 overflow-auto max-h-64"

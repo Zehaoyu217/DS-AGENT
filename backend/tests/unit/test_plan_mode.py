@@ -35,11 +35,6 @@ class _StubSkills:
         return []
 
 
-class _StubGotchas:
-    def as_injection(self) -> str:
-        return ""
-
-
 @pytest.fixture()
 def injector(tmp_path: Path) -> PreTurnInjector:
     prompt = tmp_path / "prompt.md"
@@ -48,7 +43,6 @@ def injector(tmp_path: Path) -> PreTurnInjector:
         prompt_path=prompt,
         wiki=_StubWiki(),
         skill_registry=_StubSkills(),
-        gotcha_index=_StubGotchas(),
     )
 
 

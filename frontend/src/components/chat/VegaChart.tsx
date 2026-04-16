@@ -137,13 +137,13 @@ export function VegaChart({ spec }: VegaChartProps) {
           },
         }
 
+        // Always use container width so charts fill the panel instead of
+        // rendering at the spec's original (often tiny) pixel width.
+        themed.width = 'container'
+        themed.autosize = { type: 'fit', contains: 'padding' }
         if (hasFixedDimensions) {
-          themed.width = specWidth
+          // Keep original height; width fills the available container.
           themed.height = specHeight
-          themed.autosize = { type: 'pad', contains: 'padding' }
-        } else {
-          themed.width = 'container'
-          themed.autosize = { type: 'fit', contains: 'padding' }
         }
 
         if (cancelled) return
@@ -189,16 +189,14 @@ export function VegaChart({ spec }: VegaChartProps) {
     )
   }
 
-  let aspectStyle: React.CSSProperties = {}
+  // Derive a minimum height from the spec so the chart isn't collapsed before
+  // Vega finishes rendering. Width is always 100% (filled in render()).
+  let minHeight = 220
   try {
     const parsed =
       typeof spec === 'string' ? JSON.parse(spec) : (spec as Record<string, unknown>)
-    if (typeof parsed.width === 'number' && typeof parsed.height === 'number') {
-      aspectStyle = {
-        aspectRatio: `${parsed.width} / ${parsed.height}`,
-        maxWidth: `${parsed.width}px`,
-        width: '100%',
-      }
+    if (typeof parsed.height === 'number') {
+      minHeight = Math.max(parsed.height, 180)
     }
   } catch {
     // ignore
@@ -206,10 +204,10 @@ export function VegaChart({ spec }: VegaChartProps) {
 
   return (
     <div
-      style={aspectStyle}
-      className="my-2 rounded overflow-hidden bg-surface-850 border border-surface-700/60"
+      style={{ minHeight }}
+      className="w-full my-2 rounded overflow-hidden bg-surface-850 border border-surface-700/60"
     >
-      <div ref={containerRef} className="w-full h-full [&_svg]:w-full [&_svg]:h-full" />
+      <div ref={containerRef} className="w-full [&_svg]:w-full [&_svg]:max-w-full" />
     </div>
   )
 }

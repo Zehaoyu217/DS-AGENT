@@ -75,7 +75,10 @@ class SkillNode:
     depth: 1 = Level 1 (root), 2 = Level 2 (sub-skill), etc.
     parent: None for Level 1 skills.
     children: empty list for leaf skills.
-    package_path: path to pkg/ directory, or None if the skill has no Python package.
+    package_path: path to pkg/ directory, or None if the skill has no pkg/ subdirectory.
+    skill_path: path to the directory that contains SKILL.md. Used by
+        generate_bootstrap_imports() to detect skills whose code lives directly
+        in the skill directory (no pkg/ subdir) rather than in pkg/.
     """
 
     metadata: SkillMetadata
@@ -83,4 +86,5 @@ class SkillNode:
     package_path: Path | None
     depth: int
     parent: SkillNode | None
+    skill_path: Path | None = None
     children: list[SkillNode] = field(default_factory=list)

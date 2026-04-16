@@ -11,9 +11,9 @@ You want to quantify the strength of relationship between two numeric variables,
 
 ## Entry point
 
-```python
-from app.skills.correlation import correlate
+`correlate` is available as a pre-injected sandbox global — no import needed.
 
+```python
 result = correlate(
     df,
     x="price",

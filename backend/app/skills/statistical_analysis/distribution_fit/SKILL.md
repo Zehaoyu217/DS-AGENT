@@ -7,9 +7,9 @@ description: Auto-select distribution candidates from data shape, rank by AIC wi
 
 ## Entry point
 
-```python
-from app.skills.distribution_fit import fit
+`fit` is available as a pre-injected sandbox global — no import needed.
 
+```python
 result = fit(
     series,                       # pd.Series or np.ndarray
     candidates="auto",            # or list[str] like ["normal", "lognormal", "gamma"]

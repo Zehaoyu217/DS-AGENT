@@ -33,6 +33,33 @@ Entry shape:
 
 ### Added
 
+- **`statistical_gotchas` level-1 skill**: moved 14-entry gotcha catalog from always-injected system prompt to an on-demand skill. Saves ~250 tokens per turn; agent loads it explicitly when needed. (`skills/statistical_gotchas/`) — prompt cleanup
+- **Session file auto-cleanup**: `WikiEngine.write_session_notes` now prunes session files older than 3 days automatically, preventing unbounded accumulation in `knowledge/wiki/sessions/`. (`wiki/engine.py`)
+- **`log.md` 100 MB cap**: `WikiEngine.append_log` trims the oldest entries when the log exceeds 100 MB, preserving the header and newest lines. (`wiki/engine.py`)
+- **`_SingleToolResult` dataclass**: new internal return type from `AgentLoop._dispatch_single_call` — carries all per-tool data (`status`, `tool_message`, `artifact_ids`, `scratchpad_update`, `todo_update`, a2a fields, `dispatch_ms`) so streaming events can be emitted without re-inspecting state. (`harness/loop.py`)
+- **`_get_cached_preamble(registry)`**: module-level preamble cache in `sandbox_bootstrap` — static import lines generated once per registry instance instead of on every sandbox execution. (`harness/sandbox_bootstrap.py`)
+
+### Changed
+
+- **`PreTurnInjector._static()` cached**: base prompt (`data_scientist.md`) is read from disk once per process lifetime instead of on every turn. (`harness/injector.py`)
+- **`PreTurnInjector._skill_menu()` cached**: rendered skill-menu string computed once and reused — `list_top_level()` no longer called on every turn. (`harness/injector.py`)
+- **`_trim_log_to_size` O(n) rewrite**: replaced `while body: body.pop(0)` (O(n²)) with a single forward scan + slice (O(n)); also short-circuits when content already fits. (`wiki/engine.py`)
+- **`cleanup_old_sessions` throttled**: `write_session_notes` only scans the sessions directory if ≥ 1 hour has elapsed since the last cleanup, avoiding redundant `glob` I/O on every turn. (`wiki/engine.py`)
+- **`AgentLoop._dispatch_single_call` extracted**: ~90 lines of duplicated tool-dispatch + guardrail + state-update logic collapsed into a single shared method; `run()` and `run_stream()` both delegate to it, eliminating the maintenance risk of silent divergence. (`harness/loop.py`)
+- **`_SYNTHESIS_SYSTEM` enforces three-section format**: the synthesis fallback prompt now mandates the Headline / Executive Summary / Evidence / Assumptions & Caveats structure so turns that trigger the silent-response fallback still produce output matching the expected frontend format. (`harness/loop.py`)
+- **`build_sandbox_bootstrap` removed**: deprecated function deleted; callers use `build_duckdb_globals(registry=...)` directly. (`harness/sandbox_bootstrap.py`)
+- **`data_scientist.md` prompt rewrite**: removed stale `# Statistical Gotchas` section, three duplicated rules (print-before-save, no-inline-numbers, always-write-final-response), vague filler line, and `append to log.md` step (auto-managed). 156 → 101 lines, every sentence executable. (`prompts/data_scientist.md`)
+- **Empty wiki-header guard**: `## Operational State` is no longer injected when `working.md` / `index.md` contain only auto-generated headers or `_(no pages yet)_` placeholders — no content, no section. (`harness/injector.py`)
+- **ContextManager "Tool Results" / "Assistant Turns" items now accumulate**: devtools inspector shows the full tool history per turn instead of only the last tool call. (`api/chat_api.py`)
+- **`_SYSTEM_PROMPT` eager-build removed**: the module-level constant that triggered a full singleton init (skill-tree walk, wiki reads) at import time has been removed. `prompts_api` now calls `_build_system_prompt()` directly. (`api/chat_api.py`, `api/prompts_api.py`)
+- **`GotchaIndex` removed from `PreTurnInjector` and `wiring.py`**: no longer needed as an injector dependency after gotchas became a skill. (`harness/wiring.py`, `harness/injector.py`)
+
+- **`save_artifact` sandbox function**: rewrote from disk-writer LLM tool to a marker-emitting Python function. Agent calls `save_artifact(df, 'Title')` directly in sandbox — handles DataFrames (`table-json`), Altair charts (`vega-lite`), dicts/lists (`json`), and plain text. Emits `__SAVED_ARTIFACT__…__END_SAVED_ARTIFACT__` markers parsed by `_execute_python`. Returns a confirmation string the model reads. (`harness/sandbox_bootstrap.py`, `api/chat_api.py`)
+- **`data_scientist.md` persona rewrite**: new identity + audience framing, explicit Working Loop, print-then-save discipline for DataFrames, three-section Final Response Format (headline → executive summary → evidence + caveats), non-negotiables as hard list. Designed for non-technical audience reads. (`prompts/data_scientist.md`)
+- **`data_profiler` SKILL.md**: added full 21-entry risk taxonomy table with typical severity per kind. (`skills/data_profiler/SKILL.md`)
+
+### Added (continued)
+
 - **Progressive Skill Exposure**: skill system restructured from flat catalog to hierarchical tree. `SkillRegistry` discovers skills recursively and maintains `_roots` (Level-1 for system prompt) and `_index` (flat lookup). System prompt now shows only Level-1 skills with `[N sub-skills]` annotations; loading a skill auto-appends its sub-skill catalog (~65% per-turn token reduction). New `SkillNode` dataclass carries depth, parent, children, and breadcrumb. Hub skills (`statistical_analysis`, `charting`, `reporting`) collapse leaf skills under a shared entry point. (`skills/registry.py`, `harness/injector.py`, `harness/skill_tools.py`) — `9331ae8`…`0443799`
 - **`skill-new` sub-skill scaffolding**: `make skill-new name=X parent=Y` creates nested skill with hub `__init__.py`; `type=reference` variant skips `pkg/` and prefixes description with `[Reference]`. (`Makefile`, `docs/skill-creation.md`) — `ffd36b1`
 - **Dynamic sandbox bootstrap imports** generated from registry tree via `SkillRegistry.generate_bootstrap_imports()` — new skills auto-appear in sandbox without manual edits to `_SKILL_IMPORTS`. (`harness/sandbox_bootstrap.py`) — `4f521af`
@@ -41,6 +68,9 @@ Entry shape:
 
 ### Fixed
 
+- **Statistical analysis functions missing from sandbox**: `generate_bootstrap_imports()` only generated `pkg/`-layout imports, silently dropping all stat skills (`correlate`, `compare`, `validate`, `characterize`, `decompose`, `find_anomalies`, `find_changepoints`, `lag_correlate`, `fit`). Added `skill_path` to `SkillNode` and extended the generator to detect direct-layout skills (no `pkg/`, but has `__init__.py` with `__all__`). Hub skills without `__all__` are correctly skipped. (`skills/base.py`, `skills/registry.py`, `harness/sandbox_bootstrap.py`)
+- **`altair_charts` SKILL.md stub**: 14 of 20 chart templates were undocumented ("ships in Plan 4"). Rewrote with all 20 templates organized by category with signatures and use cases. (`skills/charting/altair_charts/SKILL.md`)
+- **Wrong import paths in stat skill SKILL.md files**: `from app.skills.X import Y` examples would fail at runtime — these are pre-injected sandbox globals; no import needed. Fixed in correlation, time_series, stat_validate, group_compare, distribution_fit. (`skills/statistical_analysis/*/SKILL.md`)
 - `skills_api` `/manifest` and `/{name}/detail` crashed with `AttributeError` after `level` was removed from `SkillMetadata` — replaced with `node.depth`. (`api/skills_api.py`) — `b845412`
 - Nested skill `skill_dir` resolution used flat path `skills_root/name` — fixed to use `node.package_path.parent` so sub-skills are found at any depth. (`api/skills_api.py`) — `b845412`
 - Sandbox bootstrap multi-line import strings caused `IndentationError` when the skills-only filter stripped continuation lines — collapsed to single-line imports. (`harness/sandbox_bootstrap.py`) — `2a0125e`

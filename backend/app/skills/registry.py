@@ -108,6 +108,7 @@ class SkillRegistry:
             package_path=pkg_path if pkg_path.exists() else None,
             depth=depth,
             parent=parent,
+            skill_path=dir,
         )
 
         if name in self._index:
@@ -154,28 +155,58 @@ class SkillRegistry:
         return list(reversed(parts))
 
     def generate_bootstrap_imports(self) -> list[str]:
-        """Auto-generate Python import lines for all skills that have a pkg/ directory.
+        """Auto-generate Python import lines for all importable skills.
 
-        Each line is ``from <module_path> import *`` where module_path is
-        computed from the skill directory's position relative to the backend root.
-        The skill's pkg/__init__.py must define __all__ for selective exports.
+        Two layouts are supported:
 
-        Example: skills/statistical_analysis/correlation/pkg ->
-                 from app.skills.statistical_analysis.correlation.pkg import *
+        1. **pkg/ layout** (charting, reporting, etc.): skill has a ``pkg/``
+           subdirectory with ``__init__.py``. Import is
+           ``from app.skills.X.pkg import *``.
+
+        2. **Direct layout** (statistical_analysis sub-skills): code lives
+           directly in the skill directory with ``__init__.py`` defining
+           ``__all__``. Import is ``from app.skills.X import *``.
+
+        Hub skills (those with children but no Python exports of their own)
+        are skipped.
         """
         backend_root = self._root.parent.parent  # backend/app/skills -> backend/
         lines: list[str] = []
         for node in self._iter_all():
-            if node.package_path is None:
+            name = node.metadata.name
+
+            # --- Layout 1: explicit pkg/ subdirectory ---
+            if node.package_path is not None:
+                pkg = node.package_path
+                # Skip empty pkg/ directories
+                if not any(f for f in pkg.iterdir() if not f.name.startswith("_") or f.name == "__init__.py"):
+                    continue
+                try:
+                    rel = pkg.relative_to(backend_root)
+                except ValueError:
+                    continue
+                module_path = ".".join(rel.parts)
+                lines.append(f"from {module_path} import *  # {name}")
                 continue
-            if not any(node.package_path.iterdir()):
-                continue  # empty pkg/
+
+            # --- Layout 2: skill dir is itself a Python package ---
+            if node.skill_path is None:
+                continue
+            init_py = node.skill_path / "__init__.py"
+            if not init_py.exists():
+                continue
+            init_text = init_py.read_text()
+            # Only import skill dirs that explicitly declare __all__ — hub dirs
+            # (like statistical_analysis/) have no exports and should be skipped.
+            if "__all__" not in init_text:
+                continue
             try:
-                rel = node.package_path.relative_to(backend_root)
+                rel = node.skill_path.relative_to(backend_root)
             except ValueError:
                 continue
             module_path = ".".join(rel.parts)
-            lines.append(f"from {module_path} import *  # {node.metadata.name}")
+            lines.append(f"from {module_path} import *  # {name}")
+
         return lines
 
     def _iter_all(self) -> list[SkillNode]:

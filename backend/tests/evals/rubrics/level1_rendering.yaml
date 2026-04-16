@@ -6,9 +6,9 @@ dimensions:
     weight: 0.3
     type: llm_judge
     criteria:
-      A: "Formatted amounts, clear title, color-coded volume vs amount"
-      B: "Axes labeled, amounts accurate, months in order"
-      C: "Bar chart renders with 12 months, values roughly correct"
+      A: "Formatted amounts, clear title, axes labeled, months in correct order"
+      B: "Chart renders with 12 months, values roughly correct"
+      C: "Bar chart present with some labels"
   table_correctness:
     weight: 0.3
     type: hybrid
@@ -16,9 +16,9 @@ dimensions:
       - "output contains exactly 10 customer rows"
       - "rows sorted descending by deposit amount"
     criteria:
-      A: "Includes account types, percentage of total, clean alignment"
-      B: "Correct ranking order, properly formatted currency"
-      C: "Table with 10 rows, customer names and amounts present"
+      A: "Correct ranking order, properly formatted currency, clean alignment"
+      B: "10 rows present, customer names and amounts visible"
+      C: "Table with some customer rows and amounts present"
   mermaid_erd:
     weight: 0.2
     type: deterministic

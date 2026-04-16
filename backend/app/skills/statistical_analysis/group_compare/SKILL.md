@@ -11,9 +11,9 @@ You need to answer "is group A different from group B on metric M?" — or its k
 
 ## Entry point
 
-```python
-from app.skills.group_compare import compare
+`compare` is available as a pre-injected sandbox global — no import needed.
 
+```python
 result = compare(
     df,
     value="revenue",

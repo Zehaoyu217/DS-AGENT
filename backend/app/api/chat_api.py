@@ -98,6 +98,7 @@ for __vname_cap, __vobj_cap in list(globals().items()):
 """
 
 _VEGA_MARKER_RE = re.compile(r"\n?__VEGA_SPEC__(.*?)__END_SPEC__\n?", re.DOTALL)
+_ARTIFACT_MARKER_RE = re.compile(r"\n?__SAVED_ARTIFACT__(.*?)__END_SAVED_ARTIFACT__\n?", re.DOTALL)
 
 
 def _strip_charts(stdout: str) -> tuple[str, list[dict[str, Any]]]:
@@ -108,6 +109,16 @@ def _strip_charts(stdout: str) -> tuple[str, list[dict[str, Any]]]:
             charts.append(json.loads(match.group(1).strip()))
     cleaned = _VEGA_MARKER_RE.sub("", stdout).strip()
     return cleaned, charts
+
+
+def _strip_sandbox_artifacts(stdout: str) -> tuple[str, list[dict[str, Any]]]:
+    """Extract save_artifact payloads emitted by the sandbox save_artifact function."""
+    artifacts: list[dict[str, Any]] = []
+    for match in _ARTIFACT_MARKER_RE.finditer(stdout):
+        with contextlib.suppress(Exception):
+            artifacts.append(json.loads(match.group(1).strip()))
+    cleaned = _ARTIFACT_MARKER_RE.sub("", stdout).strip()
+    return cleaned, artifacts
 
 
 # ── tool schemas advertised to the LLM ───────────────────────────────────────
@@ -391,17 +402,12 @@ def _build_system_prompt(
     return base
 
 
-# Back-compat exports for prompts_api (which imports a constant by name).
-# Wrapped defensively: if the wiki/skills/prompt file is absent at startup,
-# the module still loads with a safe fallback instead of crashing FastAPI.
-try:
-    _SYSTEM_PROMPT = _build_system_prompt()
-except Exception as _startup_exc:
-    import logging as _logging
-    _logging.getLogger(__name__).warning(
-        "startup prompt build failed (%s) — using fallback", _startup_exc
-    )
-    _SYSTEM_PROMPT = "You are an analytical assistant. The full system prompt failed to load."
+# _SYSTEM_PROMPT is no longer eagerly built at import time — that triggered a
+# full singleton init (skill-tree walk, wiki file reads) on every worker
+# start for zero benefit, since both chat endpoints always call
+# _get_system_prompt() per-turn anyway.
+#
+# prompts_api now calls _build_system_prompt() directly for its devtools view.
 
 
 def _get_system_prompt(plan_mode: bool = False, session_id: str = "") -> str:
@@ -464,11 +470,64 @@ def _make_openrouter_client(
 # ── dispatcher wiring ─────────────────────────────────────────────────────────
 
 
+def _to_frontend_artifact(content: str, fmt: str, artifact_type: str) -> tuple[str, str]:
+    """Convert save_artifact content/format to a frontend-renderable (content, format) pair.
+
+    Returns ("", "") when the content is clearly a placeholder or unparseable.
+    """
+    import csv as _csv
+    import io as _io
+    stripped = content.strip()
+    # Reject obvious placeholder strings produced by confused models
+    if not stripped or stripped in ("result", "<chart placeholder>", "None", "nan"):
+        return "", ""
+
+    if fmt in ("vega-lite", "vega"):
+        try:
+            json.loads(stripped)  # validate it's real JSON
+            return stripped, "vega-lite"
+        except Exception:
+            return "", ""
+    if fmt == "mermaid":
+        return stripped, "mermaid"
+    if fmt == "table-json":
+        return stripped, "table-json"
+    if fmt == "csv" and artifact_type == "table":
+        try:
+            reader = _csv.DictReader(_io.StringIO(stripped))
+            rows_raw = list(reader)
+            if not rows_raw:
+                return stripped, "csv"
+            columns = list(rows_raw[0].keys())
+            rows = [[row.get(c, "") for c in columns] for row in rows_raw]
+            table_json = json.dumps({"columns": columns, "rows": rows, "total_rows": len(rows)})
+            return table_json, "table-json"
+        except Exception:
+            return stripped, "csv"
+    if fmt in ("json",):
+        try:
+            data = json.loads(stripped)
+            if isinstance(data, list) and data and isinstance(data[0], dict):
+                columns = list(data[0].keys())
+                rows = [[row.get(c) for c in columns] for row in data]
+                table_json = json.dumps({"columns": columns, "rows": rows, "total_rows": len(rows)})
+                return table_json, "table-json"
+            if isinstance(data, dict) and "columns" in data:
+                return stripped, "table-json"
+        except Exception:
+            pass
+    # Fallback: show raw content as text
+    if len(stripped) > 4:
+        return stripped, "text"
+    return "", ""
+
+
 def _build_dispatcher(
     session_id: str,
     session_bootstrap: str,
     charts_out: list[dict[str, Any]],
     outputs_out: dict[str, str],
+    saved_artifacts_out: list[dict[str, Any]],
     client: ModelClient,
 ) -> ToolDispatcher:
     """Build a fully-wired dispatcher for one chat turn.
@@ -476,6 +535,7 @@ def _build_dispatcher(
     Side-effects:
     * ``charts_out``  — appended every time execute_python emits Vega-Lite
     * ``outputs_out["latest"]`` — last execute_python stdout (for SSE injection)
+    * ``saved_artifacts_out`` — appended every time save_artifact stores a renderable artifact
     """
     dispatcher = ToolDispatcher()
 
@@ -488,6 +548,8 @@ def _build_dispatcher(
     wiki = get_wiki_engine()
     skill_registry = get_skill_registry()
 
+    from app.artifacts.models import Artifact as _Artifact
+
     register_core_tools(
         dispatcher=dispatcher,
         artifact_store=artifact_store,
@@ -497,15 +559,38 @@ def _build_dispatcher(
         registry=skill_registry,
     )
 
-    # Override `sandbox.run` with a chart-capturing variant exposed under the
-    # LLM-facing `execute_python` name. We keep the raw `sandbox.run` handler
-    # (already registered above) for sub-agent / power use.
+    # Override `sandbox.run` with a chart- and artifact-capturing variant exposed
+    # under the LLM-facing `execute_python` name.
     def _execute_python(args: dict[str, Any]) -> dict[str, Any]:
         code = str(args.get("code", ""))
         result = sandbox.run(code + "\n\n" + _CHART_CAPTURE_SUFFIX)
         cleaned, charts = _strip_charts(result.stdout)
+        cleaned, raw_artifacts = _strip_sandbox_artifacts(cleaned)
         charts_out.extend(charts)
         outputs_out["latest"] = cleaned
+        # Persist sandbox save_artifact() payloads and queue for SSE emission.
+        for raw in raw_artifacts:
+            fe_content, fe_format = _to_frontend_artifact(
+                raw.get("content", ""), raw.get("format", "text"), raw.get("type", "analysis")
+            )
+            if fe_content:
+                art = _Artifact(
+                    type=raw.get("type", "analysis"),
+                    title=raw.get("title", "Artifact"),
+                    description="",
+                    content=fe_content,
+                    format=fe_format,
+                )
+                saved = artifact_store.add_artifact(session_id, art)
+                saved_artifacts_out.append({
+                    "id": saved.id,
+                    "title": saved.title or f"{saved.type} {saved.id}",
+                    "type": saved.type,
+                    "format": fe_format,
+                    "content": fe_content,
+                    "session_id": session_id,
+                    "created_at": time.time(),
+                })
         if not result.ok:
             err = result.stderr.strip()
             return {
@@ -520,7 +605,7 @@ def _build_dispatcher(
             "charts_rendered": len(charts),
         }
 
-    dispatcher.register("execute_python", _execute_python)
+    dispatcher.register("execute_python", _execute_python, override=True)
     register_delegate_tool(
         dispatcher=dispatcher,
         client=client,
@@ -548,6 +633,36 @@ def _build_dispatcher(
         }
 
     dispatcher.register("todo_write", _todo_write_handler)
+
+    # Override save_artifact to capture renderable artifacts for SSE emission.
+    # register_core_tools already registered the base handler; we replace it here
+    # so saved_artifacts_out is populated without touching skill_tools.py.
+    def _save_artifact_capturing(args: dict[str, Any]) -> dict[str, Any]:
+        content = args["content"]
+        if not isinstance(content, str):
+            content = str(content)
+        art = _Artifact(
+            type=args.get("type", "table"),
+            title=args.get("title", ""),
+            description=args.get("summary", args.get("description", "")),
+            content=content,
+            format=args.get("format", args.get("mime_type", "html")),
+        )
+        saved = artifact_store.add_artifact(session_id, art)
+        fe_content, fe_format = _to_frontend_artifact(content, art.format, art.type)
+        if fe_content:
+            saved_artifacts_out.append({
+                "id": saved.id,
+                "title": saved.title or f"{saved.type} {saved.id}",
+                "type": saved.type,
+                "format": fe_format,
+                "content": fe_content,
+                "session_id": session_id,
+                "created_at": __import__("time").time(),
+            })
+        return {"artifact_id": saved.id}
+
+    dispatcher.register("save_artifact", _save_artifact_capturing, override=True)
     return dispatcher
 
 
@@ -565,6 +680,7 @@ def _agent_loop_sync(
     """Run the wired AgentLoop synchronously and return (text, charts, usage)."""
     charts: list[dict[str, Any]] = []
     outputs: dict[str, str] = {}
+    saved_artifacts: list[dict[str, Any]] = []
     usage: dict[str, int] = {}
     tools = filter_tools_for_plan_mode(_CHAT_TOOLS) if plan_mode else _CHAT_TOOLS
     system_prompt = _get_system_prompt(plan_mode=plan_mode)
@@ -576,6 +692,7 @@ def _agent_loop_sync(
             session_bootstrap=session_bootstrap,
             charts_out=charts,
             outputs_out=outputs,
+            saved_artifacts_out=saved_artifacts,
             client=client,
         )
         loop = AgentLoop(dispatcher, hook_runner=HookRunner())
@@ -615,7 +732,9 @@ def _stream_agent_loop(
     """
     charts: list[dict[str, Any]] = []
     outputs: dict[str, str] = {}
+    saved_artifacts: list[dict[str, Any]] = []
     emitted_chart_count = 0
+    emitted_saved_count = 0
     tools = filter_tools_for_plan_mode(_CHAT_TOOLS) if plan_mode else _CHAT_TOOLS
 
     # ── per-session context layers ───────────────────────────────────────────
@@ -641,6 +760,11 @@ def _stream_agent_loop(
     ctx.add_layer(ContextLayer(name="Tool Results", tokens=0, compactable=True, items=[]))
     assistant_tokens = 0
     tool_result_tokens = 0
+    # Running item lists so the devtools inspector shows ALL tools/turns, not
+    # just the last one.  ContextManager.add_layer replaces by name, which
+    # previously wiped the items list on every update.
+    tool_items: list[dict[str, Any]] = []
+    assistant_items: list[dict[str, Any]] = []
 
     final_outcome_state: TurnState | None = None
     final_text = ""
@@ -653,6 +777,7 @@ def _stream_agent_loop(
                 session_bootstrap=session_bootstrap,
                 charts_out=charts,
                 outputs_out=outputs,
+                saved_artifacts_out=saved_artifacts,
                 client=client,
             )
 
@@ -736,28 +861,46 @@ def _stream_agent_loop(
                         })
                         emitted_chart_count += 1
 
-                    # Update Tool Results context layer.
+                    # Emit table/report artifacts saved via save_artifact tool.
+                    while emitted_saved_count < len(saved_artifacts):
+                        sa = saved_artifacts[emitted_saved_count]
+                        yield sse_line("artifact", {
+                            "id": sa["id"],
+                            "type": "artifact",
+                            "artifact_type": sa["type"],
+                            "title": sa["title"],
+                            "format": sa["format"],
+                            "artifact_content": sa["content"],
+                            "session_id": sa["session_id"],
+                            "created_at": sa["created_at"],
+                            "artifact_metadata": {},
+                        })
+                        emitted_saved_count += 1
+
+                    # Update Tool Results context layer, accumulating all items
+                    # so the devtools inspector shows the full tool history.
                     result_text = json.dumps(event.payload)
-                    tool_result_tokens += _estimate_tokens(result_text)
+                    item_tokens = _estimate_tokens(result_text)
+                    tool_result_tokens += item_tokens
+                    tool_items.append({"name": name or "tool", "tokens": item_tokens})
                     ctx.add_layer(ContextLayer(
                         name="Tool Results", tokens=tool_result_tokens,
                         compactable=True,
-                        items=[{
-                            "name": name or "tool",
-                            "tokens": _estimate_tokens(result_text),
-                        }],
+                        items=list(tool_items),
                     ))
                 elif event.type == "turn_end":
                     final_text = event.payload.get("final_text", "") or ""
                     if final_text:
-                        assistant_tokens += _estimate_tokens(str(final_text))
+                        turn_tokens = _estimate_tokens(str(final_text))
+                        assistant_tokens += turn_tokens
+                        assistant_items.append({
+                            "name": "assistant_response",
+                            "tokens": turn_tokens,
+                        })
                         ctx.add_layer(ContextLayer(
                             name="Assistant Turns", tokens=assistant_tokens,
                             compactable=True,
-                            items=[{
-                                "name": "assistant_response",
-                                "tokens": assistant_tokens,
-                            }],
+                            items=list(assistant_items),
                         ))
 
                 if event.type == "turn_end":

@@ -44,9 +44,10 @@ def _approx_tokens(text: str) -> int:
 
 
 def _get_system_prompt() -> str:
-    # Import the constant directly from chat_api
-    from app.api.chat_api import _SYSTEM_PROMPT  # noqa: PLC0415
-    return _SYSTEM_PROMPT
+    # Build a fresh prompt for the devtools view — _SYSTEM_PROMPT was removed
+    # to avoid eager singleton init at import time.
+    from app.api.chat_api import _build_system_prompt  # noqa: PLC0415
+    return _build_system_prompt()
 
 
 def _get_tool_schemas() -> list[dict]:

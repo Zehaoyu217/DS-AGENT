@@ -73,6 +73,7 @@ def test_dispatcher_has_core_tools_registered():
         session_bootstrap="",
         charts_out=[],
         outputs_out={},
+        saved_artifacts_out=[],
         client=_NullClient(),  # type: ignore[abstract]
     )
     registered = set(dispatcher._handlers)
@@ -127,11 +128,16 @@ def test_wiring_respects_env_var_override(tmp_path, monkeypatch):
 
 
 def test_module_imports_cleanly():
-    """chat_api must import without error even when wiki or skills are absent."""
+    """chat_api must import without error even when wiki or skills are absent.
+
+    _SYSTEM_PROMPT was removed — eager singleton init at import time caused a
+    full skill-tree walk and wiki file reads on every worker start for zero
+    benefit. prompts_api now calls _build_system_prompt() directly.
+    """
     import app.api.chat_api as m
-    assert hasattr(m, "_SYSTEM_PROMPT")
-    assert isinstance(m._SYSTEM_PROMPT, str)
-    assert len(m._SYSTEM_PROMPT) > 10
+    # The on-demand builder must exist and be callable.
+    assert hasattr(m, "_build_system_prompt")
+    assert callable(m._build_system_prompt)
 
 
 def test_get_context_status_in_chat_tools():

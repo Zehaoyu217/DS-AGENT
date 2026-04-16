@@ -16,7 +16,6 @@ from threading import RLock
 
 from app.artifacts.store import ArtifactStore
 from app.harness.injector import PreTurnInjector
-from app.knowledge.gotchas import GotchaIndex, load_index
 from app.skills.registry import SkillRegistry
 from app.wiki.engine import WikiEngine
 
@@ -33,7 +32,6 @@ _lock = RLock()
 _artifact_store: ArtifactStore | None = None
 _wiki_engine: WikiEngine | None = None
 _skill_registry: SkillRegistry | None = None
-_gotcha_index: GotchaIndex | None = None
 _pre_turn_injector: PreTurnInjector | None = None
 
 
@@ -87,16 +85,6 @@ def get_skill_registry() -> SkillRegistry:
             registry.discover()
             _skill_registry = registry
     return _skill_registry
-
-
-def get_gotcha_index() -> GotchaIndex:
-    global _gotcha_index
-    if _gotcha_index is not None:
-        return _gotcha_index
-    with _lock:
-        if _gotcha_index is None:
-            _gotcha_index = load_index()
-    return _gotcha_index
 
 
 # ── Adapters ──────────────────────────────────────────────────────────────────
@@ -215,22 +203,21 @@ def get_pre_turn_injector() -> PreTurnInjector:
             prompt_path = _path_from_env("CCAGENT_PROMPT_PATH", _DEFAULT_PROMPT_PATH)
             wiki = get_wiki_engine()
             registry = get_skill_registry()
-            gotchas = get_gotcha_index()
+            # gotcha_index removed — statistical gotchas are now a level-1 skill
+            # loaded on demand via `skill statistical_gotchas`, not injected every turn.
             _pre_turn_injector = PreTurnInjector(
                 prompt_path=prompt_path,
                 wiki=_WikiInjectorAdapter(wiki),
                 skill_registry=_SkillMenuAdapter(registry),
-                gotcha_index=gotchas,
             )
     return _pre_turn_injector
 
 
 def reset_singletons_for_tests() -> None:
     """Clear cached singletons so tests get fresh instances."""
-    global _artifact_store, _wiki_engine, _skill_registry, _gotcha_index, _pre_turn_injector
+    global _artifact_store, _wiki_engine, _skill_registry, _pre_turn_injector
     with _lock:
         _artifact_store = None
         _wiki_engine = None
         _skill_registry = None
-        _gotcha_index = None
         _pre_turn_injector = None

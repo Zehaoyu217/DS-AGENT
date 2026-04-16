@@ -18,8 +18,8 @@ export interface Artifact {
   id: string
   type: 'chart' | 'table' | 'diagram' | 'profile' | 'analysis' | 'file'
   title: string
-  content: string  // JSON string for vega-lite/table-json, raw HTML for html, mermaid code for mermaid
-  format: 'vega-lite' | 'mermaid' | 'table-json' | 'html'
+  content: string  // JSON string for vega-lite/table-json, raw HTML for html, mermaid code for mermaid, raw text for csv/text
+  format: 'vega-lite' | 'mermaid' | 'table-json' | 'html' | 'csv' | 'text'
   session_id: string
   created_at: number
   metadata: Record<string, unknown>

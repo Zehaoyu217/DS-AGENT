@@ -1,11 +1,11 @@
 # backend/app/harness/tests/test_sandbox_bootstrap.py
 from __future__ import annotations
 
-from app.harness.sandbox_bootstrap import build_sandbox_bootstrap
+from app.harness.sandbox_bootstrap import build_duckdb_globals
 
 
 def test_bootstrap_imports_skills_and_injects_theme() -> None:
-    script = build_sandbox_bootstrap(session_id="s1", dataset_path=None)
+    script = build_duckdb_globals(session_id="s1", dataset_path=None)
     for token in [
         "import numpy as np",
         "import pandas as pd",
@@ -22,7 +22,7 @@ def test_bootstrap_imports_skills_and_injects_theme() -> None:
 
 def test_bootstrap_wires_dataset_when_path_provided(tmp_path) -> None:
     (tmp_path / "data.parquet").write_bytes(b"fake")
-    script = build_sandbox_bootstrap(session_id="s1",
-                                     dataset_path=tmp_path / "data.parquet")
+    script = build_duckdb_globals(session_id="s1",
+                                  dataset_path=tmp_path / "data.parquet")
     assert "df = pd.read_parquet" in script
     assert str(tmp_path / "data.parquet") in script

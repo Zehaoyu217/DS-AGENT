@@ -11,9 +11,9 @@ Before promoting any quantitative or inferential claim to a Finding. Harness gua
 
 ## Entry point
 
-```python
-from app.skills.stat_validate import validate
+`validate` is available as a pre-injected sandbox global — no import needed.
 
+```python
 verdict = validate(
     claim_kind="correlation",      # "correlation"|"group_diff"|"regression"|"classifier"|"forecast"
     payload=correlation_result.to_dict(),

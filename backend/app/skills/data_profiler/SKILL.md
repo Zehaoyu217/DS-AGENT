@@ -41,3 +41,29 @@ report = profile(df, name="customers_v1", key_candidates=["customer_id"])
 - `LOW` — informational.
 
 Every risk has a `mitigation` string.
+
+## Risk taxonomy (21 kinds)
+
+| Kind | Typical severity |
+|---|---|
+| `missing_over_threshold` | BLOCKER / HIGH |
+| `missing_co_occurrence` | HIGH |
+| `duplicate_rows` | HIGH |
+| `duplicate_key` | BLOCKER |
+| `constant_column` | MEDIUM |
+| `near_constant` | MEDIUM |
+| `high_cardinality_categorical` | MEDIUM |
+| `low_cardinality_numeric` | LOW |
+| `mixed_types` | HIGH |
+| `date_gaps` | HIGH |
+| `date_non_monotonic` | MEDIUM |
+| `date_future` | HIGH |
+| `outliers_extreme` | MEDIUM |
+| `skew_heavy` | MEDIUM |
+| `suspicious_zeros` | MEDIUM |
+| `suspicious_placeholders` | HIGH |
+| `unit_inconsistency` | HIGH |
+| `suspected_foreign_key` | LOW |
+| `collinear_pair` | MEDIUM |
+| `class_imbalance` | MEDIUM |
+| `timezone_naive` | LOW |

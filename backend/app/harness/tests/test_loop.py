@@ -8,7 +8,7 @@ from app.harness.clients.base import (
 )
 from app.harness.dispatcher import ToolDispatcher
 from app.harness.guardrails.types import GuardrailOutcome
-from app.harness.loop import AgentLoop, LoopOutcome
+from app.harness.loop import AgentLoop, LoopOutcome, _SYNTHESIS_SYSTEM, _SingleToolResult
 
 
 def _client(responses: list[CompletionResponse]) -> MagicMock:
@@ -83,6 +83,110 @@ def test_loop_strict_tier_blocks_on_pre_tool_fail() -> None:
     blocked = [evt for evt in trace if evt.get("status") == "blocked"]
     assert blocked, "expected blocked pre_tool event"
     assert GuardrailOutcome.BLOCK in outcome.guardrail_outcomes
+
+
+def test_synthesis_system_contains_required_format_markers() -> None:
+    """_SYNTHESIS_SYSTEM must enforce the three-section response format.
+
+    When the agent goes silent and synthesis fires, the fallback prompt must
+    still instruct the model to produce a Headline / Executive Summary /
+    Evidence / Assumptions response — otherwise synthesis-triggered turns
+    produce output that doesn't match the format expected by the frontend.
+    """
+    lowered = _SYNTHESIS_SYSTEM.lower()
+    assert "headline" in lowered or "declarative" in lowered, \
+        "_SYNTHESIS_SYSTEM must reference the Headline section"
+    assert "executive summary" in lowered or "executive" in lowered, \
+        "_SYNTHESIS_SYSTEM must reference the Executive Summary section"
+    assert "evidence" in lowered, \
+        "_SYNTHESIS_SYSTEM must reference the Evidence section"
+    assert "assumptions" in lowered or "caveats" in lowered, \
+        "_SYNTHESIS_SYSTEM must reference Assumptions & Caveats"
+    assert "do not call any tools" in lowered or "no tools" in lowered, \
+        "_SYNTHESIS_SYSTEM must tell the model not to call tools"
+
+
+def test_dispatch_single_call_returns_single_tool_result() -> None:
+    """_dispatch_single_call must return a _SingleToolResult with correct fields."""
+    client = MagicMock()
+    client.tier = "strict"
+
+    disp = ToolDispatcher()
+    disp.register("noop", lambda args: {"done": True})
+    loop = AgentLoop(dispatcher=disp)
+
+    from app.harness.turn_state import TurnState
+    state = TurnState(dataset_loaded=False, scratchpad="")
+    outcomes = []
+
+    call = ToolCall(id="tc1", name="noop", arguments={"x": 1})
+    result = loop._dispatch_single_call(call, state, outcomes, client)
+
+    assert isinstance(result, _SingleToolResult)
+    assert result.status == "ok"
+    assert result.tool_message.role == "tool"
+    assert result.tool_message.tool_use_id == "tc1"
+    assert result.scratchpad_update is None
+    assert result.todo_update is None
+    assert result.is_a2a is False
+
+
+def test_dispatch_single_call_records_tool_in_state() -> None:
+    """_dispatch_single_call must update TurnState even when run outside run()."""
+    from app.harness.turn_state import TurnState
+
+    client = MagicMock()
+    client.tier = "strict"
+    disp = ToolDispatcher()
+    disp.register("skill", lambda args: {"loaded": args.get("name", "")})
+    loop = AgentLoop(dispatcher=disp)
+    state = TurnState(dataset_loaded=False, scratchpad="")
+    outcomes = []
+
+    call = ToolCall(id="tc2", name="skill", arguments={"name": "correlation"})
+    loop._dispatch_single_call(call, state, outcomes, client)
+
+    trace = state.as_trace()
+    assert any(evt["tool"] == "skill" for evt in trace), "tool must appear in state trace"
+
+
+def test_run_and_run_stream_produce_same_tool_trace() -> None:
+    """run() and run_stream() must leave TurnState in the same tool-trace shape."""
+    def _make_client():
+        return _client([
+            CompletionResponse(
+                text="",
+                tool_calls=(ToolCall(id="t1", name="noop", arguments={}),),
+                stop_reason="tool_use", usage={},
+            ),
+            CompletionResponse(text="done", tool_calls=(), stop_reason="end_turn", usage={}),
+        ])
+
+    disp_sync = ToolDispatcher()
+    disp_sync.register("noop", lambda args: {"ok": True})
+    loop_sync = AgentLoop(dispatcher=disp_sync)
+    outcome_sync = loop_sync.run(
+        client=_make_client(), system="sys", user_message="hi",
+        dataset_loaded=False, max_steps=5,
+    )
+
+    disp_stream = ToolDispatcher()
+    disp_stream.register("noop", lambda args: {"ok": True})
+    loop_stream = AgentLoop(dispatcher=disp_stream)
+    events = list(loop_stream.run_stream(
+        client=_make_client(), system="sys", user_message="hi",
+        dataset_loaded=False, max_steps=5,
+    ))
+    # Extract turn_end event to get final_text + stop_reason
+    turn_end = next(e for e in events if e.type == "turn_end")
+
+    assert outcome_sync.final_text == turn_end.payload["final_text"]
+    assert outcome_sync.stop_reason == turn_end.payload["stop_reason"]
+
+    # Both must have "noop" in their tool trace.
+    sync_trace = outcome_sync.turn_state.as_trace()
+    tool_names_sync = [evt["tool"] for evt in sync_trace]
+    assert "noop" in tool_names_sync
 
 
 def test_loop_respects_max_steps() -> None:

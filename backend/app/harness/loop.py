@@ -9,6 +9,7 @@ from app.harness.clients.base import (
     CompletionRequest,
     Message,
     ModelClient,
+    ToolCall,
     ToolSchema,
 )
 from app.harness.compactor import MicroCompactor
@@ -21,6 +22,32 @@ from app.harness.guardrails.tiers import apply_tier
 from app.harness.guardrails.types import GuardrailOutcome
 from app.harness.stream_events import StreamEvent
 from app.harness.turn_state import TurnState
+
+
+@dataclass
+class _SingleToolResult:
+    """Per-call result from ``_dispatch_single_call``.
+
+    ``run()`` uses only ``status`` and ``tool_message``.
+    ``run_stream()`` uses every field to emit the appropriate ``StreamEvent``s
+    without re-inspecting state after the fact.
+    """
+
+    call: ToolCall
+    status: str                   # "ok" | "error" | "blocked"
+    pre_outcome: GuardrailOutcome
+    tool_message: Message         # ready to append to the conversation
+    artifact_ids: frozenset[str]
+    scratchpad_update: str | None  # non-None when write_working succeeded
+    todo_update: list | None       # non-None when todo_write succeeded
+    is_a2a: bool
+    a2a_task_preview: str
+    a2a_tools_allowed: list
+    a2a_artifact_id: str
+    a2a_summary: str
+    a2a_ok: bool
+    result_payload: object         # raw payload for preview / trace
+    dispatch_ms: int
 
 
 @dataclass
@@ -42,6 +69,124 @@ class AgentLoop:
         self._dispatcher = dispatcher
         self._compactor = compactor or MicroCompactor()
         self._hook_runner = hook_runner or HookRunner()
+
+    # ── shared tool dispatch ──────────────────────────────────────────────────
+
+    def _dispatch_single_call(
+        self,
+        call: ToolCall,
+        state: TurnState,
+        outcomes: list[GuardrailOutcome],
+        client: ModelClient,
+        session_id: str = "",
+    ) -> _SingleToolResult:
+        """Dispatch one tool call: run guardrails, invoke handler, update state.
+
+        Mutates *state* (scratchpad, artifact list, tool log) and *outcomes*
+        in place.  Returns a ``_SingleToolResult`` with everything the streaming
+        path needs to emit ``StreamEvent``s — the sync ``run()`` ignores most
+        fields beyond ``status`` and ``tool_message``.
+        """
+        pre_findings = pre_tool_gate(
+            call, turn_trace=state.as_trace(), dataset_loaded=state.dataset_loaded,
+        )
+        pre_outcome = apply_tier(client.tier, pre_findings)
+        outcomes.append(pre_outcome)
+
+        if pre_outcome is GuardrailOutcome.BLOCK:
+            state.record_tool(
+                name=call.name,
+                result_payload={
+                    "error": "blocked_by_pre_tool_gate",
+                    "findings": [f.code for f in pre_findings],
+                },
+                status="blocked",
+            )
+            blocked_msg = Message(
+                role="tool", tool_use_id=call.id, name=call.name,
+                content=json.dumps({
+                    "blocked": True,
+                    "reasons": [f.message for f in pre_findings],
+                }),
+            )
+            return _SingleToolResult(
+                call=call, status="blocked", pre_outcome=pre_outcome,
+                tool_message=blocked_msg, artifact_ids=frozenset(),
+                scratchpad_update=None, todo_update=None,
+                is_a2a=False, a2a_task_preview="", a2a_tools_allowed=[],
+                a2a_artifact_id="", a2a_summary="", a2a_ok=False,
+                result_payload={"blocked": True, "findings": [f.code for f in pre_findings]},
+                dispatch_ms=0,
+            )
+
+        is_a2a = call.name == "delegate_subagent"
+        self._hook_runner.run_pre(call.name, call.arguments, session_id=session_id)
+        _t0 = time.monotonic()
+        result: ToolResult = self._dispatcher.dispatch(call)
+        dispatch_ms = int((time.monotonic() - _t0) * 1000)
+        self._hook_runner.run_post(
+            call.name,
+            result.payload if isinstance(result.payload, dict) else {},
+            session_id=session_id,
+        )
+        report = post_tool(result)
+        for aid in report.new_artifact_ids:
+            state.record_artifact(aid)
+
+        scratchpad_update: str | None = None
+        if call.name == "write_working" and result.ok:
+            new_pad = (result.payload or {}).get("content", "")
+            if new_pad:
+                state.scratchpad = new_pad
+                scratchpad_update = new_pad
+
+        todo_update: list | None = None
+        if call.name == "todo_write" and result.ok:
+            todo_update = (result.payload or {}).get("todos", [])
+
+        state.record_tool(
+            name=call.name,
+            result_payload=(result.payload if isinstance(result.payload, dict)
+                            else {"value": result.payload}),
+            status="ok" if result.ok else "error",
+        )
+        if not result.ok:
+            # Include the error message so the model understands what went wrong
+            # and can recover (e.g., correct arguments, try a different approach).
+            content = json.dumps({"error": result.error_message or "tool call failed"})
+        else:
+            content = json.dumps(_serializable(result.payload))
+            if report.trimmed_stdout:
+                content = json.dumps({
+                    "artifact_refs": list(report.new_artifact_ids),
+                    "trimmed_preview": report.trimmed_stdout,
+                })
+        tool_msg = Message(role="tool", tool_use_id=call.id, name=call.name, content=content)
+
+        payload_dict = result.payload if isinstance(result.payload, dict) else {}
+        # When a tool fails, surface the error string as result_payload so it
+        # appears in SSE previews and the turn-state trace (easier debugging).
+        effective_payload = (
+            result.payload if result.ok
+            else {"error": result.error_message or "tool call failed"}
+        )
+        return _SingleToolResult(
+            call=call,
+            status="ok" if result.ok else "error",
+            pre_outcome=pre_outcome,
+            tool_message=tool_msg,
+            artifact_ids=frozenset(report.new_artifact_ids),
+            scratchpad_update=scratchpad_update,
+            todo_update=todo_update,
+            is_a2a=is_a2a,
+            a2a_task_preview=str(call.arguments.get("task", ""))[:200],
+            a2a_tools_allowed=call.arguments.get("tools_allowed", []),
+            a2a_artifact_id=payload_dict.get("artifact_id", ""),
+            a2a_summary=payload_dict.get("summary", "")[:200],
+            a2a_ok=result.ok,
+            result_payload=effective_payload,
+            dispatch_ms=dispatch_ms,
+        )
 
     def run(
         self,
@@ -111,60 +256,11 @@ class AgentLoop:
                 tool_calls=tuple(resp.tool_calls),
             ))
             for call in resp.tool_calls:
-                pre_findings = pre_tool_gate(
-                    call, turn_trace=state.as_trace(),
-                    dataset_loaded=state.dataset_loaded,
-                )
-                pre_outcome = apply_tier(client.tier, pre_findings)
-                outcomes.append(pre_outcome)
-                if pre_outcome is GuardrailOutcome.BLOCK:
-                    state.record_tool(
-                        name=call.name,
-                        result_payload={
-                            "error": "blocked_by_pre_tool_gate",
-                            "findings": [f.code for f in pre_findings],
-                        },
-                        status="blocked",
-                    )
-                    messages.append(Message(
-                        role="tool", tool_use_id=call.id,
-                        name=call.name,
-                        content=json.dumps({
-                            "blocked": True,
-                            "reasons": [f.message for f in pre_findings],
-                        }),
-                    ))
+                tr = self._dispatch_single_call(call, state, outcomes, client)
+                messages.append(tr.tool_message)
+                # BLOCK: tool_message already contains the rejection payload; skip rest.
+                if tr.status == "blocked":
                     continue
-
-                self._hook_runner.run_pre(call.name, call.arguments)
-                result: ToolResult = self._dispatcher.dispatch(call)
-                self._hook_runner.run_post(
-                    call.name,
-                    result.payload if isinstance(result.payload, dict) else {},
-                )
-                report = post_tool(result)
-                for aid in report.new_artifact_ids:
-                    state.record_artifact(aid)
-                # Keep scratchpad in sync when the agent writes working.md.
-                if call.name == "write_working" and result.ok:
-                    new_pad = (result.payload or {}).get("content", "")
-                    if new_pad:
-                        state.scratchpad = new_pad
-                state.record_tool(
-                    name=call.name,
-                    result_payload=(result.payload
-                                    if isinstance(result.payload, dict) else
-                                    {"value": result.payload}),
-                    status="ok" if result.ok else "error",
-                )
-                content = json.dumps(_serializable(result.payload))
-                if report.trimmed_stdout:
-                    content = json.dumps({"artifact_refs": list(report.new_artifact_ids),
-                                          "trimmed_preview": report.trimmed_stdout})
-                messages.append(Message(
-                    role="tool", tool_use_id=call.id,
-                    name=call.name, content=content,
-                ))
         else:
             stop_reason = "max_steps"
 
@@ -340,144 +436,101 @@ class AgentLoop:
                     },
                 )
 
-                pre_findings = pre_tool_gate(
-                    call, turn_trace=state.as_trace(),
-                    dataset_loaded=state.dataset_loaded,
-                )
-                pre_outcome = apply_tier(client.tier, pre_findings)
-                outcomes.append(pre_outcome)
-
-                if pre_outcome is GuardrailOutcome.BLOCK:
-                    state.record_tool(
-                        name=call.name,
-                        result_payload={
-                            "error": "blocked_by_pre_tool_gate",
-                            "findings": [f.code for f in pre_findings],
-                        },
-                        status="blocked",
-                    )
-                    messages.append(Message(
-                        role="tool", tool_use_id=call.id, name=call.name,
-                        content=json.dumps({
-                            "blocked": True,
-                            "reasons": [f.message for f in pre_findings],
-                        }),
-                    ))
-                    yield StreamEvent(
-                        type="tool_result",
-                        payload={
-                            "step": steps, "name": call.name, "status": "blocked",
-                            "artifact_ids": [],
-                            "preview": str([f.code for f in pre_findings]),
-                        },
-                    )
-                    continue
-
-                # Emit a2a_start before sub-agent delegation so the parent
-                # client can show a nested progress indicator.
+                # Emit a2a_start before dispatch so the parent client can show
+                # a nested progress indicator before the sub-agent runs.
                 is_a2a = call.name == "delegate_subagent"
                 if is_a2a:
-                    task_preview = str(call.arguments.get("task", ""))[:200]
                     yield StreamEvent(
                         type="a2a_start",
                         payload={
                             "step": steps,
-                            "task_preview": task_preview,
+                            "task_preview": str(call.arguments.get("task", ""))[:200],
                             "tools_allowed": call.arguments.get("tools_allowed", []),
                         },
                     )
 
-                self._hook_runner.run_pre(call.name, call.arguments, session_id=session_id)
-                _dispatch_start = time.monotonic()
-                result: ToolResult = self._dispatcher.dispatch(call)
-                _dispatch_ms = int((time.monotonic() - _dispatch_start) * 1000)
-                self._hook_runner.run_post(
-                    call.name,
-                    result.payload if isinstance(result.payload, dict) else {},
-                    session_id=session_id,
-                )
+                tr = self._dispatch_single_call(call, state, outcomes, client, session_id)
+                messages.append(tr.tool_message)
 
-                # ── Tool call trace event ──────────────────────────────────
+                if tr.status == "blocked":
+                    yield StreamEvent(
+                        type="tool_result",
+                        payload={
+                            "step": steps, "name": call.name, "status": "blocked",
+                            "artifact_ids": [], "preview": str(tr.result_payload)[:200],
+                        },
+                    )
+                    continue
+
+                # ── Tool call trace ────────────────────────────────────────
                 try:
                     from app.trace.publishers import publish_tool_call as _pub_tc
-                    _tool_out = result.payload if isinstance(result.payload, dict) else {"value": result.payload}
                     _pub_tc(
-                        turn=steps,
-                        tool_name=call.name,
+                        turn=steps, tool_name=call.name,
                         tool_input=dict(call.arguments),
-                        tool_output=str(_tool_out)[:4096],
-                        duration_ms=_dispatch_ms,
-                        error=None if result.ok else str(result.payload)[:512],
+                        tool_output=str(tr.result_payload)[:4096],
+                        duration_ms=tr.dispatch_ms,
+                        error=None if tr.status == "ok" else str(tr.result_payload)[:512],
                     )
                 except Exception:  # noqa: BLE001
                     pass
-                report = post_tool(result)
-                for aid in report.new_artifact_ids:
-                    state.record_artifact(aid)
-                # Keep scratchpad in sync when the agent writes working.md and
-                # emit a live delta so the frontend panel can update in real time.
-                if call.name == "write_working" and result.ok:
-                    new_pad = (result.payload or {}).get("content", "")
-                    if new_pad:
-                        state.scratchpad = new_pad
-                        yield StreamEvent(
-                            type="scratchpad_delta",
-                            payload={"content": new_pad},
-                        )
-                        try:
-                            from app.trace.publishers import publish_scratchpad_write as _pub_sw
-                            _pub_sw(turn=steps, key="working.md", value_preview=new_pad[:200])
-                        except Exception:  # noqa: BLE001
-                            pass
-                # Emit todos_update when todo_write succeeds so the frontend
-                # task panel refreshes in real time (P19).
-                if call.name == "todo_write" and result.ok:
-                    new_todos = (result.payload or {}).get("todos", [])
+
+                if tr.scratchpad_update:
+                    yield StreamEvent(
+                        type="scratchpad_delta",
+                        payload={"content": tr.scratchpad_update},
+                    )
+                    try:
+                        from app.trace.publishers import publish_scratchpad_write as _pub_sw
+                        _pub_sw(turn=steps, key="working.md",
+                                value_preview=tr.scratchpad_update[:200])
+                    except Exception:  # noqa: BLE001
+                        pass
+
+                if tr.todo_update is not None:
                     yield StreamEvent(
                         type="todos_update",
-                        payload={"todos": new_todos},
+                        payload={"todos": tr.todo_update},
                     )
-                state.record_tool(
-                    name=call.name,
-                    result_payload=(result.payload
-                                    if isinstance(result.payload, dict) else
-                                    {"value": result.payload}),
-                    status="ok" if result.ok else "error",
-                )
-                content = json.dumps(_serializable(result.payload))
-                if report.trimmed_stdout:
-                    content = json.dumps({
-                        "artifact_refs": list(report.new_artifact_ids),
-                        "trimmed_preview": report.trimmed_stdout,
-                    })
-                messages.append(Message(
-                    role="tool", tool_use_id=call.id, name=call.name, content=content,
-                ))
 
                 if is_a2a:
-                    payload_dict = result.payload if isinstance(result.payload, dict) else {}
                     yield StreamEvent(
                         type="a2a_end",
                         payload={
                             "step": steps,
-                            "artifact_id": payload_dict.get("artifact_id", ""),
-                            "summary": payload_dict.get("summary", "")[:200],
-                            "ok": result.ok,
+                            "artifact_id": tr.a2a_artifact_id,
+                            "summary": tr.a2a_summary,
+                            "ok": tr.a2a_ok,
                         },
                     )
 
                 yield StreamEvent(
                     type="tool_result",
                     payload={
-                        "step": steps,
-                        "name": call.name,
-                        "status": "ok" if result.ok else "error",
-                        "artifact_ids": list(report.new_artifact_ids),
-                        "preview": str(result.payload)[:200],
+                        "step": steps, "name": call.name,
+                        "status": tr.status,
+                        "artifact_ids": list(tr.artifact_ids),
+                        "preview": str(tr.result_payload)[:200],
                     },
                 )
         else:
             stop_reason = "max_steps"
+            # Agent exhausted the step budget without writing a final response.
+            # Force one synthesis call so the user always gets text back.
+            if not final_text.strip() and messages:
+                yield StreamEvent(type="turn_start", payload={"session_id": session_id, "step": steps + 1})
+                try:
+                    synth_msgs = _build_synthesis_messages(user_message, messages)
+                    synth_req = CompletionRequest(
+                        system=_SYNTHESIS_SYSTEM,
+                        messages=tuple(synth_msgs),
+                        tools=(),
+                        tool_choice=None,
+                    )
+                    synth_resp = client.complete(synth_req)
+                    final_text = (synth_resp.text or "").strip()
+                except Exception:  # noqa: BLE001
+                    pass
 
         end_findings = end_of_turn(scratchpad=state.scratchpad, claims=[])
         outcomes.append(apply_tier(client.tier, end_findings))
@@ -508,11 +561,30 @@ def _arg_preview(arguments: dict[str, object], max_len: int = 120) -> str:
     return text[:max_len] + ("…" if len(text) > max_len else "")
 
 
-_SYNTHESIS_SYSTEM = (
-    "You are a helpful data analyst. The user asked a question and you already ran "
-    "Python queries to gather data. Write a complete, clear markdown response that "
-    "directly answers their question using the results provided. Do not call any tools."
-)
+_SYNTHESIS_SYSTEM = """\
+You are a data analyst delivering findings to a non-technical executive audience.
+The user asked a question and you already ran Python queries to gather the data.
+Write a complete markdown response using exactly this three-section format — no exceptions:
+
+## [Headline — one declarative sentence, plain English, numbers if impactful]
+
+[Executive Summary — 2–4 sentences. What was asked. What the data shows. What it means for the decision. No jargon. No method description.]
+
+---
+
+### Evidence
+
+- **[Artifact Title]** — one sentence: what this shows and why it matters
+
+---
+
+### Assumptions & Caveats
+
+- [Specific data limitation, scope boundary, or statistical caveat. Always include at least one.]
+
+Do not call any tools. Cite artifact titles you saved.
+IMPORTANT: If the user explicitly asked to "show", "display", or "list" a specific table or set of rows, include those rows as a markdown table inline in this response (up to 20 rows) AND cite the artifact title. For all other data, cite by artifact title only — do not reproduce raw data inline.\
+"""
 
 
 def _build_synthesis_messages(

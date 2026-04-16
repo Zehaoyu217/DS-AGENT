@@ -7,9 +7,9 @@ description: Stationarity, decomposition, anomaly detection, changepoints, lag c
 
 ## Entry points
 
-```python
-from app.skills.time_series import characterize, decompose, find_anomalies, find_changepoints, lag_correlate
+All five functions are pre-injected sandbox globals — no import needed.
 
+```python
 char = characterize(series)
 #   .stationary (bool, ADF_reject AND NOT KPSS_reject)
 #   .adf_p, .kpss_p, .trend_slope, .dominant_period, .autocorrelation_lag1

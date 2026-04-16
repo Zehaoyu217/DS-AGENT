@@ -15,7 +15,7 @@ import duckdb
 from faker import Faker
 
 SEED = 42
-DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "duckdb" / "eval.db"
+DB_PATH = Path(__file__).resolve().parent.parent / "data" / "duckdb" / "eval.db"
 
 fake = Faker()
 Faker.seed(SEED)
@@ -344,8 +344,22 @@ def seed_loans(
         monthly_payment = round(payment, 2)
 
         region = str(cust["region"])
-        default_prob = max(0.02, 0.35 - (score - 580) * 0.001)
-        default_prob *= region_risk.get(region, 1.0)
+        # Step-function default probability — creates a strong, discoverable
+        # credit score → default relationship (target r ≈ -0.6).
+        if score < 620:
+            default_prob = 0.85
+        elif score < 650:
+            default_prob = 0.55
+        elif score < 680:
+            default_prob = 0.25
+        elif score < 710:
+            default_prob = 0.08
+        elif score < 740:
+            default_prob = 0.03
+        else:
+            default_prob = 0.01
+        # Regional risk multiplier (capped so southeast doesn't inflate too much)
+        default_prob = min(0.95, default_prob * region_risk.get(region, 1.0))
         roll = random.random()
         if roll < default_prob * 0.4:
             status = "default"
