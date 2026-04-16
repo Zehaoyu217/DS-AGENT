@@ -37,7 +37,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "app/skills"]
+testpaths = ["tests", "app/skills", "scripts"]
 asyncio_mode = "auto"
 pythonpath = [".", ".."]
 addopts = "--import-mode=importlib"

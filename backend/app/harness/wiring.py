@@ -46,6 +46,7 @@ _skill_registry: SkillRegistry | None = None
 _gotcha_index: GotchaIndex | None = None
 _pre_turn_injector: PreTurnInjector | None = None
 _cron_engine: Any = None  # CronEngine — late import avoids APScheduler at import time
+_toolset_resolver: Any = None  # ToolsetResolver — late import
 
 
 def _path_from_env(env_var: str, default: Path) -> Path:
@@ -247,6 +248,23 @@ def get_pre_turn_injector() -> PreTurnInjector:
     return _pre_turn_injector
 
 
+_DEFAULT_TOOLSETS_PATH = _BACKEND_ROOT / "config" / "toolsets.yaml"
+
+
+def get_toolset_resolver() -> Any:
+    """Return the process-wide ToolsetResolver singleton."""
+    global _toolset_resolver
+    if _toolset_resolver is not None:
+        return _toolset_resolver
+    with _lock:
+        if _toolset_resolver is None:
+            from app.harness.toolsets import ToolsetResolver  # noqa: PLC0415
+
+            ts_path = _path_from_env("CCAGENT_TOOLSETS_PATH", _DEFAULT_TOOLSETS_PATH)
+            _toolset_resolver = ToolsetResolver.from_yaml(ts_path)
+    return _toolset_resolver
+
+
 class _MinimalCronFactory:
     """Minimal AgentFactory for cron job execution.
 
@@ -304,7 +322,7 @@ def get_cron_engine(agent_factory: Any = None) -> Any:
 
 def reset_singletons_for_tests() -> None:
     """Clear cached singletons so tests get fresh instances."""
-    global _artifact_store, _session_db, _wiki_engine, _skill_registry, _gotcha_index, _pre_turn_injector, _cron_engine
+    global _artifact_store, _session_db, _wiki_engine, _skill_registry, _gotcha_index, _pre_turn_injector, _cron_engine, _toolset_resolver
     with _lock:
         _artifact_store = None
         _session_db = None
@@ -313,3 +331,4 @@ def reset_singletons_for_tests() -> None:
         _gotcha_index = None
         _pre_turn_injector = None
         _cron_engine = None
+        _toolset_resolver = None

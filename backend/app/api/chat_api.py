@@ -367,8 +367,16 @@ def filter_tools_for_plan_mode(
     Drops anything that executes code, writes artifacts, promotes findings, or
     spawns sub-agents. The agent is left with enough to plan (skills to read,
     working-md to sketch, todos to declare) but not to mutate state.
+
+    The allowed set is read from ``config/toolsets.yaml`` (``planning`` toolset)
+    when available; falls back to the hardcoded ``_PLAN_MODE_TOOL_NAMES`` frozenset.
     """
-    return tuple(t for t in tools if t.name in _PLAN_MODE_TOOL_NAMES)
+    try:
+        from app.harness.wiring import get_toolset_resolver  # noqa: PLC0415
+        planning_tools = get_toolset_resolver().resolve("planning")
+    except Exception:  # noqa: BLE001
+        planning_tools = _PLAN_MODE_TOOL_NAMES
+    return tuple(t for t in tools if t.name in planning_tools)
 
 # ── prompt assembly ───────────────────────────────────────────────────────────
 
