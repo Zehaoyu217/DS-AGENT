@@ -1,0 +1,16 @@
+{
+  "edges_emitted": 6992,
+  "extension": "cca-v1",
+  "extractors": [
+    "fastapi_routes",
+    "intra_file_calls",
+    "cross_file_imports",
+    "ts_imports",
+    "jsx_usage",
+    "method_calls",
+    "module_qualified_calls"
+  ],
+  "failures": [],
+  "files_skipped": [],
+  "nodes_emitted": 43
+}

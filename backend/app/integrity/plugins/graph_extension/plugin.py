@@ -4,7 +4,15 @@ from dataclasses import dataclass, field
 
 from ...protocol import ScanContext, ScanResult
 from .augmenter import augment
-from .extractors import fastapi_routes, intra_file_calls, jsx_usage
+from .extractors import (
+    cross_file_imports,
+    fastapi_routes,
+    intra_file_calls,
+    jsx_usage,
+    method_calls,
+    module_qualified_calls,
+    ts_imports,
+)
 
 
 @dataclass
@@ -28,7 +36,11 @@ class GraphExtensionPlugin:
             extractors=[
                 ("fastapi_routes", fastapi_routes.extract),
                 ("intra_file_calls", intra_file_calls.extract),
+                ("cross_file_imports", cross_file_imports.extract),
+                ("ts_imports", ts_imports.extract),
                 ("jsx_usage", jsx_usage.extract),
+                ("method_calls", method_calls.extract),
+                ("module_qualified_calls", module_qualified_calls.extract),
             ],
         )
         artifacts = [

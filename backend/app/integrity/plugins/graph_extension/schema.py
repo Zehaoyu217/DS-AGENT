@@ -4,7 +4,15 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 EXTENSION_TAG = "cca-v1"
-ExtractorName = Literal["fastapi_routes", "intra_file_calls", "jsx_usage"]
+ExtractorName = Literal[
+    "fastapi_routes",
+    "intra_file_calls",
+    "jsx_usage",
+    "cross_file_imports",
+    "ts_imports",
+    "method_calls",
+    "module_qualified_calls",
+]
 
 
 @dataclass(frozen=True)

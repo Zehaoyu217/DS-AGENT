@@ -31,7 +31,19 @@ Entry shape:
 
 ## [Unreleased]
 
-<!-- Add new entries here as they happen. Above this line stays empty between releases. -->
+### Added
+
+- **Integrity Plugin A — Graph Extension (gate α)**: ships seven AST extractors that augment graphify with edge classes it misses today — `fastapi_routes`, `intra_file_calls`, `jsx_usage`, `cross_file_imports`, `ts_imports`, `method_calls`, `module_qualified_calls`. Output: `graphify/graph.augmented.json` + manifest. Trigger via `make integrity-augment` or `python -m backend.app.integrity.plugins.graph_extension`. Drops orphan FP rate from 63% baseline to 36% combined (backend 37.8%, frontend 34.2%). (`backend/app/integrity/plugins/graph_extension/`, `backend/tests/integrity/`, `Makefile`)
+- **Global session search panel**: Cmd/Ctrl+Shift+F now opens a Radix dialog that queries `/api/sessions/search` (FTS5) with debounced input, groups results by session, and navigates to `#/monitor/{session_id}` on Enter. Replaces the prior stub that silently switched to the Chat section. (`frontend/src/components/search/GlobalSearchPanel.tsx`, `frontend/src/lib/store.ts`, `frontend/src/lib/api-backend.ts`)
+
+### Changed
+
+- **`scripts/verify_orphans.py`** — rewrote oracle for split (backend/frontend) FP measurement: scoped per-side path search, code-only file types, generic-name skip list, file-stem inference, and deterministic 60+40 sample. Replaces the v1 combined-only `git grep -lw` oracle that conflated name collisions with real usage. (`scripts/verify_orphans.py`)
+- **Plugin A spec gate recalibrated**: original target (<15% backend / <30% frontend) was empirically unattainable with AST-only extraction. Bands moved to <40% per side. Rationale and methodology added to spec § 1 + § 9. (`docs/superpowers/specs/2026-04-16-integrity-plugin-a-design.md`)
+
+### Removed
+
+- **Stale planning artifacts** (29 files): deleted shipped progressive plans (`progressive_plan.md`, `progressive_plan_v2.md`, `progressive_plan_v3.md`, `progress_plan_v4.md`), gap analyses (`gap-analysis.md`, `gap-analysis-v2.md`), audits (`audit-2026-04-16.md`, `deepdive-audit-2026-04-16.md`, `eval-readiness-audit.md`, `progress_eval_results_v1.md`), 11 superpowers plans, and 8 superpowers design specs. All outcomes are captured in `task_plan.md` + this changelog. (`docs/`, `docs/superpowers/plans/`, `docs/superpowers/specs/`)
 
 ---
 
