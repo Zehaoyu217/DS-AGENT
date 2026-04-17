@@ -122,3 +122,14 @@ integrity-augment:
 
 integrity-test:
 	cd backend && uv run python -m pytest tests/integrity/ -v
+
+.PHONY: integrity integrity-lint integrity-snapshot-prune
+
+integrity: ## Run the full integrity pipeline (A→B); writes integrity-out/ + docs/health/
+	uv run python -m backend.app.integrity
+
+integrity-lint: ## Run only Plugin B (graph_lint) — assumes A has run
+	uv run python -m backend.app.integrity --plugin graph_lint --no-augment
+
+integrity-snapshot-prune: ## Prune integrity-out/snapshots/ older than 30 days
+	uv run python -c "from datetime import date; from pathlib import Path; from backend.app.integrity.snapshots import prune_older_than; n = prune_older_than(Path.cwd(), days=30, today=date.today()); print(f'pruned {n}')"

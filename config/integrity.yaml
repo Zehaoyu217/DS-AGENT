@@ -1,0 +1,17 @@
+# config/integrity.yaml
+plugins:
+  graph_extension:
+    enabled: true
+  graph_lint:
+    enabled: true
+    thresholds:
+      vulture_min_confidence: 80      # passed to vulture --min-confidence
+      density_drop_pct: 25            # >25% WoW drop → WARN
+      orphan_growth_pct: 20           # >20% WoW growth → WARN
+      module_min_nodes: 5             # density_drop ignores smaller modules
+      snapshot_retention_days: 30     # prune older snapshots
+    ignored_dead_code: []             # list of node_ids
+    excluded_paths:
+      - "tests/**"
+      - "**/migrations/**"
+      - "**/__pycache__/**"

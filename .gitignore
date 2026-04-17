@@ -90,3 +90,6 @@ frontend/smoke-*.png
 
 # Backend runtime data (sandbox artifacts, settings, duckdb)
 backend/data/
+
+# Integrity engine outputs (per docs/superpowers/specs/2026-04-17-integrity-plugin-b-design.md §7)
+integrity-out/
