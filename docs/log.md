@@ -33,6 +33,19 @@ Entry shape:
 
 ### Added
 
+- **integrity**: Plugin F (`autofix`) ships gate ζ — terminal plugin of the
+  integrity roadmap. Five whitelisted fix classes (`claude_md_link`,
+  `doc_link_renamed`, `manifest_regen`, `dead_directive_cleanup`,
+  `health_dashboard_refresh`) read sibling artifacts under `integrity-out/{date}/`
+  and emit a diff plan. Two modes: `make integrity-autofix` (dry-run, default)
+  writes `integrity-out/{date}/autofix.json`; `make integrity-autofix-apply`
+  branches/commits/pushes/opens-PR per class (gated by `--apply` flag AND
+  `autofix.apply: true` config). Hard safety rails: never code logic, never
+  delete files, never edit main, force-with-lease push, path-escape protection,
+  per-class concurrency cap, circuit breaker auto-disables a class after >2
+  human-edited PRs in 30 days. `make integrity-autofix-sync` updates the
+  rolling counter in `config/autofix_state.yaml`. Spec:
+  `docs/superpowers/specs/2026-04-17-integrity-plugin-f-design.md`.
 - **second-brain v2.1 polish**: flipped `retrieval.mode` default to `hybrid` (missing `.sb/vectors.sqlite` falls back to BM25), shipped launchd plist for nightly `sb maintain --digest`, and extended the reconciliation eval fixture to cover the contradictions path alongside stale-low-conf. (sibling `second-brain/`)
 
 
