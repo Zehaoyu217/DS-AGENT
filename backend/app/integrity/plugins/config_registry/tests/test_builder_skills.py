@@ -29,8 +29,47 @@ def test_skill_entry_fields(tiny_repo: Path) -> None:
     assert alpha.description == "Alpha skill."
     assert alpha.parent is None
     assert alpha.children == []
+    assert alpha.registry_key == "alpha"
     assert len(alpha.sha_skill_md) == 40
     assert len(alpha.sha_skill_yaml or "") == 40
+
+
+def test_registry_key_from_frontmatter_name(tiny_repo: Path) -> None:
+    """registry_key tracks the ``name:`` field in SKILL.md frontmatter —
+    not the dotted filesystem id. ``beta.sub_skill`` (id) has frontmatter
+    ``name: sub_skill`` (registry_key), matching SkillRegistry._index.
+    """
+    builder = SkillsBuilder(skills_root=tiny_repo / "backend/app/skills")
+    entries, _ = builder.build()
+    by_id = {e.id: e for e in entries}
+    assert by_id["alpha"].registry_key == "alpha"
+    assert by_id["beta"].registry_key == "beta"
+    assert by_id["beta.sub_skill"].registry_key == "sub_skill"
+
+
+def test_registry_key_none_when_frontmatter_missing_name(tmp_path: Path) -> None:
+    """A SKILL.md without a ``name:`` field would be skipped by SkillRegistry —
+    builder records the entry with registry_key=None so the parity test can
+    safely exclude it.
+    """
+    skills = tmp_path / "skills"
+    (skills / "no_name").mkdir(parents=True)
+    (skills / "no_name" / "SKILL.md").write_text(
+        "---\nversion: 1.0.0\ndescription: No name field.\n---\n# Body\n"
+    )
+    builder = SkillsBuilder(skills_root=skills, repo_root=tmp_path)
+    entries, failures = builder.build()
+    assert failures == []
+    assert len(entries) == 1
+    assert entries[0].registry_key is None
+
+
+def test_to_dict_emits_registry_key(tiny_repo: Path) -> None:
+    builder = SkillsBuilder(skills_root=tiny_repo / "backend/app/skills")
+    entries, _ = builder.build()
+    payload = entries[0].to_dict()
+    assert "registry_key" in payload
+    assert payload["registry_key"] == "alpha"
 
 
 def test_parent_and_children_relationships(tiny_repo: Path) -> None:

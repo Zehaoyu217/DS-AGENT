@@ -1,8 +1,17 @@
 """SkillsBuilder — walks the skills tree and produces SkillEntry list.
 
-Mirrors the dotted-path id convention used by
-``backend/app/skills/registry.SkillRegistry._index`` so the
-acceptance gate's parity check holds.
+Two distinct identifiers are tracked per skill:
+
+- ``id``        : dotted filesystem path relative to ``backend/app/skills/``
+                   (e.g. ``charting.altair_charts.altair_reference``). Stable,
+                   collision-free, and unambiguous within the manifest.
+- ``registry_key``: the ``name:`` field from each ``SKILL.md`` frontmatter —
+                   the same source ``backend/app/skills/registry.SkillRegistry``
+                   uses to populate ``_index``. May collide across skills
+                   (last-wins, mirrors the registry behavior). ``None`` only
+                   when frontmatter lacks ``name`` (in which case the
+                   registry would also skip the skill — so that entry is
+                   excluded from the parity check at gate δ #2).
 """
 from __future__ import annotations
 
@@ -26,6 +35,7 @@ class SkillEntry:
     version: str
     description: str
     parent: str | None
+    registry_key: str | None = None
     children: list[str] = field(default_factory=list)
     sha_skill_md: str = ""
     sha_skill_yaml: str | None = None
@@ -33,6 +43,7 @@ class SkillEntry:
     def to_dict(self) -> dict[str, Any]:
         return {
             "id": self.id,
+            "registry_key": self.registry_key,
             "path": self.path,
             "yaml_path": self.yaml_path,
             "version": self.version,
@@ -100,6 +111,13 @@ class SkillsBuilder:
         fm, _ = _split_frontmatter(text)
         version = str(fm.get("version", "0.0.0"))
         description = str(fm.get("description", "")).strip()
+        # Same source SkillRegistry uses to populate ``_index`` keys.
+        registry_key_raw = fm.get("name")
+        registry_key = (
+            str(registry_key_raw).strip() or None
+            if registry_key_raw is not None
+            else None
+        )
 
         yaml_file = skill_dir / "skill.yaml"
         yaml_rel = yaml_file.relative_to(self.repo_root).as_posix() if yaml_file.exists() else None
@@ -112,6 +130,7 @@ class SkillsBuilder:
             version=version,
             description=description,
             parent=None,            # populated after pass 2
+            registry_key=registry_key,
             children=[],            # populated after pass 2
             sha_skill_md=git_blob_sha(skill_md),
             sha_skill_yaml=sha_yaml,

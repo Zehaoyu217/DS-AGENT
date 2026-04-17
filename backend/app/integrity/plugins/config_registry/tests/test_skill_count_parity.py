@@ -37,10 +37,20 @@ def test_builder_count_matches_registry() -> None:
 
 @pytest.mark.skipif(not SKILLS_ROOT.exists(), reason="real skills tree not present")
 def test_builder_ids_match_registry_keys() -> None:
+    """SkillEntry.registry_key (from SKILL.md frontmatter ``name``) is the
+    same value SkillRegistry uses to populate ``_index``. The set of
+    non-null registry_keys must equal the registry's key set exactly —
+    no leaf-name workaround, no normalization, just identity.
+    """
     from backend.app.skills.registry import SkillRegistry
 
     registry = SkillRegistry(SKILLS_ROOT)
     registry.discover()
     builder = SkillsBuilder(skills_root=SKILLS_ROOT, repo_root=REPO_ROOT)
     entries, _ = builder.build()
-    assert {e.id.split(".")[-1] for e in entries} == set(registry._index)
+    builder_keys = {e.registry_key for e in entries if e.registry_key is not None}
+    assert builder_keys == set(registry._index), (
+        f"registry_key parity mismatch:\n"
+        f"missing in builder: {set(registry._index) - builder_keys}\n"
+        f"extra in builder:   {builder_keys - set(registry._index)}"
+    )
