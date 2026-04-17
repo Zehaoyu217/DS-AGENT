@@ -86,3 +86,59 @@ def test_plugin_skips_disabled_rules(tmp_path: Path):
     )
     plugin.scan(ScanContext(repo_root=tmp_path, graph=GraphSnapshot.load(tmp_path)))
     assert called["count"] == 0
+
+
+from collections import Counter
+
+from backend.app.integrity.plugins.doc_audit.plugin import DocAuditPlugin
+from backend.app.integrity.protocol import ScanContext
+from backend.app.integrity.schema import GraphSnapshot
+
+
+def test_full_plugin_against_tiny_repo(tiny_repo, today_fixed):
+    cfg = {
+        "doc_roots": ["*.md", "docs/**/*.md", "knowledge/**/*.md"],
+        "excluded_paths": [],
+        "claude_ignore_file": ".claude-ignore",
+        "seed_docs": ["CLAUDE.md"],
+        "thresholds": {"stale_days": 90},
+        "coverage_required": [
+            "dev-setup.md",
+            "testing.md",
+            "gotchas.md",
+            "skill-creation.md",
+            "log.md",
+        ],
+        "rename_lookback": "30.days.ago",
+        "disabled_rules": [],
+    }
+    plugin = DocAuditPlugin(config=cfg, today=today_fixed)
+    ctx = ScanContext(repo_root=tiny_repo, graph=GraphSnapshot.load(tiny_repo))
+    result = plugin.scan(ctx)
+
+    counts = Counter(i.rule for i in result.issues)
+    # coverage_gap: all 5 required files present → 0
+    assert counts["doc.coverage_gap"] == 0
+    # unindexed: docs/orphan.md not linked from CLAUDE.md → 1
+    assert counts["doc.unindexed"] == 1
+    # broken_link: docs/broken.md → docs/gone.md (1) + anchor-broken → 1 = 2
+    assert counts["doc.broken_link"] == 2
+    # dead_code_ref: dead-ref.md has 2 refs (path + symbol)
+    assert counts["doc.dead_code_ref"] == 2
+    # adr_status_drift: 002-drift.md (1 path ref); 001-real and template excluded
+    assert counts["doc.adr_status_drift"] == 1
+    # stale_candidate: tiny_repo just got committed → no docs older than 90d
+    assert counts["doc.stale_candidate"] == 0
+
+    assert result.failures == []
+    artifact = tiny_repo / "integrity-out" / today_fixed.isoformat() / "doc_audit.json"
+    assert artifact.exists()
+    payload = __import__("json").loads(artifact.read_text())
+    assert set(payload["rules_run"]) == {
+        "doc.coverage_gap",
+        "doc.unindexed",
+        "doc.broken_link",
+        "doc.dead_code_ref",
+        "doc.stale_candidate",
+        "doc.adr_status_drift",
+    }
