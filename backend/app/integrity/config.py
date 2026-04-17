@@ -57,6 +57,26 @@ DEFAULTS: dict[str, Any] = {
             "rename_lookback": "30.days.ago",
             "disabled_rules": [],
         },
+        "autofix": {
+            "enabled": True,
+            "apply": False,
+            "fix_classes": {
+                "claude_md_link": {"enabled": True},
+                "doc_link_renamed": {"enabled": True},
+                "manifest_regen": {"enabled": True},
+                "dead_directive_cleanup": {"enabled": True},
+                "health_dashboard_refresh": {"enabled": True},
+            },
+            "pr_concurrency_per_class": 1,
+            "gh_executable": "gh",
+            "branch_prefix": "integrity/autofix",
+            "commit_author": "Integrity Autofix <integrity@local>",
+            "dispatcher_subprocess_timeout_seconds": 60,
+            "circuit_breaker": {
+                "window_days": 30,
+                "max_human_edits": 2,
+            },
+        },
     },
 }
 

@@ -12,7 +12,7 @@ from .report import write_report
 from .schema import GraphSnapshot
 from .snapshots import prune_older_than, write_snapshot
 
-KNOWN_PLUGINS = ("graph_extension", "graph_lint", "doc_audit", "config_registry", "hooks_check")
+KNOWN_PLUGINS = ("graph_extension", "graph_lint", "doc_audit", "config_registry", "hooks_check", "autofix")
 
 
 def _build_engine(
@@ -20,6 +20,7 @@ def _build_engine(
     only: str | None,
     skip_augment: bool,
     check_only: bool = False,
+    apply: bool = False,
 ) -> IntegrityEngine:
     cfg = load_config(repo_root)
     engine = IntegrityEngine(repo_root)
@@ -72,6 +73,19 @@ def _build_engine(
             hc_plugin = replace(hc_plugin, depends_on=())
         engine.register(hc_plugin)
 
+    af_cfg_enabled = enabled.get("autofix", {}).get("enabled", True)
+    want_af = (only is None or only == "autofix") and af_cfg_enabled
+    if want_af:
+        from .plugins.autofix.plugin import AutofixPlugin
+        af_plugin = AutofixPlugin(
+            config=enabled.get("autofix", {}),
+            apply=apply,
+        )
+        if only == "autofix":
+            from dataclasses import replace
+            af_plugin = replace(af_plugin, depends_on=())
+        engine.register(af_plugin)
+
     return engine
 
 
@@ -85,6 +99,10 @@ def main(argv: list[str] | None = None) -> int:
         "--check", action="store_true",
         help="config_registry: dry-run, fail if config/manifest.yaml would change",
     )
+    parser.add_argument(
+        "--apply", action="store_true",
+        help="autofix: enable apply mode (requires autofix.apply: true in config too)",
+    )
     parser.add_argument("--retention-days", type=int, default=30)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     args = parser.parse_args(argv)
@@ -92,7 +110,10 @@ def main(argv: list[str] | None = None) -> int:
     repo_root = args.repo_root.resolve()
     today = date.today()
 
-    engine = _build_engine(repo_root, args.plugin, args.no_augment, check_only=args.check)
+    engine = _build_engine(
+        repo_root, args.plugin, args.no_augment,
+        check_only=args.check, apply=args.apply,
+    )
     results = engine.run()
 
     report_paths = write_report(
