@@ -26,7 +26,7 @@ def _cfg():  # noqa: ANN202
 def sb_search(args: dict[str, Any]) -> dict[str, Any]:
     if not config.SECOND_BRAIN_ENABLED:
         return _disabled({"hits": []})
-    from second_brain.index.retriever import BM25Retriever
+    from second_brain.index.retriever import make_retriever
 
     query = str(args.get("query", ""))
     if not query:
@@ -40,7 +40,7 @@ def sb_search(args: dict[str, Any]) -> dict[str, Any]:
     if not cfg.fts_path.exists():
         return {"ok": False, "error": "no_index", "hits": []}
 
-    retriever = BM25Retriever(cfg)
+    retriever = make_retriever(cfg)
     hits = retriever.search(
         query,
         k=k,

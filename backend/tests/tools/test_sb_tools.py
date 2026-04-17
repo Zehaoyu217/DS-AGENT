@@ -5,6 +5,8 @@ import importlib
 import sqlite3
 from pathlib import Path
 
+import pytest
+
 
 def _point_at_home(monkeypatch, home: Path, enabled: bool) -> None:
     if enabled:
@@ -148,3 +150,114 @@ def test_sb_promote_claim_refuses_overwrite(monkeypatch, tmp_path):
     # Same statement → same slug → second call must fail explicitly.
     assert second["ok"] is False
     assert "exists" in second["error"].lower()
+
+
+def _write_habits_hybrid(home: Path) -> None:
+    """Drop a minimal habits.yaml that flips retrieval.mode to hybrid."""
+    (home / ".sb" / "habits.yaml").write_text(
+        "retrieval:\n  mode: hybrid\n",
+        encoding="utf-8",
+    )
+
+
+def _seed_fts(home: Path) -> None:
+    """Seed kb.sqlite so make_retriever has a BM25 index available."""
+    db = sqlite3.connect(home / ".sb" / "kb.sqlite")
+    db.executescript(
+        """
+        CREATE VIRTUAL TABLE claim_fts USING fts5(
+            claim_id UNINDEXED, statement, abstract, body, taxonomy,
+            tokenize='unicode61 remove_diacritics 2'
+        );
+        CREATE VIRTUAL TABLE source_fts USING fts5(
+            source_id UNINDEXED, title, abstract, processed_body, taxonomy,
+            tokenize='unicode61 remove_diacritics 2'
+        );
+        INSERT INTO claim_fts(claim_id, statement, abstract, body, taxonomy)
+        VALUES ('clm_x', 'attention alone suffices', 'attention', 'body', 'papers/ml');
+        """
+    )
+    db.commit()
+    db.close()
+
+
+def test_sb_search_uses_make_retriever_factory(monkeypatch, tmp_path):
+    """When habits mode=hybrid AND vectors.sqlite exists, factory returns hybrid."""
+    pytest.importorskip("sqlite_vec")
+    from second_brain.config import Config
+    from second_brain.index.retriever import HybridRetriever
+    from second_brain.index.vector_store import VectorStore
+
+    home = tmp_path / "sb"
+    (home / ".sb").mkdir(parents=True)
+    _seed_fts(home)
+    _write_habits_hybrid(home)
+    # Create vectors.sqlite so the hybrid branch is taken.
+    cfg_bootstrap = Config(home=home, sb_dir=home / ".sb")
+    with VectorStore.open(cfg_bootstrap.vectors_path) as store:
+        store.ensure_schema(dim=3)
+
+    _point_at_home(monkeypatch, home, enabled=True)
+    from app.tools import sb_tools
+    importlib.reload(sb_tools)
+
+    captured: dict = {}
+    orig_make = sb_tools.__dict__.get("make_retriever")  # None before import inside handler
+
+    # Spy on make_retriever by monkeypatching the symbol the handler imports.
+    from second_brain.index import retriever as retriever_mod
+
+    real_factory = retriever_mod.make_retriever
+
+    def spy(cfg):  # noqa: ANN001, ANN202
+        r = real_factory(cfg)
+        captured["type"] = type(r).__name__
+        return r
+
+    monkeypatch.setattr(retriever_mod, "make_retriever", spy)
+
+    # Patch the embedder factory so we don't try to load sentence-transformers.
+    from second_brain.index import vector_retriever as vr
+
+    class _Stub:
+        dim = 3
+
+        def embed(self, texts):  # noqa: ANN001, ANN202
+            return [[1.0, 0.0, 0.0] for _ in texts]
+
+    monkeypatch.setattr(vr, "_default_embedder_factory", lambda _cfg: _Stub())
+
+    res = sb_tools.sb_search({"query": "attention", "k": 3, "scope": "claims"})
+    assert res["ok"] is True
+    assert captured["type"] == HybridRetriever.__name__
+
+
+def test_sb_search_falls_back_to_bm25_when_no_vectors(monkeypatch, tmp_path):
+    """Even with mode=hybrid, missing vectors.sqlite must degrade to BM25."""
+    from second_brain.index.retriever import BM25Retriever
+
+    home = tmp_path / "sb"
+    (home / ".sb").mkdir(parents=True)
+    _seed_fts(home)
+    _write_habits_hybrid(home)
+    # Note: no VectorStore created → vectors.sqlite absent.
+
+    _point_at_home(monkeypatch, home, enabled=True)
+    from app.tools import sb_tools
+    importlib.reload(sb_tools)
+
+    captured: dict = {}
+    from second_brain.index import retriever as retriever_mod
+
+    real_factory = retriever_mod.make_retriever
+
+    def spy(cfg):  # noqa: ANN001, ANN202
+        r = real_factory(cfg)
+        captured["type"] = type(r).__name__
+        return r
+
+    monkeypatch.setattr(retriever_mod, "make_retriever", spy)
+
+    res = sb_tools.sb_search({"query": "attention", "k": 3, "scope": "claims"})
+    assert res["ok"] is True
+    assert captured["type"] == BM25Retriever.__name__
