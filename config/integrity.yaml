@@ -91,3 +91,20 @@ plugins:
       - "sb inject"
       - "sb reindex"
     disabled_rules: []
+  autofix:
+    enabled: true
+    apply: false
+    fix_classes:
+      claude_md_link:           {enabled: true}
+      doc_link_renamed:         {enabled: true}
+      manifest_regen:           {enabled: true}
+      dead_directive_cleanup:   {enabled: true}
+      health_dashboard_refresh: {enabled: true}
+    pr_concurrency_per_class: 1
+    gh_executable: gh
+    branch_prefix: integrity/autofix
+    commit_author: "Integrity Autofix <integrity@local>"
+    dispatcher_subprocess_timeout_seconds: 60
+    circuit_breaker:
+      window_days: 30
+      max_human_edits: 2
