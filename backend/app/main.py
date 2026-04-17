@@ -65,7 +65,11 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    _health_dir = Path.cwd() / "docs" / "health"
+    _override = os.environ.get("INTEGRITY_HEALTH_DIR")
+    if _override:
+        _health_dir = Path(_override)
+    else:
+        _health_dir = Path(__file__).resolve().parents[2] / "docs" / "health"
     if _health_dir.is_dir():
         app.mount("/static/health", StaticFiles(directory=str(_health_dir)), name="health-static")
 

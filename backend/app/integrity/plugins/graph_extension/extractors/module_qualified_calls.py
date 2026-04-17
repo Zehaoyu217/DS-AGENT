@@ -93,12 +93,12 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
             )
         )
 
-    for path, file_pkg, tree in parsed:
-        rel = str(path.relative_to(repo_root))
-        stem = path.stem.lower()
-        bindings = _module_bindings(tree, file_pkg, module_index)
-        for caller_name, func_node in _iter_callers(tree):
-            caller_id = node_id(stem, caller_name)
+    for src_path, src_pkg, src_tree in parsed:
+        rel_str = str(src_path.relative_to(repo_root))
+        src_stem = src_path.stem.lower()
+        bindings = _module_bindings(src_tree, src_pkg, module_index)
+        for caller_name, func_node in _iter_callers(src_tree):
+            caller_id = node_id(src_stem, caller_name)
             shadows = _local_shadows(func_node)
             for call in (n for n in ast.walk(func_node) if isinstance(n, ast.Call)):
                 if not isinstance(call.func, ast.Attribute):
@@ -111,7 +111,7 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
                 if mod is None or fn not in module_functions.get(mod, set()):
                     continue
                 target_stem = module_index[mod].stem.lower()
-                add(caller_id, node_id(target_stem, fn), rel, call.lineno)
+                add(caller_id, node_id(target_stem, fn), rel_str, call.lineno)
 
     return ExtractionResult(edges=edges, failures=failures)
 
@@ -150,7 +150,10 @@ def _resolve_chain(
 def _module_bindings(
     tree: ast.AST, file_pkg: tuple[str, ...], module_index: dict[str, Path]
 ) -> dict[str, str]:
-    """Map each module-level local name → absolute dotted module path (only if it's a real module)."""
+    """Map each module-level local name → absolute dotted module path.
+
+    Only includes bindings that resolve to a real module in ``module_index``.
+    """
     bindings: dict[str, str] = {}
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.ImportFrom):

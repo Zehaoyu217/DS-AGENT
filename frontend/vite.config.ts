@@ -23,11 +23,16 @@ export default defineConfig({
         timeout: 300_000,
         proxyTimeout: 300_000,
       },
+      '/static': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
     },
   },
   test: {
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
+    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
   },
 })

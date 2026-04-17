@@ -32,8 +32,12 @@ def _resolve(name: str, resolver: dict[str, str]) -> str:
     return resolver.get(key, f"{key}_{key}")
 
 
-class ExtractorUnavailable(RuntimeError):
+class ExtractorUnavailableError(RuntimeError):
     """Raised when Node or @babel/parser is not installed."""
+
+
+# Backward-compatible alias (older spec docs reference the un-suffixed name).
+ExtractorUnavailable = ExtractorUnavailableError
 
 
 def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
@@ -71,7 +75,9 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
         return ExtractionResult(failures=["jsx_usage subprocess timed out"])
 
     if proc.returncode != 0:
-        return ExtractionResult(failures=[f"node helper exit {proc.returncode}: {proc.stderr.strip()}"])
+        return ExtractionResult(
+            failures=[f"node helper exit {proc.returncode}: {proc.stderr.strip()}"]
+        )
 
     try:
         records = json.loads(proc.stdout)

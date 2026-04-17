@@ -84,7 +84,12 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
                     cls = call.func.id
                     for owner_stem, owner_cls in method_owners.get("__init__", []):
                         if owner_cls == cls:
-                            add(caller_id, _method_id(owner_stem, owner_cls, "__init__"), rel, call.lineno)
+                            add(
+                                caller_id,
+                                _method_id(owner_stem, owner_cls, "__init__"),
+                                rel,
+                                call.lineno,
+                            )
                             break
                     continue
                 if not isinstance(call.func, ast.Attribute):

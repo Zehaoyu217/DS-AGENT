@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from pathlib import Path
 
 from backend.app.integrity.plugins.graph_extension.extractors import ts_imports
@@ -39,7 +40,11 @@ def test_default_import_uses_local_name(tmp_path: Path) -> None:
 
 
 def test_aliased_named_import_uses_source_name(tmp_path: Path) -> None:
-    _write(tmp_path, "frontend/src/hooks/useRegistry.ts", "export const useCommandRegistry = ()=>0;\n")
+    _write(
+        tmp_path,
+        "frontend/src/hooks/useRegistry.ts",
+        "export const useCommandRegistry = ()=>0;\n",
+    )
     _write(
         tmp_path,
         "frontend/src/components/Cmd.tsx",

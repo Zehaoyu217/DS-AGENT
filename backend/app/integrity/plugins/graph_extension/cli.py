@@ -5,9 +5,9 @@ import json
 import sys
 from pathlib import Path
 
-from .plugin import GraphExtensionPlugin
 from ...protocol import ScanContext
 from ...schema import GraphSnapshot
+from .plugin import GraphExtensionPlugin
 
 
 def main(argv: list[str] | None = None) -> int:

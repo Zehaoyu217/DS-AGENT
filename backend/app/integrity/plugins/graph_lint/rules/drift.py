@@ -4,7 +4,7 @@ import fnmatch
 from datetime import date
 from typing import Any
 
-from ....issue import IntegrityIssue
+from ....issue import IntegrityIssue, Severity
 from ....protocol import ScanContext
 from ....snapshots import load_snapshot_by_age
 from ..git_renames import recent_renames
@@ -72,7 +72,7 @@ def run_removed(ctx: ScanContext, config: dict[str, Any], today: date) -> list[I
         if _matches_any_glob(src, excluded):
             continue
         was_renamed = src in renames
-        severity = "INFO" if was_renamed else "WARN"
+        severity: Severity = "INFO" if was_renamed else "WARN"
         msg_suffix = f" (file renamed → {renames[src]})" if was_renamed else ""
         issues.append(
             IntegrityIssue(

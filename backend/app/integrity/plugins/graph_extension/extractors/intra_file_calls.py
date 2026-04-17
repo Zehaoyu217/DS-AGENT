@@ -85,7 +85,10 @@ def _resolve_callee(call: ast.Call, local_defs: set[str]) -> str | None:
     func = call.func
     if isinstance(func, ast.Name):
         return func.id if func.id in local_defs else None
-    if isinstance(func, ast.Attribute):
-        if isinstance(func.value, ast.Name) and func.value.id == "self":
-            return func.attr if func.attr in local_defs else None
+    if (
+        isinstance(func, ast.Attribute)
+        and isinstance(func.value, ast.Name)
+        and func.value.id == "self"
+    ):
+        return func.attr if func.attr in local_defs else None
     return None

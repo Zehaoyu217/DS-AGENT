@@ -9,8 +9,8 @@ def client(tmp_path: Path, monkeypatch):
     health = tmp_path / "docs" / "health"
     health.mkdir(parents=True)
     (health / "latest.md").write_text("# Hello health\n")
-    monkeypatch.chdir(tmp_path)
-    # create_app() is called fresh per test, so it picks up the chdir
+    monkeypatch.setenv("INTEGRITY_HEALTH_DIR", str(health))
+    # create_app() is called fresh per test, so it picks up the env var
     from app.main import create_app
 
     return TestClient(create_app())
