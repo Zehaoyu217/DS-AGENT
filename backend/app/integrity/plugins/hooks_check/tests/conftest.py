@@ -52,7 +52,7 @@ def tiny_repo_with_hooks(tmp_path: Path) -> Path:
            "  - id: b_broken\n"
            "    description: matched but exits 1\n"
            "    when: {paths: ['*.py']}\n"
-           "    requires_hook: {event: PostToolUse, matcher: 'Write|Edit', command_substring: false}\n"
+           "    requires_hook: {event: PostToolUse, matcher: 'Write|Edit', command_substring: 'false'}\n"
            "  - id: c_missing\n"
            "    description: no hook ever matches\n"
            "    when: {paths: ['*.py']}\n"
