@@ -19,6 +19,10 @@ class IntegrityEngine:
         self.repo_root = repo_root
         self._plugins: list[IntegrityPlugin] = []
 
+    @property
+    def plugins(self) -> list[IntegrityPlugin]:
+        return list(self._plugins)
+
     def register(self, plugin: IntegrityPlugin) -> None:
         self._plugins.append(plugin)
 
