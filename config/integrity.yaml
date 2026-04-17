@@ -82,3 +82,12 @@ plugins:
     removed_escalation:
       enabled: true
     disabled_rules: []
+  hooks_check:
+    enabled: true
+    coverage_path: "config/hooks_coverage.yaml"
+    settings_path: ".claude/settings.json"
+    dry_run_timeout_seconds: 10
+    tolerated:
+      - "sb inject"
+      - "sb reindex"
+    disabled_rules: []
