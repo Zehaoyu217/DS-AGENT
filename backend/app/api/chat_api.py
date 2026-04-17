@@ -18,10 +18,10 @@ import re
 import secrets
 import sys
 import time
-from uuid import uuid4
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import anthropic
 import httpx
@@ -31,14 +31,12 @@ from pydantic import BaseModel, Field
 
 from app.artifacts.events import get_event_bus
 from app.config import get_config
-from app.core.home import traces_path
 from app.context.manager import ContextLayer, session_registry
+from app.core.home import traces_path
 from app.data.db_init import get_data_context
 from app.harness.a2a import register_delegate_tool
 from app.harness.clients.anthropic_client import AnthropicClient
 from app.harness.clients.base import (
-    CompletionRequest,
-    Message,
     ModelClient,
     ToolSchema,
 )

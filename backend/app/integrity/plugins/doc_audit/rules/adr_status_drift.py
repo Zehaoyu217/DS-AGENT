@@ -9,7 +9,6 @@ from ....protocol import ScanContext
 from ..index import MarkdownIndex
 from ..parser.code_refs import extract_code_refs
 
-
 _BOLD_STATUS_RE = re.compile(
     r"^\s*\*\*Status:\*\*\s*Accepted\b", re.IGNORECASE | re.MULTILINE
 )

@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 
 
-
 def test_profile_returns_report_with_risks_sorted(duplicated_key_df: pd.DataFrame) -> None:
     from app.skills.data_profiler.pkg.profile import profile
 

@@ -4,7 +4,11 @@ from __future__ import annotations
 import subprocess
 import sys
 
-from app.harness.sandbox_bootstrap import _PREAMBLE_CACHE, _get_cached_preamble, build_duckdb_globals
+from app.harness.sandbox_bootstrap import (
+    _PREAMBLE_CACHE,
+    _get_cached_preamble,
+    build_duckdb_globals,
+)
 
 
 def test_build_duckdb_globals_no_dataset() -> None:

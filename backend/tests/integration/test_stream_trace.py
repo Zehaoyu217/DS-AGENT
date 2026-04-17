@@ -14,8 +14,8 @@ OpenRouter key needed), streams one turn, and asserts:
 """
 from __future__ import annotations
 
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 import httpx
 import pytest
@@ -27,7 +27,6 @@ from app.harness.clients.base import (
     CompletionResponse,
     ModelClient,
     ToolCall,
-    ToolSchema,
 )
 
 
@@ -96,14 +95,13 @@ def test_stream_endpoint_writes_trace_yaml(_stub_env: Path) -> None:
     from app.main import create_app
 
     app = create_app()
-    with TestClient(app) as client:
-        with client.stream(
-            "POST",
-            "/api/chat/stream",
-            json={"message": "what is 1+1?"},
-        ) as resp:
-            assert resp.status_code == 200
-            lines = _collect_sse_lines(resp)
+    with TestClient(app) as client, client.stream(
+        "POST",
+        "/api/chat/stream",
+        json={"message": "what is 1+1?"},
+    ) as resp:
+        assert resp.status_code == 200
+        lines = _collect_sse_lines(resp)
 
     # SSE frames include at least turn_start + turn_end.
     joined = "\n".join(lines)
@@ -147,16 +145,15 @@ def test_stream_endpoint_trace_includes_prompt_sections(_stub_env: Path) -> None
     from app.main import create_app
 
     app = create_app()
-    with TestClient(app) as client:
-        with client.stream(
-            "POST",
-            "/api/chat/stream",
-            json={"message": "hello world"},
-        ) as resp:
-            assert resp.status_code == 200
-            _: Iterator[str] = resp.iter_lines()
-            for _chunk in _:
-                pass  # drain
+    with TestClient(app) as client, client.stream(
+        "POST",
+        "/api/chat/stream",
+        json={"message": "hello world"},
+    ) as resp:
+        assert resp.status_code == 200
+        _: Iterator[str] = resp.iter_lines()
+        for _chunk in _:
+            pass  # drain
 
     trace = yaml.safe_load(
         next(iter(_stub_env.glob("*.yaml"))).read_text(encoding="utf-8"),

@@ -1,5 +1,4 @@
 from backend.app.integrity.plugins.doc_audit.parser.code_refs import (
-    CodeRef,
     extract_code_refs,
 )
 

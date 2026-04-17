@@ -5,7 +5,6 @@ import pytest
 
 from app.harness.toolsets import ToolsetResolver
 
-
 # ── Fixtures ───────────────────────────────────────────────────────────────────
 
 def _resolver(config: dict) -> ToolsetResolver:

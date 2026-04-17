@@ -26,7 +26,6 @@ from app.harness.semantic_compactor import SemanticCompactionResult, SemanticCom
 from app.harness.stream_events import StreamEvent
 from app.harness.turn_state import TurnState
 
-
 # ── Parallel-safe tool dispatch (Hermes H3b) ─────────────────────────────────
 #
 # A small whitelist of tools whose handlers are read-only and have no shared

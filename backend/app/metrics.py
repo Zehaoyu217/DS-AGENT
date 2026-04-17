@@ -24,7 +24,7 @@ except ImportError:
     # prometheus_client not installed — create a no-op stub so other modules
     # can safely import and call .inc()/.dec() without conditional guards.
     class _Noop:  # type: ignore[no-redef]
-        def labels(self, **_: object) -> "_Noop":
+        def labels(self, **_: object) -> _Noop:
             return self
 
         def inc(self, amount: float = 1) -> None:

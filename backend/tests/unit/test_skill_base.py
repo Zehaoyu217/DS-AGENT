@@ -1,5 +1,6 @@
-from app.skills.base import SkillError, SkillResult, SkillMetadata, SkillNode
 from pathlib import Path
+
+from app.skills.base import SkillError, SkillMetadata, SkillNode, SkillResult
 
 
 def test_skill_error_formats_message() -> None:

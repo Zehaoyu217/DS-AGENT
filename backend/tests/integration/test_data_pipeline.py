@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from app.data.db_init import get_data_context, initialize_db, _BANK_MACRO_DIR
+from app.data.db_init import _BANK_MACRO_DIR, get_data_context, initialize_db
 from app.harness.sandbox import SandboxExecutor
 from app.harness.sandbox_bootstrap import build_duckdb_globals
 
@@ -43,6 +43,7 @@ def test_initialize_db_runs_without_error(tmp_path: Path, monkeypatch: pytest.Mo
 def test_initialize_db_loads_tables(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """When source CSV files exist, tables are created with expected row counts."""
     import duckdb
+
     from app.config import AppConfig, get_config
 
     db_file = tmp_path / "test.db"

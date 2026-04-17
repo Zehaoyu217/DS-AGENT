@@ -17,5 +17,5 @@ def test_second_brain_enabled_when_sb_dir_present(monkeypatch, tmp_path):
     monkeypatch.setenv("SECOND_BRAIN_HOME", str(home))
     from app import config
     importlib.reload(config)
-    assert config.SECOND_BRAIN_HOME == home
+    assert home == config.SECOND_BRAIN_HOME
     assert config.SECOND_BRAIN_ENABLED is True

@@ -1,13 +1,12 @@
 """Unit tests for CronEngine (H4.T3)."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from app.scheduler.engine import CronEngine
 from app.scheduler.jobs import CronJob
-
 
 # ── Fixtures ───────────────────────────────────────────────────────────────────
 

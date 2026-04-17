@@ -24,7 +24,6 @@ from dataclasses import dataclass
 
 from app.harness.clients.base import Message
 
-
 _ROUGH_CHARS_PER_TOKEN = 4  # Anthropic / OpenAI rule-of-thumb.
 
 

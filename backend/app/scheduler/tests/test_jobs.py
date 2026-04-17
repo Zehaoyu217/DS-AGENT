@@ -5,7 +5,6 @@ import pytest
 
 from app.scheduler.jobs import CronJob, CronJobCreate, CronJobResult, parse_schedule
 
-
 # ── parse_schedule ─────────────────────────────────────────────────────────────
 
 @pytest.mark.parametrize("raw,expected", [

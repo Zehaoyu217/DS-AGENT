@@ -90,10 +90,6 @@ def test_plugin_skips_disabled_rules(tmp_path: Path):
 
 from collections import Counter
 
-from backend.app.integrity.plugins.doc_audit.plugin import DocAuditPlugin
-from backend.app.integrity.protocol import ScanContext
-from backend.app.integrity.schema import GraphSnapshot
-
 
 def test_full_plugin_against_tiny_repo(tiny_repo, today_fixed):
     cfg = {

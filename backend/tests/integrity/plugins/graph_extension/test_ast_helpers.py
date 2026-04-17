@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import ast
 
 from backend.app.integrity.plugins.graph_extension.extractors._ast_helpers import (

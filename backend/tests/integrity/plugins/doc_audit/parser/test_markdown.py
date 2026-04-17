@@ -1,8 +1,6 @@
 from pathlib import Path
 
 from backend.app.integrity.plugins.doc_audit.parser.markdown import (
-    Heading,
-    MarkdownLink,
     parse_doc,
     slug_for_heading,
 )

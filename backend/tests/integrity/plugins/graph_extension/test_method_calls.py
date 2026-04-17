@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from pathlib import Path
 
 from backend.app.integrity.plugins.graph_extension.extractors import method_calls

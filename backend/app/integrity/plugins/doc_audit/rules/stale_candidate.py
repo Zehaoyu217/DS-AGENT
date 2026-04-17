@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 from ....issue import IntegrityIssue
@@ -22,7 +22,7 @@ def _parse_iso(s: str | None) -> datetime | None:
 def run(ctx: ScanContext, cfg: dict[str, Any], today: date) -> list[IntegrityIssue]:
     idx = MarkdownIndex.build(ctx.repo_root, cfg)
     stale_days = int(cfg.get("thresholds", {}).get("stale_days", 90))
-    threshold = datetime.combine(today, datetime.min.time(), tzinfo=timezone.utc) - timedelta(
+    threshold = datetime.combine(today, datetime.min.time(), tzinfo=UTC) - timedelta(
         days=stale_days
     )
     gl = GitLog(ctx.repo_root)

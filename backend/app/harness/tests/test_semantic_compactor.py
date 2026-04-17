@@ -3,11 +3,12 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from app.harness.clients.base import CompletionResponse, Message
-from app.harness.semantic_compactor import SemanticCompactor, _estimate_tokens, _identify_turn_boundaries
-
+from app.harness.semantic_compactor import (
+    SemanticCompactor,
+    _estimate_tokens,
+    _identify_turn_boundaries,
+)
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

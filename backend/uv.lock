@@ -2143,9 +2143,11 @@ requires-dist = [
     { name = "readability-lxml", specifier = ">=0.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
+    { name = "sentence-transformers", marker = "extra == 'vectors'", specifier = ">=2.0" },
+    { name = "sqlite-vec", marker = "extra == 'vectors'", specifier = ">=0.1" },
     { name = "watchdog", specifier = ">=4.0" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["dev", "vectors"]
 
 [[package]]
 name = "six"

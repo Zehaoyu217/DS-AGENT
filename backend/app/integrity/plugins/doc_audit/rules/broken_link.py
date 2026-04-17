@@ -9,7 +9,6 @@ from ....protocol import ScanContext
 from ...graph_lint.git_renames import recent_renames
 from ..index import MarkdownIndex
 
-
 _ABSOLUTE_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "tel:")
 
 

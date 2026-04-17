@@ -28,7 +28,7 @@ class Message:
     content: str
     name: str | None = None
     tool_use_id: str | None = None
-    tool_calls: tuple["ToolCall", ...] = field(default_factory=tuple)
+    tool_calls: tuple[ToolCall, ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True, slots=True)

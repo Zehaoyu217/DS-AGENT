@@ -8,7 +8,7 @@ from app.harness.clients.base import (
 )
 from app.harness.dispatcher import ToolDispatcher
 from app.harness.guardrails.types import GuardrailOutcome
-from app.harness.loop import AgentLoop, LoopOutcome, _SYNTHESIS_SYSTEM, _SingleToolResult
+from app.harness.loop import _SYNTHESIS_SYSTEM, AgentLoop, LoopOutcome, _SingleToolResult
 
 
 def _client(responses: list[CompletionResponse]) -> MagicMock:

@@ -9,7 +9,6 @@ from app.harness.injection_guard import (
     scan,
 )
 
-
 # ── scan() passes for benign content ──────────────────────────────────────────
 
 def test_scan_passes_for_benign_text() -> None:

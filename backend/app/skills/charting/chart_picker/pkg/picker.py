@@ -5,7 +5,7 @@ Pure: no I/O, no DataFrame inspection. The caller summarizes shape into a dict.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal, TypedDict
 
 Intent = Literal[

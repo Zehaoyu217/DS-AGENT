@@ -4,7 +4,6 @@ from __future__ import annotations
 import pandas as pd
 
 
-
 def test_schema_reports_column_types_and_null_counts(small_df: pd.DataFrame) -> None:
     from app.skills.data_profiler.pkg.sections.schema import run
 

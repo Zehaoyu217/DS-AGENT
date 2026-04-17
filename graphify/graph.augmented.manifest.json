@@ -1,5 +1,5 @@
 {
-  "edges_emitted": 6992,
+  "edges_emitted": 8301,
   "extension": "cca-v1",
   "extractors": [
     "fastapi_routes",

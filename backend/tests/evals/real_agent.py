@@ -87,67 +87,66 @@ class RealAgentAdapter:
         title = prompt[:80] + ("…" if len(prompt) > 80 else "")
         session_id = await self._create_conversation(title)
 
-        async with httpx.AsyncClient(timeout=self._timeout) as client:
-            async with client.stream(
-                "POST",
-                f"{self._base_url}/api/chat/stream",
-                json={
-                    "message": prompt,
-                    "session_id": session_id,
-                },
-                headers={"Accept": "text/event-stream"},
-            ) as resp:
-                if resp.status_code != 200:
-                    raise BackendNotReachableError(
-                        f"Backend returned HTTP {resp.status_code} for /api/chat/stream"
-                    )
-                async for raw_line in resp.aiter_lines():
-                    line = raw_line.strip()
-                    if not line or not line.startswith("data: "):
-                        continue
-                    try:
-                        event = json.loads(line[6:])
-                    except json.JSONDecodeError:
-                        continue
+        async with httpx.AsyncClient(timeout=self._timeout) as client, client.stream(
+            "POST",
+            f"{self._base_url}/api/chat/stream",
+            json={
+                "message": prompt,
+                "session_id": session_id,
+            },
+            headers={"Accept": "text/event-stream"},
+        ) as resp:
+            if resp.status_code != 200:
+                raise BackendNotReachableError(
+                    f"Backend returned HTTP {resp.status_code} for /api/chat/stream"
+                )
+            async for raw_line in resp.aiter_lines():
+                line = raw_line.strip()
+                if not line or not line.startswith("data: "):
+                    continue
+                try:
+                    event = json.loads(line[6:])
+                except json.JSONDecodeError:
+                    continue
 
-                    event_type = event.get("type", "")
-                    # StreamEvent.to_sse() flattens payload into the top-level
-                    # dict: {"type": "...", ...payload fields...}.  There is no
-                    # nested "payload" key — read directly from `event`.
+                event_type = event.get("type", "")
+                # StreamEvent.to_sse() flattens payload into the top-level
+                # dict: {"type": "...", ...payload fields...}.  There is no
+                # nested "payload" key — read directly from `event`.
 
-                    if event_type == "turn_start" and event.get("session_id"):
-                        # Capture the real session_id (backend appends timestamp suffix)
-                        backend_session_id = event["session_id"]
+                if event_type == "turn_start" and event.get("session_id"):
+                    # Capture the real session_id (backend appends timestamp suffix)
+                    backend_session_id = event["session_id"]
 
-                    elif event_type == "tool_call":
-                        tool_call_previews.append({
-                            "name": event.get("name", ""),
-                            "input_preview": event.get("input_preview", ""),
-                        })
+                elif event_type == "tool_call":
+                    tool_call_previews.append({
+                        "name": event.get("name", ""),
+                        "input_preview": event.get("input_preview", ""),
+                    })
 
-                    elif event_type == "tool_result":
-                        if event.get("status") == "error":
-                            errors.append(
-                                f"{event.get('name', 'tool')}: "
-                                f"{event.get('preview', '')[:200]}"
-                            )
-
-                    elif event_type == "debug_step":
-                        import sys as _sys
-                        p = event
-                        _sys.stderr.write(
-                            f"[DEBUG step={p.get('step')} synth={p.get('synthesis')} "
-                            f"tool_choice={p.get('tool_choice')!r} "
-                            f"n_tools={p.get('n_tools')} n_msgs={p.get('n_req_msgs')} "
-                            f"resp_len={p.get('resp_len')} tool_calls={p.get('resp_tool_calls')} "
-                            f"stop={p.get('stop_reason')!r} "
-                            f"in_tok={p.get('input_tokens')} out_tok={p.get('output_tokens')} "
-                            f"ms={p.get('latency_ms')}]\n"
+                elif event_type == "tool_result":
+                    if event.get("status") == "error":
+                        errors.append(
+                            f"{event.get('name', 'tool')}: "
+                            f"{event.get('preview', '')[:200]}"
                         )
-                        _sys.stderr.flush()
 
-                    elif event_type == "turn_end":
-                        final_output = event.get("final_text", "") or ""
+                elif event_type == "debug_step":
+                    import sys as _sys
+                    p = event
+                    _sys.stderr.write(
+                        f"[DEBUG step={p.get('step')} synth={p.get('synthesis')} "
+                        f"tool_choice={p.get('tool_choice')!r} "
+                        f"n_tools={p.get('n_tools')} n_msgs={p.get('n_req_msgs')} "
+                        f"resp_len={p.get('resp_len')} tool_calls={p.get('resp_tool_calls')} "
+                        f"stop={p.get('stop_reason')!r} "
+                        f"in_tok={p.get('input_tokens')} out_tok={p.get('output_tokens')} "
+                        f"ms={p.get('latency_ms')}]\n"
+                    )
+                    _sys.stderr.flush()
+
+                elif event_type == "turn_end":
+                    final_output = event.get("final_text", "") or ""
 
         duration_ms = int((time.monotonic() - started) * 1000)
 

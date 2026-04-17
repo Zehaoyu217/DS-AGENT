@@ -4,10 +4,10 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.api.mcp_sampling_api import reset_sampling_counts_for_tests, router
-from fastapi import FastAPI
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

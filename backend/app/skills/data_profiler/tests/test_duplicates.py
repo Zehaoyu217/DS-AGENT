@@ -4,7 +4,6 @@ from __future__ import annotations
 import pandas as pd
 
 
-
 def test_detects_duplicate_rows() -> None:
     from app.skills.data_profiler.pkg.sections.duplicates import run
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
-
 from backend.app.integrity.plugins.graph_extension.extractors import fastapi_routes
 from backend.app.integrity.schema import GraphSnapshot
 

@@ -62,9 +62,25 @@ def test_main_rejects_unknown_plugin(tmp_path):
     g.mkdir()
     (g / "graph.json").write_text('{"nodes":[],"links":[]}', encoding="utf-8")
 
-    from backend.app.integrity.__main__ import main
-
     import pytest
+    from backend.app.integrity.__main__ import main
 
     with pytest.raises(SystemExit):
         main(["--plugin", "nonexistent", "--repo-root", str(tmp_path)])
+
+
+def test_hooks_check_in_known_plugins() -> None:
+    from backend.app.integrity.__main__ import KNOWN_PLUGINS
+    assert "hooks_check" in KNOWN_PLUGINS
+
+
+def test_unknown_plugin_rejected_for_hooks_check_typo(monkeypatch, tmp_path) -> None:
+    import sys
+    monkeypatch.chdir(tmp_path)
+    from backend.app.integrity.__main__ import main
+    try:
+        main(["--plugin", "hooks_chec"])
+    except SystemExit as exc:
+        assert "unknown plugin" in str(exc)
+    else:
+        raise AssertionError("expected SystemExit")

@@ -3,6 +3,7 @@ from __future__ import annotations
 from html import escape
 
 import pandas as pd
+
 from config.themes.table_css import render_table_css
 
 

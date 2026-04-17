@@ -7,8 +7,6 @@ implementation would load from a YAML config.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
-
 
 # ── Stroke descriptor ─────────────────────────────────────────────────────────
 

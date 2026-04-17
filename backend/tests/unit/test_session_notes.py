@@ -6,10 +6,10 @@ from unittest.mock import MagicMock
 
 from app.harness.turn_state import TurnState
 from app.harness.wrap_up import (
-    TurnWrapUp,
-    _render_session_notes,
-    _extract_section,
     _SESSION_SECTIONS,
+    TurnWrapUp,
+    _extract_section,
+    _render_session_notes,
 )
 from app.wiki.engine import WikiEngine, _safe_session_filename
 
@@ -108,7 +108,7 @@ def test_turn_wrap_up_writes_session_notes() -> None:
 
 def test_turn_wrap_up_tolerates_session_notes_failure() -> None:
     wiki = MagicMock()
-    wiki.write_session_notes.side_effect = IOError("disk full")
+    wiki.write_session_notes.side_effect = OSError("disk full")
     bus = MagicMock()
     state = TurnState(scratchpad="## Goal\ntest\n")
     wrap = TurnWrapUp(wiki=wiki, event_bus=bus)

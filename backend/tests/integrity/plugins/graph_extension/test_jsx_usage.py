@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 import shutil
 from pathlib import Path
 
 import pytest
-
 from backend.app.integrity.plugins.graph_extension.extractors import jsx_usage
 from backend.app.integrity.schema import GraphSnapshot
 

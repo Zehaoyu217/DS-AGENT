@@ -43,7 +43,6 @@ class OllamaClient:
             if m.role == "tool":
                 messages.append({"role": "tool", "content": m.content, "name": m.name or ""})
             elif m.role == "assistant" and m.tool_calls:
-                import json as _json
                 msg: dict = {
                     "role": "assistant",
                     "content": m.content or "",

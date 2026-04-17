@@ -8,10 +8,14 @@ import pandas as pd
 from app.skills.statistical_analysis.stat_validate.checks.confounder import check_confounder_risk
 from app.skills.statistical_analysis.stat_validate.checks.effect_size import check_effect_size
 from app.skills.statistical_analysis.stat_validate.checks.leakage import check_leakage
-from app.skills.statistical_analysis.stat_validate.checks.multiple_comparisons import check_multiple_comparisons
+from app.skills.statistical_analysis.stat_validate.checks.multiple_comparisons import (
+    check_multiple_comparisons,
+)
 from app.skills.statistical_analysis.stat_validate.checks.sample_size import check_sample_size
 from app.skills.statistical_analysis.stat_validate.checks.simpsons import check_simpsons_paradox
-from app.skills.statistical_analysis.stat_validate.checks.stationarity import check_stationarity_for_spurious
+from app.skills.statistical_analysis.stat_validate.checks.stationarity import (
+    check_stationarity_for_spurious,
+)
 from app.skills.statistical_analysis.stat_validate.verdict import Check, Validation, Violation
 
 VALID_KINDS = frozenset({"correlation", "group_diff", "regression", "classifier", "forecast"})

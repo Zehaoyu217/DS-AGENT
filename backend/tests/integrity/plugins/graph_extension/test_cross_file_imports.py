@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 from pathlib import Path
 
 from backend.app.integrity.plugins.graph_extension.extractors import cross_file_imports
 from backend.app.integrity.schema import GraphSnapshot
-
 
 EMPTY = GraphSnapshot(nodes=[], links=[])
 

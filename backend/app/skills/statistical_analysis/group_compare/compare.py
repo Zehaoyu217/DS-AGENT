@@ -16,7 +16,11 @@ from scipy.stats import (
 from app.artifacts.models import Artifact
 from app.artifacts.store import ArtifactStore
 from app.skills.statistical_analysis.group_compare.assumptions import check_assumptions
-from app.skills.statistical_analysis.group_compare.effect_size import cliffs_delta, cohens_d, eta_squared
+from app.skills.statistical_analysis.group_compare.effect_size import (
+    cliffs_delta,
+    cohens_d,
+    eta_squared,
+)
 from app.skills.statistical_analysis.group_compare.methods import pick_method
 from app.skills.statistical_analysis.group_compare.result import CompareResult
 

@@ -147,7 +147,7 @@ def test_get_context_status_in_chat_tools():
 
 
 def test_ctx_status_handler_returns_correct_shape():
-    from app.context.manager import ContextManager, ContextLayer
+    from app.context.manager import ContextLayer, ContextManager
     ctx = ContextManager()
     ctx.add_layer(ContextLayer(name="System Prompt", tokens=1200, compactable=False, items=[]))
     ctx.add_layer(ContextLayer(name="User Message", tokens=300, compactable=True, items=[]))

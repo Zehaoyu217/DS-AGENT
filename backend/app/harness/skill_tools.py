@@ -17,18 +17,17 @@ def _closest_skill_names(target: str, available: list[str], *, n: int = 5) -> li
         return []
     return difflib.get_close_matches(target, available, n=n, cutoff=0.4)
 
-from app.harness.fs_tools import FsTools
 from app.artifacts.models import Artifact
 from app.artifacts.store import ArtifactStore
 from app.harness.dispatcher import ToolDispatcher
+from app.harness.fs_tools import FsTools
 from app.harness.sandbox import SandboxExecutor
-from app.skills.statistical_analysis.correlation import correlate
 from app.skills.data_profiler import profile
+from app.skills.registry import SkillRegistry
+from app.skills.statistical_analysis.correlation import correlate
 from app.skills.statistical_analysis.distribution_fit import fit as dist_fit
 from app.skills.statistical_analysis.group_compare import compare
-from app.skills.registry import SkillRegistry
 from app.skills.statistical_analysis.stat_validate import validate
-from app.storage.session_db import SessionDB
 from app.skills.statistical_analysis.time_series import (
     characterize,
     decompose,
@@ -36,6 +35,7 @@ from app.skills.statistical_analysis.time_series import (
     find_changepoints,
     lag_correlate,
 )
+from app.storage.session_db import SessionDB
 from app.wiki.engine import WikiEngine
 from app.wiki.schema import Finding
 
@@ -49,7 +49,7 @@ def register_core_tools(
     registry: SkillRegistry | None = None,
     session_db: SessionDB | None = None,
 ) -> None:
-    def _lookup_frame(args: dict[str, Any]) -> "pd.DataFrame":
+    def _lookup_frame(args: dict[str, Any]) -> pd.DataFrame:
         """Resolve a named or ID-referenced artifact into a pandas DataFrame.
 
         Lookup order:

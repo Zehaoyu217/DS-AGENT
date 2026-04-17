@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from app.storage.session_db import SessionDB
-from app.trace.events import Grade
 from app.trace.publishers import TraceSession
 
 
@@ -39,7 +38,7 @@ def test_recorder_writes_to_session_db(
         session_db=tmp_db,
     ):
         # Publish a minimal LLM call via the recorder's on_event path
-        from app.trace.publishers import publish_llm_call, publish_final_output  # noqa: PLC0415
+        from app.trace.publishers import publish_final_output, publish_llm_call  # noqa: PLC0415
 
         publish_llm_call(
             step_id="step-1",

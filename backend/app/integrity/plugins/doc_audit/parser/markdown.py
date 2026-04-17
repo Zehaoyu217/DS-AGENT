@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -66,9 +66,7 @@ def _heading_text(tokens: list[Token], idx: int) -> str:
         return ""
     parts: list[str] = []
     for child in inline.children or []:
-        if child.type == "text":
-            parts.append(child.content)
-        elif child.type == "code_inline":
+        if child.type == "text" or child.type == "code_inline":
             parts.append(child.content)
     return "".join(parts).strip()
 

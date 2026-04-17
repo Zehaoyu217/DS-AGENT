@@ -4,7 +4,6 @@ from __future__ import annotations
 import pandas as pd
 
 
-
 def test_flags_missing_over_50_percent(heavy_missing_df: pd.DataFrame) -> None:
     from app.skills.data_profiler.pkg.sections.missingness import run
 

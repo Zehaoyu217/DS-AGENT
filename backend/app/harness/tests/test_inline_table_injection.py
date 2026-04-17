@@ -8,14 +8,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from app.harness.clients.base import CompletionResponse, Message
+from app.harness.clients.base import CompletionResponse
 from app.harness.dispatcher import ToolDispatcher
 from app.harness.loop import (
     AgentLoop,
     _response_has_table,
     _user_wants_inline_table,
 )
-
 
 # ── Predicate sanity ──────────────────────────────────────────────────────────
 

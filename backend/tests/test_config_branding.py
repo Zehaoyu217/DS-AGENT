@@ -1,7 +1,6 @@
 """Unit tests for load_branding() (H6.T3)."""
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest

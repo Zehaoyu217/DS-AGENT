@@ -11,10 +11,7 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from scripts.batch_runner import BatchRunner
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

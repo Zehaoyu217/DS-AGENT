@@ -125,22 +125,22 @@ def _print_analysis(analysis: TraceAnalysis, trace_duration_s: float) -> None:
         print(f"  Queries:  {query_ok} succeeded, {query_errors} errored")
 
     if analysis.error_patterns:
-        print(f"\n  Errors detected:")
+        print("\n  Errors detected:")
         for p in analysis.error_patterns:
             print(f"    ✗ [{p.kind}]  {p.evidence[:80]}")
 
     if analysis.check_results:
-        print(f"\n  Checks:")
+        print("\n  Checks:")
         for name, passed in analysis.check_results.items():
             icon = "✓" if passed else "✗"
             print(f"    {icon} {name}")
 
-    print(f"\n  Root cause:")
+    print("\n  Root cause:")
     for line in analysis.root_cause.splitlines():
         print(f"    {line}")
 
     if analysis.suggestions:
-        print(f"\n  Suggestions:")
+        print("\n  Suggestions:")
         for i, s in enumerate(analysis.suggestions, 1):
             # Wrap long suggestions at 80 chars
             words, line_buf = s.split(), []
@@ -205,7 +205,7 @@ async def run_level(
             print(f"    [{i}] {q[:100]}{'…' if len(q) > 100 else ''}")
 
     if trace.final_output:
-        print(f"\n  Final output preview:")
+        print("\n  Final output preview:")
         preview = trace.final_output[:400]
         for line in preview.splitlines():
             print(f"    {line}")
@@ -216,7 +216,7 @@ async def run_level(
     checks = LEVEL_CHECKS.get(level, {})
     analysis = TraceAnalyzer().analyze(trace, checks=checks)
     print(f"\n  {'─' * 68}")
-    print(f"  TRACE ANALYSIS")
+    print("  TRACE ANALYSIS")
     print(f"  {'─' * 68}")
     _print_analysis(analysis, elapsed)
 
@@ -225,7 +225,7 @@ async def run_level(
         return
 
     print(f"\n  {'─' * 68}")
-    print(f"  JUDGE GRADES")
+    print("  JUDGE GRADES")
     print(f"  {'─' * 68}")
     try:
         result = await evaluate_level(rubric, trace, judge, checks)

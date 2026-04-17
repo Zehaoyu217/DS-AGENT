@@ -2,7 +2,6 @@ import subprocess
 from pathlib import Path
 
 import pytest
-
 from backend.app.integrity.plugins.doc_audit.parser.git_log import GitLog
 
 
