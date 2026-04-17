@@ -24,7 +24,7 @@ class IntegrityIssue:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "IntegrityIssue":
+    def from_dict(cls, d: dict[str, Any]) -> IntegrityIssue:
         return cls(
             rule=d["rule"],
             severity=d["severity"],
