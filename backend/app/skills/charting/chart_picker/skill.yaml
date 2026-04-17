@@ -1,0 +1,8 @@
+dependencies:
+  requires: []
+  used_by:
+    - altair_charts
+  packages: []
+errors:
+  unknown_intent: "Unknown intent: {intent!r}. Use one of: compare, trend, distribution, relationship, composition, change, forecast, other."
+  bad_data_shape: "Bad data_shape: {missing_keys}. Required keys: rows, x_type, y_type, n_series."
