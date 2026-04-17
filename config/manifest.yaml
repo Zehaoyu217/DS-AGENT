@@ -631,6 +631,7 @@ scripts:
   sha: e2c029a22e7164f5f21ae1cdd4dd51f23eebe147
 skills:
 - id: analysis_plan
+  registry_key: analysis_plan
   path: backend/app/skills/analysis_plan/SKILL.md
   yaml_path: backend/app/skills/analysis_plan/skill.yaml
   version: 0.1.0
@@ -640,6 +641,7 @@ skills:
   sha_skill_md: efb3c39e7e01b554d7b59ee0a666029bd820b57b
   sha_skill_yaml: 5c031ee404e356b36f92d70b999c9a035afb5af8
 - id: charting
+  registry_key: charting
   path: backend/app/skills/charting/SKILL.md
   yaml_path: backend/app/skills/charting/skill.yaml
   version: '0.1'
@@ -651,6 +653,7 @@ skills:
   sha_skill_md: db3317b0998c597a377507abba5a23a3484b4e20
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: charting.altair_charts
+  registry_key: altair_charts
   path: backend/app/skills/charting/altair_charts/SKILL.md
   yaml_path: backend/app/skills/charting/altair_charts/skill.yaml
   version: '0.2'
@@ -661,6 +664,7 @@ skills:
   sha_skill_md: af33e007c7b1d0d7b6e8ad75432f7cd3e6843f62
   sha_skill_yaml: 81058890e43d4ea91d8cedf76ae39dfebe637460
 - id: charting.altair_charts.altair_reference
+  registry_key: altair_reference
   path: backend/app/skills/charting/altair_charts/altair_reference/SKILL.md
   yaml_path: backend/app/skills/charting/altair_charts/altair_reference/skill.yaml
   version: '0.1'
@@ -670,6 +674,7 @@ skills:
   sha_skill_md: b42f23196c27d887baee86e8fae4bc29692fcef8
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: charting.chart_picker
+  registry_key: chart_picker
   path: backend/app/skills/charting/chart_picker/SKILL.md
   yaml_path: backend/app/skills/charting/chart_picker/skill.yaml
   version: '0.1'
@@ -679,6 +684,7 @@ skills:
   sha_skill_md: 79197ba0f79b8d359bda0e728c242ddd10481408
   sha_skill_yaml: 437fd4f1ab8e73228cfef6ed941ab15bd828744c
 - id: data_profiler
+  registry_key: data_profiler
   path: backend/app/skills/data_profiler/SKILL.md
   yaml_path: backend/app/skills/data_profiler/skill.yaml
   version: '0.1'
@@ -688,6 +694,7 @@ skills:
   sha_skill_md: ccd6bbf9063fef6a715e36ca565917ed2bb40fce
   sha_skill_yaml: 8fb4ed3646688d7360c1a0939f894f075cc86309
 - id: reporting
+  registry_key: reporting
   path: backend/app/skills/reporting/SKILL.md
   yaml_path: backend/app/skills/reporting/skill.yaml
   version: '0.1'
@@ -700,6 +707,7 @@ skills:
   sha_skill_md: 4ac9d6b5829034fd9c79a6922692c62405f7ebdc
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: reporting.dashboard_builder
+  registry_key: dashboard_builder
   path: backend/app/skills/reporting/dashboard_builder/SKILL.md
   yaml_path: backend/app/skills/reporting/dashboard_builder/skill.yaml
   version: 0.1.0
@@ -709,6 +717,7 @@ skills:
   sha_skill_md: 7125ff1d0172d7133a8e50ae58c5fb4d9bb0b60a
   sha_skill_yaml: d3cac126f7a831578f25c92a30f061b91db63853
 - id: reporting.html_tables
+  registry_key: html_tables
   path: backend/app/skills/reporting/html_tables/SKILL.md
   yaml_path: backend/app/skills/reporting/html_tables/skill.yaml
   version: '0.1'
@@ -718,6 +727,7 @@ skills:
   sha_skill_md: 51c5339c047b80dbb8ebd2e28d7be85fc41bb381
   sha_skill_yaml: 28299b8ba7d34e6281b6e046447a7508dc40693a
 - id: reporting.report_builder
+  registry_key: report_builder
   path: backend/app/skills/reporting/report_builder/SKILL.md
   yaml_path: backend/app/skills/reporting/report_builder/skill.yaml
   version: 0.1.0
@@ -727,6 +737,7 @@ skills:
   sha_skill_md: d1a3ad4b33d57d897aad8bd70239c2ccccf93734
   sha_skill_yaml: 28ff8325d2615a4b88a607d9b6d56451d11e5205
 - id: second_brain
+  registry_key: second_brain
   path: backend/app/skills/second_brain/SKILL.md
   yaml_path: null
   version: 0.0.0
@@ -736,6 +747,7 @@ skills:
   sha_skill_md: d45b5355505882004ad912c3eced4ef7fd5076d5
   sha_skill_yaml: null
 - id: sql_builder
+  registry_key: sql_builder
   path: backend/app/skills/sql_builder/SKILL.md
   yaml_path: backend/app/skills/sql_builder/skill.yaml
   version: '0.1'
@@ -745,6 +757,7 @@ skills:
   sha_skill_md: b196921f24267697c72a45b545bfe564763c1d90
   sha_skill_yaml: a71482fda557f99976168c1889be599ec861213a
 - id: statistical_analysis
+  registry_key: statistical_analysis
   path: backend/app/skills/statistical_analysis/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/skill.yaml
   version: '0.1'
@@ -759,6 +772,7 @@ skills:
   sha_skill_md: 98f125f1b625f390fa563894d7f59c00502e6d3b
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: statistical_analysis.correlation
+  registry_key: correlation
   path: backend/app/skills/statistical_analysis/correlation/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/correlation/skill.yaml
   version: 0.0.0
@@ -769,6 +783,7 @@ skills:
   sha_skill_md: 00cabe71b7486e7aed9d5b1d15509940a3394092
   sha_skill_yaml: b803fa39728bccfdb3f3a7425f7561c364b2ebe9
 - id: statistical_analysis.correlation.correlation_methodology
+  registry_key: correlation_methodology
   path: backend/app/skills/statistical_analysis/correlation/correlation_methodology/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/correlation/correlation_methodology/skill.yaml
   version: '0.1'
@@ -778,6 +793,7 @@ skills:
   sha_skill_md: 0b8be5507cef3e8535a9e26be52dd069f0e7ca4a
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: statistical_analysis.distribution_fit
+  registry_key: distribution_fit
   path: backend/app/skills/statistical_analysis/distribution_fit/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/distribution_fit/skill.yaml
   version: 0.0.0
@@ -787,6 +803,7 @@ skills:
   sha_skill_md: f5a5a5f3fd173a3aad995288150a19a774a0131e
   sha_skill_yaml: d0b6ef28a76e75f8b8168b8b3a8677a392dc3acc
 - id: statistical_analysis.group_compare
+  registry_key: group_compare
   path: backend/app/skills/statistical_analysis/group_compare/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/group_compare/skill.yaml
   version: 0.0.0
@@ -796,6 +813,7 @@ skills:
   sha_skill_md: b57e33d72bce1d0b28c292421e160b89d8c9eabe
   sha_skill_yaml: 99f4d3f5581cf4891734917f3c941f5757524689
 - id: statistical_analysis.stat_validate
+  registry_key: stat_validate
   path: backend/app/skills/statistical_analysis/stat_validate/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/stat_validate/skill.yaml
   version: 0.0.0
@@ -805,6 +823,7 @@ skills:
   sha_skill_md: fe6f15ba5b5e68c495416a6f78a9310f394b8222
   sha_skill_yaml: ed7bc5df5bf62755080df5c5ffba8412e402c6ec
 - id: statistical_analysis.time_series
+  registry_key: time_series
   path: backend/app/skills/statistical_analysis/time_series/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/time_series/skill.yaml
   version: 0.0.0
@@ -815,6 +834,7 @@ skills:
   sha_skill_md: f3829b443a286dcc141df228f23f2d9fa0a7dc93
   sha_skill_yaml: 12d71e27cf363a18ce0c38a7322b82360ec0460b
 - id: statistical_analysis.time_series.time_series_methodology
+  registry_key: time_series_methodology
   path: backend/app/skills/statistical_analysis/time_series/time_series_methodology/SKILL.md
   yaml_path: backend/app/skills/statistical_analysis/time_series/time_series_methodology/skill.yaml
   version: '0.1'
@@ -824,6 +844,7 @@ skills:
   sha_skill_md: eecf346fcc0d13af70273f1cb074d241f8dc7f12
   sha_skill_yaml: c80c58727909bfb2f46a8be297fd595d7d606c1e
 - id: statistical_gotchas
+  registry_key: statistical_gotchas
   path: backend/app/skills/statistical_gotchas/SKILL.md
   yaml_path: null
   version: '0.1'
