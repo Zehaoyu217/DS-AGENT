@@ -133,3 +133,19 @@ def _build_from_raw(raw: dict[str, Any]) -> BrandingConfig:
     if "spinner_phrases" in ui:
         kwargs["ui_spinner_phrases"] = ui["spinner_phrases"]
     return BrandingConfig(**kwargs)
+
+
+# ── Second Brain integration ────────────────────────────────────────────────
+import os as _os
+from pathlib import Path as _Path
+
+
+def _resolve_sb_home() -> _Path:
+    raw = _os.environ.get("SECOND_BRAIN_HOME")
+    return _Path(raw).expanduser() if raw else _Path.home() / "second-brain"
+
+
+SECOND_BRAIN_HOME: _Path = _resolve_sb_home()
+SECOND_BRAIN_ENABLED: bool = (
+    SECOND_BRAIN_HOME.exists() and (SECOND_BRAIN_HOME / ".sb").exists()
+)
