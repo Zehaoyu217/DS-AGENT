@@ -46,3 +46,45 @@ def test_basic_router_edges_target_handler_function_names(
     assert "basic_router_list_items" in targets
     assert "basic_router_create_item" in targets
     assert "basic_router_delete_item" in targets
+
+
+def _build_repo_multi(tmp_path: Path, fixtures: list[str]) -> Path:
+    api = tmp_path / "backend" / "app" / "api"
+    api.mkdir(parents=True)
+    (api / "__init__.py").write_text("")
+    for f in fixtures:
+        (api / f).write_text((FIXTURES / f).read_text())
+    return tmp_path
+
+
+def test_api_route_fans_out_methods(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
+    repo = _build_repo_multi(tmp_path, ["api_route_methods.py"])
+    result = fastapi_routes.extract(repo, empty_graph)
+
+    ids = {n.id for n in result.nodes}
+    assert "route::GET::/multi/both" in ids
+    assert "route::POST::/multi/both" in ids
+
+
+def test_add_api_route_emits_route(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
+    repo = _build_repo_multi(tmp_path, ["api_route_methods.py"])
+    result = fastapi_routes.extract(repo, empty_graph)
+
+    ids = {n.id for n in result.nodes}
+    assert "route::PUT::/programmatic" in ids
+
+
+def test_include_router_composes_prefix(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
+    repo = tmp_path
+    (repo / "backend" / "app" / "api").mkdir(parents=True)
+    (repo / "backend" / "app" / "api" / "__init__.py").write_text("")
+    (repo / "backend" / "app" / "api" / "composed_router.py").write_text(
+        (FIXTURES / "composed_router.py").read_text()
+    )
+    (repo / "backend" / "app" / "main.py").write_text(
+        (FIXTURES / "main_with_include.py").read_text()
+    )
+
+    result = fastapi_routes.extract(repo, empty_graph)
+    ids = {n.id for n in result.nodes}
+    assert "route::GET::/v1/inner/leaf" in ids
