@@ -43,14 +43,33 @@ def parse_vulture_output(text: str) -> list[VultureFinding]:
     return out
 
 
+def _resolve_vulture_bin(vulture_bin: str, repo_root: Path | None) -> str:
+    """Return the resolved vulture binary path.
+
+    If *vulture_bin* is the default ``"vulture"`` and *repo_root* is provided,
+    prefer the binary inside the backend venv when it exists.  Falls back to the
+    bare name (PATH lookup) otherwise.
+    """
+    if vulture_bin == "vulture" and repo_root is not None:
+        candidate = repo_root / "backend" / ".venv" / "bin" / "vulture"
+        if candidate.exists():
+            return str(candidate)
+    return vulture_bin
+
+
 def run_vulture(
-    target: Path, *, min_confidence: int, vulture_bin: str = "vulture"
+    target: Path,
+    *,
+    min_confidence: int,
+    vulture_bin: str = "vulture",
+    repo_root: Path | None = None,
 ) -> VultureResult:
-    cmd = [vulture_bin, str(target), "--min-confidence", str(min_confidence)]
+    resolved_bin = _resolve_vulture_bin(vulture_bin, repo_root)
+    cmd = [resolved_bin, str(target), "--min-confidence", str(min_confidence)]
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=120)
     except FileNotFoundError as exc:
-        return VultureResult(failure_message=f"vulture binary not found: {vulture_bin} ({exc})")
+        return VultureResult(failure_message=f"vulture binary not found: {resolved_bin} ({exc})")
     except subprocess.TimeoutExpired:
         return VultureResult(failure_message="vulture timed out after 120s")
 

@@ -49,11 +49,32 @@ def parse_knip_output(text: str) -> list[KnipFinding]:
     return out
 
 
-def run_knip(frontend_dir: Path, *, knip_bin: str = "npx") -> KnipResult:
+def _resolve_knip_cmd(
+    knip_bin: str, frontend_dir: Path, repo_root: Path | None
+) -> list[str]:
+    """Return the command list for running knip.
+
+    When *knip_bin* is the default ``"npx"`` and *repo_root* is provided,
+    prefer the local ``frontend/node_modules/.bin/knip`` binary when it exists
+    (avoids npx network lookups and PATH issues).  Falls back to the standard
+    ``npx knip`` invocation otherwise.
+    """
+    if knip_bin == "npx" and repo_root is not None:
+        candidate = repo_root / "frontend" / "node_modules" / ".bin" / "knip"
+        if candidate.exists():
+            return [str(candidate), "--reporter", "json"]
     if knip_bin == "npx":
-        cmd = [knip_bin, "knip", "--reporter", "json"]
-    else:
-        cmd = [knip_bin, "--reporter", "json"]
+        return [knip_bin, "knip", "--reporter", "json"]
+    return [knip_bin, "--reporter", "json"]
+
+
+def run_knip(
+    frontend_dir: Path,
+    *,
+    knip_bin: str = "npx",
+    repo_root: Path | None = None,
+) -> KnipResult:
+    cmd = _resolve_knip_cmd(knip_bin, frontend_dir, repo_root)
     try:
         proc = subprocess.run(
             cmd, capture_output=True, text=True, check=False, timeout=180,

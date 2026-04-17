@@ -12,12 +12,12 @@ from ..wrappers.vulture import VultureResult, run_vulture
 
 
 # Thin indirections so tests can patch.
-def _run_vulture(target: Path, min_confidence: int) -> VultureResult:
-    return run_vulture(target, min_confidence=min_confidence)
+def _run_vulture(target: Path, min_confidence: int, repo_root: Path | None = None) -> VultureResult:
+    return run_vulture(target, min_confidence=min_confidence, repo_root=repo_root)
 
 
-def _run_knip(frontend_dir: Path) -> KnipResult:
-    return run_knip(frontend_dir)
+def _run_knip(frontend_dir: Path, repo_root: Path | None = None) -> KnipResult:
+    return run_knip(frontend_dir, repo_root=repo_root)
 
 
 _NOQA_MARKERS = ("# noqa: dead-code", "// knip-ignore")
@@ -116,6 +116,35 @@ def _frontend_dead_code(
     return out
 
 
+def _tool_unavailable_issues(
+    vulture_result: VultureResult,
+    knip_result: KnipResult,
+) -> list[IntegrityIssue]:
+    """Return INFO issues for any tool that failed to run."""
+    issues: list[IntegrityIssue] = []
+    if vulture_result.failure_message:
+        issues.append(
+            IntegrityIssue(
+                rule="graph.dead_code.tool_unavailable",
+                severity="INFO",
+                node_id="<vulture-unavailable>",
+                location="backend/",
+                message=f"vulture could not run: {vulture_result.failure_message}",
+            )
+        )
+    if knip_result.failure_message:
+        issues.append(
+            IntegrityIssue(
+                rule="graph.dead_code.tool_unavailable",
+                severity="INFO",
+                node_id="<knip-unavailable>",
+                location="frontend/",
+                message=f"knip could not run: {knip_result.failure_message}",
+            )
+        )
+    return issues
+
+
 def run(ctx: ScanContext, config: dict[str, Any], today: date) -> list[IntegrityIssue]:
     thresholds = config.get("thresholds", {})
     min_conf = int(thresholds.get("vulture_min_confidence", 80))
@@ -125,13 +154,20 @@ def run(ctx: ScanContext, config: dict[str, Any], today: date) -> list[Integrity
     frontend_dir = ctx.repo_root / "frontend"
 
     vulture_result = (
-        _run_vulture(backend_app, min_conf) if backend_app.exists() else VultureResult()
+        _run_vulture(backend_app, min_conf, repo_root=ctx.repo_root)
+        if backend_app.exists()
+        else VultureResult()
     )
-    knip_result = _run_knip(frontend_dir) if frontend_dir.exists() else KnipResult()
+    knip_result = (
+        _run_knip(frontend_dir, repo_root=ctx.repo_root)
+        if frontend_dir.exists()
+        else KnipResult()
+    )
 
     orphans = set(find_orphans(ctx.graph))
 
     return [
+        *_tool_unavailable_issues(vulture_result, knip_result),
         *_python_dead_code(ctx, orphans, vulture_result, ignored),
         *_frontend_dead_code(ctx, orphans, knip_result, ignored),
     ]

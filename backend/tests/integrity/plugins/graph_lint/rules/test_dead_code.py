@@ -126,7 +126,62 @@ def test_noqa_comment_at_definition_line_skipped(repo: Path):
     assert issues == []
 
 
+def test_vulture_failure_emits_info_issue(repo: Path):
+    """When vulture wrapper returns a failure_message, an INFO issue is emitted."""
+    nodes: list[dict] = []
+    ctx = make_ctx(repo, nodes, [])
+    with patch.object(dead_code, "_run_vulture") as mv, patch.object(dead_code, "_run_knip") as mk:
+        mv.return_value = VultureResult(failure_message="vulture binary not found: /some/path")
+        mk.return_value = KnipResult()
+        issues = dead_code.run(
+            ctx, {"thresholds": {"vulture_min_confidence": 80}}, date(2026, 4, 17)
+        )
+    info_issues = [i for i in issues if i.rule == "graph.dead_code.tool_unavailable"]
+    assert len(info_issues) == 1
+    issue = info_issues[0]
+    assert issue.severity == "INFO"
+    assert issue.node_id == "<vulture-unavailable>"
+    assert issue.location == "backend/"
+    assert "vulture binary not found" in issue.message
+
+
+def test_knip_failure_emits_info_issue(repo: Path):
+    """When knip wrapper returns a failure_message, an INFO issue is emitted."""
+    nodes: list[dict] = []
+    ctx = make_ctx(repo, nodes, [])
+    with patch.object(dead_code, "_run_vulture") as mv, patch.object(dead_code, "_run_knip") as mk:
+        mv.return_value = VultureResult()
+        mk.return_value = KnipResult(failure_message="knip binary not found: npx")
+        issues = dead_code.run(
+            ctx, {"thresholds": {"vulture_min_confidence": 80}}, date(2026, 4, 17)
+        )
+    info_issues = [i for i in issues if i.rule == "graph.dead_code.tool_unavailable"]
+    assert len(info_issues) == 1
+    issue = info_issues[0]
+    assert issue.severity == "INFO"
+    assert issue.node_id == "<knip-unavailable>"
+    assert issue.location == "frontend/"
+    assert "knip binary not found" in issue.message
+
+
+def test_both_tool_failures_emit_two_info_issues(repo: Path):
+    """When both tools fail, two INFO issues are emitted."""
+    nodes: list[dict] = []
+    ctx = make_ctx(repo, nodes, [])
+    with patch.object(dead_code, "_run_vulture") as mv, patch.object(dead_code, "_run_knip") as mk:
+        mv.return_value = VultureResult(failure_message="vulture timed out")
+        mk.return_value = KnipResult(failure_message="knip timed out")
+        issues = dead_code.run(
+            ctx, {"thresholds": {"vulture_min_confidence": 80}}, date(2026, 4, 17)
+        )
+    info_issues = [i for i in issues if i.rule == "graph.dead_code.tool_unavailable"]
+    assert len(info_issues) == 2
+    node_ids = {i.node_id for i in info_issues}
+    assert node_ids == {"<vulture-unavailable>", "<knip-unavailable>"}
+
+
 def test_vulture_failure_does_not_emit_python_dead_code(repo: Path):
+    """A vulture failure must not produce graph.dead_code WARN issues (only INFO)."""
     nodes = [
         {"id": "x_old", "label": "old", "file_type": "code",
          "source_file": "backend/app/x.py", "kind": "function"},
@@ -138,4 +193,5 @@ def test_vulture_failure_does_not_emit_python_dead_code(repo: Path):
         issues = dead_code.run(
             ctx, {"thresholds": {"vulture_min_confidence": 80}}, date(2026, 4, 17)
         )
-    assert issues == []
+    warn_issues = [i for i in issues if i.rule == "graph.dead_code" and i.severity == "WARN"]
+    assert warn_issues == []
