@@ -27,6 +27,36 @@ DEFAULTS: dict[str, Any] = {
                 "**/__pycache__/**",
             ],
         },
+        "doc_audit": {
+            "enabled": True,
+            "thresholds": {
+                "stale_days": 90,
+            },
+            "coverage_required": [
+                "dev-setup.md",
+                "testing.md",
+                "gotchas.md",
+                "skill-creation.md",
+                "log.md",
+            ],
+            "seed_docs": ["CLAUDE.md"],
+            "doc_roots": [
+                "docs/**/*.md",
+                "knowledge/**/*.md",
+                "*.md",
+            ],
+            "excluded_paths": [
+                "reference/**",
+                "node_modules/**",
+                "**/__pycache__/**",
+                "integrity-out/**",
+                "docs/health/**",
+                "docs/superpowers/**",
+            ],
+            "claude_ignore_file": ".claude-ignore",
+            "rename_lookback": "30.days.ago",
+            "disabled_rules": [],
+        },
     },
 }
 
