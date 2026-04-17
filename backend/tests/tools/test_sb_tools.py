@@ -68,3 +68,83 @@ def test_sb_ingest_rejects_path_when_disabled(monkeypatch, tmp_path):
     importlib.reload(sb_tools)
     res = sb_tools.sb_ingest({"path": str(tmp_path / "doc.md")})
     assert res == {"ok": False, "error": "second_brain_disabled"}
+
+
+def test_sb_promote_claim_no_op_when_disabled(monkeypatch, tmp_path):
+    from app import config as app_config
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", False)
+    from app.tools import sb_tools
+
+    res = sb_tools.sb_promote_claim({"statement": "x", "kind": "empirical", "confidence": "low"})
+    assert res["ok"] is False
+    assert res["error"] == "second_brain_disabled"
+
+
+def test_sb_promote_claim_writes_claim_markdown(monkeypatch, tmp_path):
+    from app import config as app_config
+    home = tmp_path / "sb"
+    (home / ".sb").mkdir(parents=True)
+    (home / "claims").mkdir()
+    monkeypatch.setenv("SECOND_BRAIN_HOME", str(home))
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True)
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_HOME", home)
+
+    from app.tools import sb_tools
+
+    res = sb_tools.sb_promote_claim({
+        "statement": "Attention is all you need for sequence modelling.",
+        "abstract": "Transformer beats RNN baselines on translation.",
+        "kind": "empirical",
+        "confidence": "high",
+        "taxonomy": "papers/ml",
+    })
+
+    assert res["ok"] is True, res
+    assert res["claim_id"].startswith("clm_")
+    written = home / "claims" / res["filename"]
+    assert written.is_file()
+    body = written.read_text(encoding="utf-8")
+    assert "Attention is all you need" in body
+    assert "kind: empirical" in body
+    assert "confidence: high" in body
+
+
+def test_sb_promote_claim_rejects_missing_statement(monkeypatch, tmp_path):
+    from app import config as app_config
+    home = tmp_path / "sb"
+    (home / ".sb").mkdir(parents=True)
+    (home / "claims").mkdir()
+    monkeypatch.setenv("SECOND_BRAIN_HOME", str(home))
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True)
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_HOME", home)
+
+    from app.tools import sb_tools
+
+    res = sb_tools.sb_promote_claim({"kind": "empirical", "confidence": "low"})
+    assert res["ok"] is False
+    assert "statement" in res["error"]
+
+
+def test_sb_promote_claim_refuses_overwrite(monkeypatch, tmp_path):
+    from app import config as app_config
+    home = tmp_path / "sb"
+    (home / ".sb").mkdir(parents=True)
+    (home / "claims").mkdir()
+    monkeypatch.setenv("SECOND_BRAIN_HOME", str(home))
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True)
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_HOME", home)
+
+    from app.tools import sb_tools
+
+    args = {
+        "statement": "Gravity pulls mass toward mass.",
+        "kind": "theoretical",
+        "confidence": "high",
+    }
+    first = sb_tools.sb_promote_claim(args)
+    second = sb_tools.sb_promote_claim(args)
+
+    assert first["ok"] is True
+    # Same statement → same slug → second call must fail explicitly.
+    assert second["ok"] is False
+    assert "exists" in second["error"].lower()

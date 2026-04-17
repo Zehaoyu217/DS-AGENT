@@ -159,6 +159,80 @@ def sb_ingest(args: dict[str, Any]) -> dict[str, Any]:
 def sb_promote_claim(args: dict[str, Any]) -> dict[str, Any]:
     if not config.SECOND_BRAIN_ENABLED:
         return _disabled()
-    # v1: claude-code-agent wiki findings don't yet carry ids that second-brain
-    # can resolve. Return a structured not-implemented so the agent can continue.
-    return {"ok": False, "error": "sb_promote_claim not wired in v1 bridge"}
+
+    from datetime import datetime, timezone
+    from io import StringIO
+
+    from ruamel.yaml import YAML
+    from second_brain.schema.claim import ClaimConfidence, ClaimFrontmatter, ClaimKind
+
+    statement = str(args.get("statement", "")).strip()
+    if not statement:
+        return {"ok": False, "error": "missing statement"}
+
+    kind_raw = str(args.get("kind", "empirical"))
+    conf_raw = str(args.get("confidence", "low"))
+    try:
+        kind = ClaimKind(kind_raw)
+    except ValueError:
+        return {"ok": False, "error": f"invalid kind: {kind_raw}"}
+    try:
+        confidence = ClaimConfidence(conf_raw)
+    except ValueError:
+        return {"ok": False, "error": f"invalid confidence: {conf_raw}"}
+
+    supports = [str(x) for x in (args.get("supports") or [])]
+    contradicts = [str(x) for x in (args.get("contradicts") or [])]
+    refines = [str(x) for x in (args.get("refines") or [])]
+    abstract = str(args.get("abstract", ""))
+    taxonomy = str(args.get("taxonomy", ""))
+
+    cfg = _cfg()
+    cfg.claims_dir.mkdir(parents=True, exist_ok=True)
+
+    slug = _slugify_claim(statement)
+    claim_id = f"clm_{slug}"
+    path = cfg.claims_dir / f"{slug}.md"
+    if path.exists():
+        return {"ok": False, "error": f"claim file exists: {path.name}"}
+
+    fm = ClaimFrontmatter(
+        id=claim_id,
+        statement=statement,
+        kind=kind,
+        confidence=confidence,
+        supports=supports,
+        contradicts=contradicts,
+        refines=refines,
+        extracted_at=datetime.now(timezone.utc),
+        abstract=abstract,
+    )
+
+    yaml = YAML()
+    yaml.default_flow_style = False
+    buf = StringIO()
+    yaml.dump(fm.to_frontmatter_dict(), buf)
+    fm_text = buf.getvalue().rstrip()
+
+    body_lines = ["---", fm_text, "---", "", f"# {statement}", ""]
+    if abstract:
+        body_lines.extend([abstract, ""])
+    if taxonomy:
+        body_lines.extend([f"> taxonomy: `{taxonomy}`", ""])
+    path.write_text("\n".join(body_lines), encoding="utf-8")
+
+    return {
+        "ok": True,
+        "claim_id": claim_id,
+        "filename": path.name,
+        "path": str(path),
+    }
+
+
+def _slugify_claim(text: str) -> str:
+    import re
+
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    if not slug:
+        slug = "claim"
+    return slug[:60].rstrip("-")
