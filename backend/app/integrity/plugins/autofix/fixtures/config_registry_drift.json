@@ -1,0 +1,15 @@
+{
+  "plugin": "config_registry",
+  "issues": [
+    {
+      "rule": "config.added",
+      "evidence": {"path": "scripts/new-script.sh"},
+      "severity": "INFO",
+      "node_id": "scripts/new-script.sh",
+      "location": "scripts/new-script.sh",
+      "message": "new script not in manifest",
+      "fix_class": null,
+      "first_seen": ""
+    }
+  ]
+}

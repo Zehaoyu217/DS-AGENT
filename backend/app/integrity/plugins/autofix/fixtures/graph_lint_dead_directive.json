@@ -1,0 +1,21 @@
+{
+  "plugin": "graph_lint",
+  "issues": [
+    {
+      "rule": "lint.dead_directive",
+      "evidence": {
+        "path": "src/dead.py",
+        "line": 1,
+        "language": "python",
+        "rule_code": "F401",
+        "directive_kind": "noqa"
+      },
+      "severity": "INFO",
+      "node_id": "src/dead.py:1",
+      "location": "src/dead.py",
+      "message": "dead noqa: F401",
+      "fix_class": null,
+      "first_seen": ""
+    }
+  ]
+}

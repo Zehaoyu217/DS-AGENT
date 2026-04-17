@@ -1,0 +1,15 @@
+{
+  "plugin": "doc_audit",
+  "issues": [
+    {
+      "rule": "doc.broken_link",
+      "evidence": {"source": "docs/landing.md", "link_target": "docs/old/legacy.md"},
+      "severity": "WARN",
+      "node_id": "docs/landing.md->docs/old/legacy.md",
+      "location": "docs/landing.md",
+      "message": "broken link to docs/old/legacy.md",
+      "fix_class": null,
+      "first_seen": ""
+    }
+  ]
+}

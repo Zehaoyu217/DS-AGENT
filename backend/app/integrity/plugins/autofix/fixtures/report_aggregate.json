@@ -1,0 +1,10 @@
+{
+  "date": "2026-04-17",
+  "issue_total": 4,
+  "by_severity": {"INFO": 2, "WARN": 2, "ERROR": 0, "CRITICAL": 0},
+  "plugins": {
+    "doc_audit": {"issues": 2, "rules_run": ["doc.unindexed", "doc.broken_link"]},
+    "config_registry": {"issues": 1, "rules_run": ["config.added"]},
+    "graph_lint": {"issues": 1, "rules_run": ["lint.dead_directive"]}
+  }
+}
