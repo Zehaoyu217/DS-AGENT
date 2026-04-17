@@ -12,6 +12,26 @@ HELPER_DIR = Path(__file__).parent / "_node_helper"
 HELPER_SCRIPT = HELPER_DIR / "parse_jsx.mjs"
 
 
+def _build_resolver(graph: GraphSnapshot) -> dict[str, str]:
+    """Map lowercased component name → graphify node id, preferring function-level nodes."""
+    by_paren: dict[str, str] = {}
+    by_file: dict[str, str] = {}
+    for n in graph.nodes:
+        lab = n.get("label", "") or ""
+        nid = n.get("id") or ""
+        if lab.endswith("()"):
+            by_paren.setdefault(lab[:-2].lower(), nid)
+        elif lab.endswith(".tsx") or lab.endswith(".jsx"):
+            by_file.setdefault(lab.rsplit(".", 1)[0].lower(), nid)
+    return {**by_file, **by_paren}
+
+
+def _resolve(name: str, resolver: dict[str, str]) -> str:
+    """Resolve a JSX component name to a graphify-compatible node id."""
+    key = name.lower()
+    return resolver.get(key, f"{key}_{key}")
+
+
 class ExtractorUnavailable(RuntimeError):
     """Raised when Node or @babel/parser is not installed."""
 
@@ -58,6 +78,7 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
     except json.JSONDecodeError as exc:
         return ExtractionResult(failures=[f"helper output not JSON: {exc}"])
 
+    resolver = _build_resolver(graph)
     edges: list[ExtractedEdge] = []
     failures: list[str] = []
     files_skipped: list[str] = []
@@ -70,8 +91,8 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
             failures.extend(f"{rel}: {e}" for e in rec["errors"])
             continue
         for edge in rec.get("edges", []):
-            source = edge["source"]
-            target = edge["target"]
+            source = _resolve(edge["source"], resolver)
+            target = _resolve(edge["target"], resolver)
             key = (source, target, "uses")
             if key in edge_keys or source == target:
                 continue

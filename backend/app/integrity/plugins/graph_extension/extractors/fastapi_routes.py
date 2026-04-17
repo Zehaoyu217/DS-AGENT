@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ....schema import GraphSnapshot  # type: ignore[no-redef]
 from ..schema import ExtractedEdge, ExtractedNode, ExtractionResult
-from ._ast_helpers import extract_kw_str, name_of
+from ._ast_helpers import extract_kw_str, name_of, node_id
 
 ROUTE_DECORATORS = {"get", "post", "put", "delete", "patch", "websocket"}
 
@@ -145,7 +145,7 @@ def _walk_endpoints(
                 edges.append(
                     ExtractedEdge(
                         source=route_id,
-                        target=f"{stem}_{node.name}",
+                        target=node_id(stem, node.name),
                         relation="routes_to",
                         source_file=rel_path,
                         source_location=node.lineno,
@@ -197,7 +197,7 @@ def _walk_add_api_route(
             edges.append(
                 ExtractedEdge(
                     source=route_id,
-                    target=f"{stem}_{target}",
+                    target=node_id(stem, target),
                     relation="routes_to",
                     source_file=rel_path,
                     source_location=node.lineno,

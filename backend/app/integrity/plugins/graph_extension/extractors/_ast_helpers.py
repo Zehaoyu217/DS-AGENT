@@ -19,3 +19,8 @@ def extract_kw_str(call: ast.Call, key: str) -> str | None:
         if kw.arg == key and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
             return kw.value.value
     return None
+
+
+def node_id(stem: str, name: str) -> str:
+    """Graphify-compatible id: <stem>_<lowered name with leading underscores stripped>."""
+    return f"{stem.lower()}_{name.lstrip('_').lower()}"

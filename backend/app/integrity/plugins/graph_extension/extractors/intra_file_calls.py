@@ -5,6 +5,7 @@ from pathlib import Path
 
 from ....schema import GraphSnapshot
 from ..schema import ExtractedEdge, ExtractionResult
+from ._ast_helpers import node_id
 
 
 def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
@@ -32,14 +33,16 @@ def extract(repo_root: Path, graph: GraphSnapshot) -> ExtractionResult:
             target = _resolve_callee(call_node, local_defs)
             if target is None:
                 continue
-            edge_key = (f"{stem}_{caller_name}", f"{stem}_{target}", "calls")
+            src_id = node_id(stem, caller_name)
+            tgt_id = node_id(stem, target)
+            edge_key = (src_id, tgt_id, "calls")
             if edge_key in edge_keys:
                 continue
             edge_keys.add(edge_key)
             edges.append(
                 ExtractedEdge(
-                    source=f"{stem}_{caller_name}",
-                    target=f"{stem}_{target}",
+                    source=src_id,
+                    target=tgt_id,
                     relation="calls",
                     source_file=rel,
                     source_location=call_node.lineno,

@@ -27,29 +27,43 @@ def test_direct_component_usage(tmp_path: Path, empty_graph: GraphSnapshot) -> N
     repo = _build_repo(tmp_path, ["Direct.tsx"])
     result = jsx_usage.extract(repo, empty_graph)
     relations = {(e.source, e.target, e.relation) for e in result.edges}
-    assert ("Direct", "Inner", "uses") in relations
+    assert ("direct_direct", "inner_inner", "uses") in relations
 
 
 def test_hoc_unwrap(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
     repo = _build_repo(tmp_path, ["HOC.tsx"])
     result = jsx_usage.extract(repo, empty_graph)
     targets = {e.target for e in result.edges}
-    assert "MyComp" in targets
+    assert "mycomp_mycomp" in targets
 
 
 def test_lazy_import(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
     repo = _build_repo(tmp_path, ["LazyImport.tsx"])
     result = jsx_usage.extract(repo, empty_graph)
     targets = {e.target for e in result.edges}
-    assert "Heavy" in targets
+    assert "heavy_heavy" in targets
 
 
 def test_render_prop_callback(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
     repo = _build_repo(tmp_path, ["RenderProp.tsx"])
     result = jsx_usage.extract(repo, empty_graph)
     targets = {e.target for e in result.edges}
-    assert "Inner" in targets
-    assert "Outer" in targets
+    assert "inner_inner" in targets
+    assert "outer_outer" in targets
+
+
+def test_resolves_to_existing_graph_node(tmp_path: Path) -> None:
+    repo = _build_repo(tmp_path, ["Direct.tsx"])
+    graph = GraphSnapshot(
+        nodes=[
+            {"id": "direct_direct", "label": "Direct()"},
+            {"id": "components_inner", "label": "Inner()"},
+        ],
+        links=[],
+    )
+    result = jsx_usage.extract(repo, graph)
+    relations = {(e.source, e.target, e.relation) for e in result.edges}
+    assert ("direct_direct", "components_inner", "uses") in relations
 
 
 def test_no_frontend_dir_returns_empty(tmp_path: Path, empty_graph: GraphSnapshot) -> None:
