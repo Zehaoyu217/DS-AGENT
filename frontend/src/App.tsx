@@ -21,6 +21,7 @@ import { SkillsSection } from '@/sections/SkillsSection'
 import { PromptsSection } from '@/sections/PromptsSection'
 import { ContextSection } from '@/sections/ContextSection'
 import { DevtoolsSection } from '@/sections/DevtoolsSection'
+import { HealthSection } from '@/sections/HealthSection'
 import { SettingsSection } from '@/sections/SettingsSection'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
@@ -208,6 +209,8 @@ function SectionContent() {
       return <ContextSection />
     case 'devtools':
       return <DevtoolsSection />
+    case 'health':
+      return <HealthSection />
     case 'settings':
       return <SettingsSection />
     default:

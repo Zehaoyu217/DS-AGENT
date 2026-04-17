@@ -5,6 +5,7 @@ import {
   FileText,
   Layers,
   Code2,
+  Activity,
   Settings,
 } from 'lucide-react'
 import { useChatStore, type SectionId } from '@/lib/store'
@@ -23,6 +24,7 @@ const TOP_SECTIONS: SectionDef[] = [
   { id: 'prompts', icon: FileText, label: 'Prompts' },
   { id: 'context', icon: Layers, label: 'Context' },
   { id: 'devtools', icon: Code2, label: 'DevTools' },
+  { id: 'health', icon: Activity, label: 'Health' },
 ]
 
 const BOTTOM_SECTIONS: SectionDef[] = [
