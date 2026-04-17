@@ -23,6 +23,10 @@ def _run_knip(frontend_dir: Path, repo_root: Path | None = None) -> KnipResult:
 _NOQA_MARKERS = ("# noqa: dead-code", "// knip-ignore")
 
 
+def _strip_call_parens(label: str) -> str:
+    return label[:-2] if label.endswith("()") else label
+
+
 def _has_noqa(repo_root: Path, source_file: str, line: int) -> bool:
     p = repo_root / source_file
     if not p.exists():
@@ -99,7 +103,8 @@ def _frontend_dead_code(
             continue
         if n["id"] in ignored:
             continue
-        knip_match = src in files_flagged or n.get("label", "") in exports_flagged.get(src, set())
+        label = _strip_call_parens(n.get("label", ""))
+        knip_match = src in files_flagged or label in exports_flagged.get(src, set())
         if not knip_match:
             continue
         out.append(

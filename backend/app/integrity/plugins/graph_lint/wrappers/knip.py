@@ -23,7 +23,14 @@ class KnipResult:
     failure_message: str = ""
 
 
-def parse_knip_output(text: str) -> list[KnipFinding]:
+def _apply_prefix(path: str, prefix: str) -> str:
+    """Prepend *prefix* to *path* when prefix is non-empty, joining cleanly."""
+    if not prefix:
+        return path
+    return prefix.rstrip("/") + "/" + path.lstrip("/")
+
+
+def parse_knip_output(text: str, *, path_prefix: str = "") -> list[KnipFinding]:
     if not text.strip():
         return []
     try:
@@ -32,9 +39,9 @@ def parse_knip_output(text: str) -> list[KnipFinding]:
         return []
     out: list[KnipFinding] = []
     for path in data.get("files", []) or []:
-        out.append(KnipFinding(kind="file", path=path))
+        out.append(KnipFinding(kind="file", path=_apply_prefix(path, path_prefix)))
     for issue in data.get("issues", []) or []:
-        path = issue.get("file", "")
+        path = _apply_prefix(issue.get("file", ""), path_prefix)
         for exp in issue.get("exports", []) or []:
             out.append(
                 KnipFinding(
@@ -90,4 +97,11 @@ def run_knip(
         stderr = proc.stderr.strip()[:500]
         return KnipResult(failure_message=f"knip exited {proc.returncode}: {stderr}")
 
-    return KnipResult(findings=parse_knip_output(proc.stdout))
+    prefix = ""
+    if repo_root is not None:
+        try:
+            prefix = str(frontend_dir.relative_to(repo_root))
+        except ValueError:
+            prefix = ""
+
+    return KnipResult(findings=parse_knip_output(proc.stdout, path_prefix=prefix))

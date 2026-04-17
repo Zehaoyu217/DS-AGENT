@@ -180,6 +180,30 @@ def test_both_tool_failures_emit_two_info_issues(repo: Path):
     assert node_ids == {"<vulture-unavailable>", "<knip-unavailable>"}
 
 
+def test_frontend_label_with_parens_matches_knip_export(repo: Path):
+    """Graph node label 'fetchHealth()' should match knip export name 'fetchHealth'."""
+    nodes = [
+        {
+            "id": "x",
+            "source_file": "frontend/src/lib/api.ts",
+            "label": "fetchHealth()",
+            "file_type": "code",
+        }
+    ]
+    ctx = make_ctx(repo, nodes, [])
+    with patch.object(dead_code, "_run_vulture") as mv, patch.object(dead_code, "_run_knip") as mk:
+        mv.return_value = VultureResult()
+        mk.return_value = KnipResult(findings=[
+            KnipFinding(kind="export", path="frontend/src/lib/api.ts", name="fetchHealth")
+        ])
+        issues = dead_code.run(
+            ctx, {"thresholds": {"vulture_min_confidence": 80}}, date(2026, 4, 17)
+        )
+    assert len(issues) == 1
+    assert issues[0].rule == "graph.dead_code"
+    assert issues[0].evidence == {"vulture": False, "knip": True, "graph_orphan": True}
+
+
 def test_vulture_failure_does_not_emit_python_dead_code(repo: Path):
     """A vulture failure must not produce graph.dead_code WARN issues (only INFO)."""
     nodes = [

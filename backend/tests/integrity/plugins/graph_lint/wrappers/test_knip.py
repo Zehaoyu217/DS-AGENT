@@ -79,6 +79,35 @@ def test_run_knip_resolves_node_modules_binary(tmp_path: Path, monkeypatch):
     assert "npx" not in captured[0]
 
 
+def test_parse_applies_path_prefix():
+    """When path_prefix is given, all finding paths are prepended with it."""
+    sample_no_prefix = json.dumps({
+        "files": ["src/dead/orphan.tsx"],
+        "issues": [
+            {
+                "file": "src/api.ts",
+                "exports": [{"name": "unusedExport", "line": 12, "col": 1}],
+            }
+        ],
+    })
+    findings = parse_knip_output(sample_no_prefix, path_prefix="frontend")
+    file_findings = [f for f in findings if f.kind == "file"]
+    export_findings = [f for f in findings if f.kind == "export"]
+    assert len(file_findings) == 1
+    assert file_findings[0].path == "frontend/src/dead/orphan.tsx"
+    assert len(export_findings) == 1
+    assert export_findings[0].path == "frontend/src/api.ts"
+
+
+def test_parse_handles_empty_prefix():
+    """Empty prefix preserves existing paths unchanged."""
+    findings = parse_knip_output(SAMPLE, path_prefix="")
+    file_findings = [f for f in findings if f.kind == "file"]
+    export_findings = [f for f in findings if f.kind == "export"]
+    assert file_findings[0].path == "frontend/src/dead/orphan.tsx"
+    assert export_findings[0].path == "frontend/src/api.ts"
+
+
 def test_run_knip_falls_back_to_npx_when_no_node_modules(tmp_path: Path, monkeypatch):
     """When repo_root is given but node_modules binary doesn't exist, fall back to npx."""
     import subprocess as _sp
