@@ -1,7 +1,7 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
         seed-eval eval eval-trace clean-traces sop \
-        docker-build docker-up
+        docker-build docker-up integrity-augment integrity-test
 
 # Development
 dev:
@@ -73,14 +73,14 @@ endif
 
 # Knowledge
 wiki-lint:
-	cd backend && python -m app.wiki.lint 2>/dev/null || echo "Wiki lint not yet implemented"
+	cd backend && .venv/bin/python -m app.wiki.lint $(if $(strict),--strict,)
 
 graphify:
-	@echo "Running graphify..." && echo "Not yet implemented"
+	bash scripts/run_graphify.sh $(args)
 
 # Data
 seed-data:
-	@echo "Seeding sample data..." && echo "Not yet implemented"
+	cd backend && .venv/bin/python -m scripts.seed_data
 
 # Eval framework
 seed-eval:
@@ -114,3 +114,11 @@ docker-build:
 
 docker-up:
 	docker compose -f $(COMPOSE_FILE) up -d
+
+# Integrity (self-maintaining graph)
+.PHONY: integrity-augment integrity-test
+integrity-augment:
+	cd backend && uv run python -m app.integrity.plugins.graph_extension --repo-root ..
+
+integrity-test:
+	cd backend && uv run python -m pytest tests/integrity/ -v
