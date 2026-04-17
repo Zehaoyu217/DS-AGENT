@@ -123,7 +123,7 @@ integrity-augment:
 integrity-test:
 	cd backend && uv run python -m pytest tests/integrity/ -v
 
-.PHONY: integrity integrity-lint integrity-doc integrity-config integrity-snapshot-prune
+.PHONY: integrity integrity-lint integrity-doc integrity-config integrity-hooks integrity-snapshot-prune
 
 integrity: ## Run the full integrity pipeline (A→B→C→E); writes integrity-out/ + docs/health/
 	uv run python -m backend.app.integrity
@@ -136,6 +136,9 @@ integrity-doc: ## Run only Plugin C (doc_audit) — assumes A has run
 
 integrity-config: ## Run only Plugin E (config_registry) — gate δ
 	uv run python -m backend.app.integrity --plugin config_registry --no-augment
+
+integrity-hooks: ## Run only Plugin D (hooks_check) — gate ε
+	uv run python -m backend.app.integrity --plugin hooks_check --no-augment
 
 integrity-snapshot-prune: ## Prune integrity-out/snapshots/ older than 30 days
 	uv run python -c "from datetime import date; from pathlib import Path; from backend.app.integrity.snapshots import prune_older_than; n = prune_older_than(Path.cwd(), days=30, today=date.today()); print(f'pruned {n}')"
