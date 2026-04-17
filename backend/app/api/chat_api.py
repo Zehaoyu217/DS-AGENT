@@ -369,6 +369,119 @@ _SEARCH_TEXT = ToolSchema(
     },
 )
 
+_SB_SEARCH = ToolSchema(
+    name="sb_search",
+    description=(
+        "BM25 search against the Second Brain knowledge base. "
+        "Returns top-k claims and/or sources ranked by relevance. "
+        "Use to find prior extracted claims or source material before answering."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "Natural-language query."},
+            "k": {"type": "integer", "default": 5, "minimum": 1, "maximum": 50},
+            "scope": {
+                "type": "string",
+                "enum": ["claims", "sources", "both"],
+                "default": "both",
+            },
+            "taxonomy": {
+                "type": ["string", "null"],
+                "description": "Optional taxonomy prefix filter.",
+            },
+            "with_neighbors": {"type": "boolean", "default": False},
+        },
+        "required": ["query"],
+    },
+)
+
+_SB_LOAD = ToolSchema(
+    name="sb_load",
+    description=(
+        "Load a Second Brain node (claim or source) by id, optionally expanding "
+        "its graph neighborhood. Use after sb_search identifies an interesting id."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "node_id": {"type": "string"},
+            "depth": {"type": "integer", "default": 0, "minimum": 0, "maximum": 3},
+            "relations": {
+                "type": ["string", "null"],
+                "description": (
+                    "Comma-separated edge types to follow "
+                    "(supports, contradicts, cites, refines, …)."
+                ),
+            },
+        },
+        "required": ["node_id"],
+    },
+)
+
+_SB_REASON = ToolSchema(
+    name="sb_reason",
+    description=(
+        "Walk the Second Brain graph from start_id along a typed relation. "
+        "Use for 'what does X support?' or 'what contradicts Y?' style traversals."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "start_id": {"type": "string"},
+            "walk": {
+                "type": "string",
+                "description": "Edge relation to walk, e.g. 'supports' or 'refines'.",
+            },
+            "direction": {
+                "type": "string",
+                "enum": ["outbound", "inbound", "both"],
+                "default": "outbound",
+            },
+            "max_depth": {"type": "integer", "default": 3, "minimum": 1, "maximum": 6},
+            "terminator": {
+                "type": ["string", "null"],
+                "description": "Optional relation to stop on (e.g. 'supersedes').",
+            },
+        },
+        "required": ["start_id", "walk"],
+    },
+)
+
+_SB_INGEST = ToolSchema(
+    name="sb_ingest",
+    description=(
+        "Ingest a local file (PDF, markdown, DOCX, EPUB) into the Second Brain "
+        "knowledge base. URL/repo ingest via tool is not yet supported — drop those "
+        "into ~/second-brain/inbox/ and run `sb process-inbox`."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "path": {
+                "type": "string",
+                "description": "Absolute path to the file to ingest.",
+            },
+        },
+        "required": ["path"],
+    },
+)
+
+_SB_PROMOTE_CLAIM = ToolSchema(
+    name="sb_promote_claim",
+    description=(
+        "Promote a validated wiki finding into a Second Brain claim node. "
+        "Not yet wired in v1 — returns a structured not-implemented."
+    ),
+    input_schema={
+        "type": "object",
+        "properties": {
+            "finding_id": {"type": "string"},
+        },
+        "required": ["finding_id"],
+    },
+)
+
 _CHAT_TOOLS: tuple[ToolSchema, ...] = (
     _EXECUTE_PYTHON,
     _WRITE_WORKING,
@@ -381,6 +494,11 @@ _CHAT_TOOLS: tuple[ToolSchema, ...] = (
     _READ_FILE,
     _GLOB_FILES,
     _SEARCH_TEXT,
+    _SB_SEARCH,
+    _SB_LOAD,
+    _SB_REASON,
+    _SB_INGEST,
+    _SB_PROMOTE_CLAIM,
 )
 
 # Read-only / non-mutating tools. Plan Mode narrows the tool menu to this set
@@ -845,6 +963,14 @@ def _stream_agent_loop(
                 }
 
             dispatcher.register("get_context_status", _ctx_status_handler)
+
+            # ── Second Brain tools (no-op when disabled) ─────────────────
+            from app.tools import sb_tools as _sb
+            dispatcher.register("sb_search", _sb.sb_search)
+            dispatcher.register("sb_load", _sb.sb_load)
+            dispatcher.register("sb_reason", _sb.sb_reason)
+            dispatcher.register("sb_ingest", _sb.sb_ingest)
+            dispatcher.register("sb_promote_claim", _sb.sb_promote_claim)
 
             loop = AgentLoop(
             dispatcher,
