@@ -122,6 +122,63 @@
   letter-spacing: 0.04em;
 }
 
+.digest-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 0 4px;
+  border-bottom: 1px solid #18181b;
+}
+
+.digest-tabs__btn {
+  background: transparent;
+  border: 1px solid #27272a;
+  color: #a1a1aa;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: border-color 120ms linear, color 120ms linear;
+}
+
+.digest-tabs__btn:hover,
+.digest-tabs__btn[data-active='true'] {
+  border-color: #e0733a;
+  color: #e0733a;
+}
+
+.digest-pending__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 4px;
+}
+
+.digest-pending__build {
+  background: transparent;
+  border: 1px solid #e0733a;
+  color: #e0733a;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background-color 120ms linear;
+}
+
+.digest-pending__build:hover {
+  background-color: rgba(224, 115, 58, 0.08);
+}
+
+.digest-pending__section {
+  color: #71717a;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
 .digest-panel__error {
   margin: 8px 0;
   padding: 6px 8px;

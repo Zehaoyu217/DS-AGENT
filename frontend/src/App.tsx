@@ -232,11 +232,21 @@ export default function App() {
   const [digestOpen, setDigestOpen] = useState(false)
   const [healthOpen, setHealthOpen] = useState(false)
   const digestUnread = useDigestStore((s) => s.unread)
+  const pendingCount = useDigestStore((s) => s.pending.length)
+  const refreshPending = useDigestStore((s) => s.refreshPending)
+  const digestCount = digestUnread + pendingCount
 
   // Sync browser tab title with branding config.
   useEffect(() => {
     document.title = branding.ui_title
   }, [branding.ui_title])
+
+  // Background refresh of pending proposals so the topbar badge stays current.
+  useEffect(() => {
+    void refreshPending()
+    const t = window.setInterval(() => void refreshPending(), 30_000)
+    return () => window.clearInterval(t)
+  }, [refreshPending])
 
   if (monitorMatch) {
     return <MonitorPage sessionId={monitorMatch[1]} />
@@ -260,9 +270,9 @@ export default function App() {
             <TopbarButton
               slot={0}
               label="DIGEST"
-              count={digestUnread}
+              count={digestCount}
               active={digestOpen}
-              unread={digestUnread > 0}
+              unread={digestCount > 0}
               onClick={() => setDigestOpen((v) => !v)}
               ariaLabel="Toggle second-brain digest panel"
             />

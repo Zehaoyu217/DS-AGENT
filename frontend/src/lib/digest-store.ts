@@ -8,16 +8,32 @@ export interface DigestEntry {
   applied: boolean
 }
 
+export interface PendingProposal {
+  id: string
+  section: string
+  line: string
+  action: Record<string, unknown>
+}
+
+interface BuildResult {
+  emitted: boolean
+  entries: number
+}
+
 interface DigestState {
   date: string
   entries: DigestEntry[]
   unread: number
   loading: boolean
   error: string | null
+  pending: PendingProposal[]
+  pendingLoading: boolean
   refresh: () => Promise<void>
   apply: (ids: string[]) => Promise<void>
   skip: (id: string, ttlDays?: number) => Promise<void>
   markRead: () => Promise<void>
+  refreshPending: () => Promise<void>
+  triggerBuild: () => Promise<BuildResult>
 }
 
 export const useDigestStore = create<DigestState>((set, get) => ({
@@ -26,6 +42,8 @@ export const useDigestStore = create<DigestState>((set, get) => ({
   unread: 0,
   loading: false,
   error: null,
+  pending: [],
+  pendingLoading: false,
 
   async refresh() {
     set({ loading: true, error: null })
@@ -92,6 +110,36 @@ export const useDigestStore = create<DigestState>((set, get) => ({
       })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Unexpected error' })
+    }
+  },
+
+  async refreshPending() {
+    set({ pendingLoading: true })
+    try {
+      const res = await fetch('/api/sb/digest/pending')
+      if (res.status === 404) {
+        set({ pending: [], pendingLoading: false })
+        return
+      }
+      const body = (await res.json()) as { proposals?: PendingProposal[] }
+      set({ pending: body.proposals ?? [], pendingLoading: false })
+    } catch (err: unknown) {
+      set({
+        pendingLoading: false,
+        error: err instanceof Error ? err.message : 'Unexpected error',
+      })
+    }
+  },
+
+  async triggerBuild() {
+    try {
+      const res = await fetch('/api/sb/digest/build', { method: 'POST' })
+      if (res.status === 404) return { emitted: false, entries: 0 }
+      const body = (await res.json()) as BuildResult
+      return { emitted: Boolean(body.emitted), entries: body.entries ?? 0 }
+    } catch (err: unknown) {
+      set({ error: err instanceof Error ? err.message : 'Unexpected error' })
+      return { emitted: false, entries: 0 }
     }
   },
 }))

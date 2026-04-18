@@ -79,3 +79,58 @@ def digest_read(body: ReadBody) -> dict[str, Any]:
 def sb_stats() -> dict[str, Any]:
     _require_enabled()
     return sb_digest_tools.sb_stats({})
+
+
+# ── Seams for digest pending / build (monkeypatched in tests) ──────
+
+
+def _sb_cfg():  # noqa: ANN202
+    from second_brain.config import Config
+
+    return Config.load()
+
+
+def _read_pending(cfg):  # noqa: ANN001, ANN202
+    from second_brain.digest.pending import read_pending
+
+    return read_pending(cfg)
+
+
+def _load_habits(cfg):  # noqa: ANN001, ANN202
+    from second_brain.habits.loader import load_habits
+
+    return load_habits(cfg)
+
+
+def _run_build(cfg, habits):  # noqa: ANN001, ANN202
+    from datetime import date
+
+    from second_brain.digest.builder import DigestBuilder
+
+    return DigestBuilder(cfg, habits=habits).build(today=date.today())
+
+
+@router.get("/digest/pending")
+def digest_pending() -> dict[str, Any]:
+    _require_enabled()
+    cfg = _sb_cfg()
+    proposals = [
+        {
+            "id": getattr(p, "id", ""),
+            "section": getattr(p, "section", ""),
+            "line": getattr(p, "line", ""),
+            "action": getattr(p, "action", {}) or {},
+        }
+        for p in _read_pending(cfg)
+    ]
+    return {"ok": True, "count": len(proposals), "proposals": proposals}
+
+
+@router.post("/digest/build")
+def digest_build() -> dict[str, Any]:
+    _require_enabled()
+    cfg = _sb_cfg()
+    habits = _load_habits(cfg)
+    result = _run_build(cfg, habits)
+    entries = list(getattr(result, "entries", []) or [])
+    return {"ok": True, "emitted": len(entries) > 0, "entries": len(entries)}
