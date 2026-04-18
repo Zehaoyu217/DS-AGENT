@@ -300,4 +300,77 @@ def test_digest_costs_explicit_date(monkeypatch, tmp_path):
     assert resp.json()["record"] == payload
 
 
+# ─────────────────────── graph viz ──────────────────────────────────
+
+
+def test_graph_returns_404_when_disabled(monkeypatch):
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", False, raising=False)
+    resp = _client().get("/api/sb/graph")
+    assert resp.status_code == 404
+
+
+def test_graph_happy_path_with_center(monkeypatch):
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True, raising=False)
+    monkeypatch.setattr(sb_api, "_sb_cfg", lambda: object(), raising=False)
+
+    def _fake_query(cfg, *, center, depth, limit):  # noqa: ANN001
+        assert center == "clm_foo"
+        assert depth == 1
+        assert limit == 60
+        return {
+            "ok": True,
+            "center": center,
+            "nodes": [
+                {"id": "clm_foo", "kind": "claim", "label": "foo"},
+                {"id": "src_bar", "kind": "source", "label": "bar"},
+            ],
+            "edges": [{"src": "clm_foo", "dst": "src_bar", "kind": "supports"}],
+        }
+
+    monkeypatch.setattr(sb_api, "_query_graph", _fake_query, raising=False)
+
+    resp = _client().get("/api/sb/graph?center=clm_foo")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is True
+    assert body["center"] == "clm_foo"
+    assert len(body["nodes"]) == 2
+    assert body["edges"][0]["kind"] == "supports"
+
+
+def test_graph_empty_fallback(monkeypatch):
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True, raising=False)
+    monkeypatch.setattr(sb_api, "_sb_cfg", lambda: object(), raising=False)
+    monkeypatch.setattr(
+        sb_api,
+        "_query_graph",
+        lambda *_a, **_kw: {"ok": True, "nodes": [], "edges": [], "note": "no graph data"},
+        raising=False,
+    )
+    resp = _client().get("/api/sb/graph")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is True
+    assert body["nodes"] == []
+    assert body["note"] == "no graph data"
+
+
+def test_graph_clamps_depth_and_limit(monkeypatch):
+    monkeypatch.setattr(app_config, "SECOND_BRAIN_ENABLED", True, raising=False)
+    monkeypatch.setattr(sb_api, "_sb_cfg", lambda: object(), raising=False)
+
+    captured: dict[str, Any] = {}
+
+    def _fake(cfg, *, center, depth, limit):  # noqa: ANN001
+        captured["depth"] = depth
+        captured["limit"] = limit
+        return {"ok": True, "nodes": [], "edges": []}
+
+    monkeypatch.setattr(sb_api, "_query_graph", _fake, raising=False)
+    resp = _client().get("/api/sb/graph?depth=99&limit=9999")
+    assert resp.status_code == 200
+    assert captured["depth"] == 2
+    assert captured["limit"] == 200
+
+
 _ = Path  # keep import used

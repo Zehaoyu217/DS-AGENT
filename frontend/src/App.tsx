@@ -21,6 +21,7 @@ import { DigestPanel } from '@/components/digest/DigestPanel'
 import { HealthPanel } from '@/components/health/HealthPanel'
 import { SkillsPanel } from '@/components/skills/SkillsPanel'
 import { useSkillsStore, countToday } from '@/lib/skills-store'
+import { GraphPanel } from '@/components/graph/GraphPanel'
 import { TopbarButton } from '@/components/ui/TopbarButton'
 import { AgentsSection } from '@/sections/AgentsSection'
 import { SkillsSection } from '@/sections/SkillsSection'
@@ -234,6 +235,7 @@ export default function App() {
   const [digestOpen, setDigestOpen] = useState(false)
   const [healthOpen, setHealthOpen] = useState(false)
   const [skillsOpen, setSkillsOpen] = useState(false)
+  const [graphOpen, setGraphOpen] = useState(false)
   const digestUnread = useDigestStore((s) => s.unread)
   const pendingCount = useDigestStore((s) => s.pending.length)
   const refreshPending = useDigestStore((s) => s.refreshPending)
@@ -305,9 +307,17 @@ export default function App() {
               onClick={() => setSkillsOpen((v) => !v)}
               ariaLabel="Toggle skills usage panel"
             />
+            <TopbarButton
+              slot={3}
+              label="GRAPH"
+              active={graphOpen}
+              onClick={() => setGraphOpen((v) => !v)}
+              ariaLabel="Toggle knowledge graph panel"
+            />
             <DigestPanel open={digestOpen} onClose={() => setDigestOpen(false)} />
             <HealthPanel open={healthOpen} onClose={() => setHealthOpen(false)} />
             <SkillsPanel open={skillsOpen} onClose={() => setSkillsOpen(false)} />
+            <GraphPanel open={graphOpen} onClose={() => setGraphOpen(false)} />
             <CommandPalette />
             <GlobalSearchPanel />
             <ShortcutsHelp />

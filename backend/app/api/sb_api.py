@@ -11,6 +11,7 @@ import json
 import time
 from datetime import date as date_t
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -244,3 +245,163 @@ def sb_memory_session(session_id: str, prompt: str | None = None) -> dict[str, A
         "block": getattr(result, "block", "") or "",
         "skipped_reason": getattr(result, "skipped_reason", None),
     }
+
+
+# ── Graph viz seam ──────────────────────────────────────────────────
+
+
+_KIND_BY_PREFIX = {"clm_": "claim", "src_": "source"}
+
+
+def _node_kind(node_id: str) -> str:
+    for pfx, kind in _KIND_BY_PREFIX.items():
+        if node_id.startswith(pfx):
+            return kind
+    return "wiki"
+
+
+def _query_graph(
+    cfg: Any,
+    *,
+    center: str | None,
+    depth: int,
+    limit: int,
+) -> dict[str, Any]:
+    """Query the property-graph DuckDB store for nodes and edges.
+
+    When ``center`` is provided, returns edges within ``depth`` hops of
+    that node. When missing, returns the top-N highest-degree nodes and
+    the edges among them. Degrades to an empty payload when the store
+    is missing, empty, or lacks the expected ``edges`` table.
+    """
+    import duckdb
+
+    path = getattr(cfg, "duckdb_path", None)
+    if path is None or not Path(path).exists():
+        return {"ok": True, "center": center, "nodes": [], "edges": [], "note": "no graph data"}
+
+    try:
+        conn = duckdb.connect(str(path), read_only=True)
+    except Exception:  # noqa: BLE001
+        return {"ok": True, "center": center, "nodes": [], "edges": [], "note": "no graph data"}
+
+    try:
+        try:
+            tables = {r[0] for r in conn.execute(
+                "SELECT table_name FROM information_schema.tables"
+            ).fetchall()}
+        except Exception:  # noqa: BLE001
+            tables = set()
+        if "edges" not in tables:
+            return {
+                "ok": True,
+                "center": center,
+                "nodes": [],
+                "edges": [],
+                "note": "no graph data",
+            }
+
+        edges: list[dict[str, str]] = []
+        node_ids: set[str] = set()
+        if center:
+            frontier = {center}
+            visited: set[str] = set()
+            for _ in range(max(1, depth)):
+                if not frontier:
+                    break
+                placeholders = ",".join(["?"] * len(frontier))
+                rows = conn.execute(
+                    f"SELECT src_id, dst_id, relation FROM edges "
+                    f"WHERE src_id IN ({placeholders}) OR dst_id IN ({placeholders}) "
+                    f"LIMIT {int(limit)}",
+                    list(frontier) + list(frontier),
+                ).fetchall()
+                visited |= frontier
+                next_frontier: set[str] = set()
+                for src, dst, rel in rows:
+                    edges.append({"src": src, "dst": dst, "kind": rel})
+                    node_ids.add(src)
+                    node_ids.add(dst)
+                    for nb in (src, dst):
+                        if nb not in visited:
+                            next_frontier.add(nb)
+                frontier = next_frontier
+                if len(edges) >= limit:
+                    break
+            node_ids.add(center)
+        else:
+            # Pick nodes with highest degree, then fetch their edges.
+            deg_rows = conn.execute(
+                "SELECT node_id, cnt FROM ("
+                "  SELECT src_id AS node_id FROM edges "
+                "  UNION ALL SELECT dst_id FROM edges"
+                ") GROUP BY node_id ORDER BY COUNT(*) DESC LIMIT ?",
+                [int(limit)],
+            ).fetchall()
+            top_ids = [r[0] for r in deg_rows]
+            if not top_ids:
+                return {
+                    "ok": True,
+                    "center": None,
+                    "nodes": [],
+                    "edges": [],
+                    "note": "no graph data",
+                }
+            placeholders = ",".join(["?"] * len(top_ids))
+            rows = conn.execute(
+                f"SELECT src_id, dst_id, relation FROM edges "
+                f"WHERE src_id IN ({placeholders}) AND dst_id IN ({placeholders}) "
+                f"LIMIT {int(limit)}",
+                top_ids + top_ids,
+            ).fetchall()
+            node_ids.update(top_ids)
+            for src, dst, rel in rows:
+                edges.append({"src": src, "dst": dst, "kind": rel})
+
+        # Resolve labels when the `claims` / `sources` tables exist.
+        labels: dict[str, str] = {}
+        if node_ids:
+            placeholders = ",".join(["?"] * len(node_ids))
+            if "claims" in tables:
+                try:
+                    for r in conn.execute(
+                        f"SELECT id, statement FROM claims WHERE id IN ({placeholders})",
+                        list(node_ids),
+                    ).fetchall():
+                        labels[r[0]] = (r[1] or r[0])[:80]
+                except Exception:  # noqa: BLE001
+                    pass
+            if "sources" in tables:
+                try:
+                    for r in conn.execute(
+                        f"SELECT id, title FROM sources WHERE id IN ({placeholders})",
+                        list(node_ids),
+                    ).fetchall():
+                        labels[r[0]] = (r[1] or r[0])[:80]
+                except Exception:  # noqa: BLE001
+                    pass
+
+        nodes = [
+            {"id": nid, "kind": _node_kind(nid), "label": labels.get(nid, nid)}
+            for nid in node_ids
+        ]
+    finally:
+        conn.close()
+
+    return {"ok": True, "center": center, "nodes": nodes, "edges": edges}
+
+
+@router.get("/graph")
+def sb_graph(
+    center: str | None = None, depth: int = 1, limit: int = 60
+) -> dict[str, Any]:
+    _require_enabled()
+    cfg = _sb_cfg()
+    return _query_graph(
+        cfg,
+        center=center,
+        depth=max(1, min(depth, 2)),
+        limit=max(1, min(limit, 200)),
+    )
+
+
