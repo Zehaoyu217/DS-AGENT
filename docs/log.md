@@ -33,6 +33,7 @@ Entry shape:
 
 ### Added
 
+- **Second-Brain bridge (digest surface)**: 7 new tools (`sb_digest_today`, `sb_digest_list`, `sb_digest_show`, `sb_digest_apply`, `sb_digest_skip`, `sb_digest_propose`, `sb_stats`), a pre-turn hook that injects a pending-digest summary into the system prompt (gated by `SB_DIGEST_HOOK_ENABLED`), 4 REST routes under `/api/sb/digest/*` (`today`, `apply`, `skip`, `read`), and a right-rail `DigestPanel` in the frontend with a topbar toggle. All paths gracefully degrade when `SECOND_BRAIN_ENABLED=False`. Sibling `second-brain/` `DigestBuilder` now absorbs `digests/pending.jsonl` proposals into the next build and truncates the file on success. (`backend/app/tools/sb_digest_tools.py`, `backend/app/hooks/sb_digest_hook.py`, `backend/app/api/sb_api.py`, `frontend/src/lib/digest-store.ts`, `frontend/src/components/digest/`, sibling `second-brain/src/second_brain/digest/pending.py`)
 - **integrity**: Plugin F (`autofix`) ships gate ζ — terminal plugin of the
   integrity roadmap. Five whitelisted fix classes (`claude_md_link`,
   `doc_link_renamed`, `manifest_regen`, `dead_directive_cleanup`,
