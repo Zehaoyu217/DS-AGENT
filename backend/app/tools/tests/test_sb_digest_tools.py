@@ -226,3 +226,37 @@ def test_sb_digest_skip_entry_not_found(sb_home, monkeypatch):
     result = sb_digest_tools.sb_digest_skip({"id": "nope"})
     assert result["ok"] is False
     assert result["error"] == "entry_not_found"
+
+
+# ─────────────────────── sb_digest_propose ────────────────────────
+
+
+def test_sb_digest_propose_appends_pending(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_propose
+
+    action = {
+        "action": "upgrade_confidence",
+        "claim_id": "clm_x",
+        "from": "low",
+        "to": "medium",
+        "rationale": "r",
+    }
+    r1 = sb_digest_propose({"section": "Reconciliation", "action": action})
+    assert r1["ok"] is True
+    assert r1["pending_id"].startswith("pend_")
+    pending = sb_home / "digests" / "pending.jsonl"
+    assert pending.exists()
+    lines = pending.read_text().splitlines()
+    assert len(lines) == 1
+    payload = json.loads(lines[0])
+    assert payload["section"] == "Reconciliation"
+    assert payload["action"]["claim_id"] == "clm_x"
+
+
+def test_sb_digest_propose_rejects_unknown_action(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_propose
+
+    result = sb_digest_propose(
+        {"section": "Reconciliation", "action": {"action": "zzz"}}
+    )
+    assert result == {"ok": False, "error": "invalid_action_type"}

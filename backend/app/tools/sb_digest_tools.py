@@ -240,3 +240,42 @@ def sb_digest_skip(args: dict[str, Any]) -> dict[str, Any]:
         "signature": sig,
         "expires_at": expires,
     }
+
+
+_VALID_ACTIONS = frozenset(
+    {
+        "upgrade_confidence",
+        "resolve_contradiction",
+        "promote_wiki_to_claim",
+        "backlink_claim_to_wiki",
+        "add_taxonomy_root",
+        "re_abstract_batch",
+        "drop_edge",
+        "keep",
+    }
+)
+
+
+def sb_digest_propose(args: dict[str, Any]) -> dict[str, Any]:
+    if not config.SECOND_BRAIN_ENABLED:
+        return _disabled()
+    section = str(args.get("section", "")).strip()
+    action = args.get("action")
+    if not section:
+        return {"ok": False, "error": "section required"}
+    if not isinstance(action, dict) or action.get("action") not in _VALID_ACTIONS:
+        return {"ok": False, "error": "invalid_action_type"}
+    cfg = _cfg()
+    pending = cfg.digests_dir / "pending.jsonl"
+    pending.parent.mkdir(parents=True, exist_ok=True)
+    existing = pending.read_text().splitlines() if pending.exists() else []
+    pending_id = f"pend_{len(existing) + 1:04d}"
+    record = {
+        "id": pending_id,
+        "section": section,
+        "action": action,
+        "proposed_at": datetime.now(timezone.utc).isoformat(),
+    }
+    with pending.open("a") as f:
+        f.write(json.dumps(record) + "\n")
+    return {"ok": True, "pending_id": pending_id, "file": str(pending)}
