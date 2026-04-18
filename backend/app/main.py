@@ -18,6 +18,7 @@ from app.api.hooks_api import router as hooks_router
 from app.api.mcp_sampling_api import router as mcp_sampling_router
 from app.api.models_api import router as models_router
 from app.api.prompts_api import router as prompts_router
+from app.api.sb_api import router as sb_router
 from app.api.scheduler_api import router as scheduler_router
 from app.api.session_search_api import router as session_search_router
 from app.api.settings_api import router as settings_router
@@ -102,5 +103,6 @@ def create_app() -> FastAPI:
     app.include_router(scheduler_router)
     app.include_router(mcp_sampling_router)
     app.include_router(config_router)
+    app.include_router(sb_router)
 
     return app
