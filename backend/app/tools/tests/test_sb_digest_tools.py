@@ -85,3 +85,51 @@ def test_sb_digest_today_missing(sb_home):
     assert result["ok"] is True
     assert result["entry_count"] == 0
     assert result["entries"] == []
+
+
+# ─────────────────────── sb_digest_list / show ─────────────────────
+
+
+def test_sb_digest_list(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_list
+
+    today = date.today()
+    yday = today - timedelta(days=1)
+    _write_digest(
+        sb_home,
+        today,
+        [{"id": "r01", "section": "Reconciliation", "line": "a", "action": {"action": "keep"}}],
+    )
+    _write_digest(
+        sb_home,
+        yday,
+        [{"id": "r01", "section": "Taxonomy", "line": "b", "action": {"action": "keep"}}],
+    )
+    result = sb_digest_list({"limit": 5})
+    assert result["ok"] is True
+    dates = [d["date"] for d in result["digests"]]
+    assert dates == [today.isoformat(), yday.isoformat()]
+    assert result["digests"][0]["entry_count"] == 1
+
+
+def test_sb_digest_show(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_show
+
+    today = date.today()
+    _write_digest(
+        sb_home,
+        today,
+        [{"id": "r01", "section": "Reconciliation", "line": "x", "action": {"action": "keep"}}],
+    )
+    result = sb_digest_show({"date": today.isoformat()})
+    assert result["ok"] is True
+    assert result["date"] == today.isoformat()
+    assert "Digest" in result["markdown"]
+    assert result["entries"][0]["id"] == "r01"
+
+
+def test_sb_digest_show_missing(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_show
+
+    result = sb_digest_show({"date": "2099-01-01"})
+    assert result == {"ok": False, "error": "digest_not_found", "date": "2099-01-01"}

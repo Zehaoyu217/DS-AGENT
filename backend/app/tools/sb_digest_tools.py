@@ -93,3 +93,66 @@ def sb_digest_today(_args: dict[str, Any]) -> dict[str, Any]:
         "unread": unread,
         "entries": shaped,
     }
+
+
+def sb_digest_list(args: dict[str, Any]) -> dict[str, Any]:
+    if not config.SECOND_BRAIN_ENABLED:
+        return _disabled({"digests": []})
+    limit = int(args.get("limit", 10))
+    cfg = _cfg()
+    digests_dir: Path = cfg.digests_dir
+    if not digests_dir.exists():
+        return {"ok": True, "digests": []}
+    read_marks_path = digests_dir / ".read_marks"
+    read_marks: set[str] = set()
+    if read_marks_path.exists():
+        read_marks = {
+            ln.strip()
+            for ln in read_marks_path.read_text().splitlines()
+            if ln.strip()
+        }
+    rows: list[dict[str, Any]] = []
+    for md in sorted(digests_dir.glob("????-??-??.md"), reverse=True):
+        day_str = md.stem
+        try:
+            day = _parse_date(day_str)
+        except ValueError:
+            continue
+        entries = _entries_for(cfg, day)
+        applied = _applied_ids(cfg, day)
+        rows.append(
+            {
+                "date": day_str,
+                "entry_count": len(entries),
+                "applied_count": len(applied),
+                "read": day_str in read_marks,
+            }
+        )
+        if len(rows) >= limit:
+            break
+    return {"ok": True, "digests": rows}
+
+
+def sb_digest_show(args: dict[str, Any]) -> dict[str, Any]:
+    if not config.SECOND_BRAIN_ENABLED:
+        return _disabled()
+    date_str = str(args.get("date", "")).strip()
+    if not date_str:
+        return {"ok": False, "error": "missing date"}
+    cfg = _cfg()
+    md_path = cfg.digests_dir / f"{date_str}.md"
+    if not md_path.exists():
+        return {"ok": False, "error": "digest_not_found", "date": date_str}
+    day = _parse_date(date_str)
+    entries = _entries_for(cfg, day)
+    applied = _applied_ids(cfg, day)
+    shaped = [
+        {**s, "skipped": False}
+        for s in _shape_entries(entries, applied)
+    ]
+    return {
+        "ok": True,
+        "date": date_str,
+        "markdown": md_path.read_text(),
+        "entries": shaped,
+    }
