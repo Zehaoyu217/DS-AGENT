@@ -78,7 +78,7 @@ Always use `make backend` (which runs `cd backend && uvicorn app.main:create_app
 
 ## [2026-04-15] Tailwind opacity modifier breaks on CSS variable colors
 
-`bg-brand-accent/8` (or any `/N` opacity modifier) does **not** work when the color token is defined as a plain CSS variable like `var(--color-accent)` that holds a hex value. Tailwind tries to generate `rgb(var(--color-accent) / 0.08)` which is invalid CSS when the variable contains `#8b5cf6`.
+`bg-brand-accent/8` (or any `/N` opacity modifier) does **not** work when the color token is defined as a plain CSS variable like `var(--color-accent)` that holds a hex value. Tailwind tries to generate `rgb(var(--color-accent) / 0.08)` which is invalid CSS when the variable contains `#e0733a`.
 
 **Symptom:** Selected/active item background is invisible in menus, dropdowns, or highlighted rows.
 
@@ -88,6 +88,6 @@ Always use `make backend` (which runs `cd backend && uvicorn app.main:create_app
 
 Or define the CSS variable with RGB components so Tailwind can inject alpha:
 ```css
---color-accent-rgb: 139 92 246; /* same as #8b5cf6 */
+--color-accent-rgb: 224 115 58; /* same as #e0733a */
 ```
 then use `bg-[rgb(var(--color-accent-rgb)/0.08)]` in Tailwind.
