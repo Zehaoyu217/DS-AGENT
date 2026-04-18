@@ -1,7 +1,8 @@
 .PHONY: dev backend frontend test test-backend test-frontend lint typecheck \
         skill-check skill-eval skill-new wiki-lint graphify seed-data \
         seed-eval eval eval-trace clean-traces sop \
-        docker-build docker-up integrity-augment integrity-test
+        docker-build docker-up integrity-augment integrity-test \
+        e2e-panels
 
 # Development
 dev:
@@ -30,6 +31,9 @@ test-backend:
 
 test-frontend:
 	cd frontend && npm test 2>/dev/null || echo "No frontend tests yet"
+
+e2e-panels:
+	cd frontend && pnpm playwright test e2e/panels.spec.ts 2>/dev/null || cd frontend && npx playwright test e2e/panels.spec.ts
 
 # Skills
 skill-check:
