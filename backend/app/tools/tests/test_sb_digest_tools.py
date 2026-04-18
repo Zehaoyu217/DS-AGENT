@@ -133,3 +133,39 @@ def test_sb_digest_show_missing(sb_home):
 
     result = sb_digest_show({"date": "2099-01-01"})
     assert result == {"ok": False, "error": "digest_not_found", "date": "2099-01-01"}
+
+
+# ─────────────────────── sb_digest_apply ──────────────────────────
+
+
+def test_sb_digest_apply_delegates_to_applier(sb_home, monkeypatch):
+    from app.tools import sb_digest_tools
+
+    today = date.today()
+    called: dict[str, object] = {}
+
+    class FakeResult:
+        applied = ["r01"]
+        skipped: list[str] = []
+        failed: list[str] = []
+
+    class FakeApplier:
+        def __init__(self, cfg):
+            called["cfg"] = cfg
+
+        def apply(self, *, digest_date, entry_ids):
+            called["date"] = digest_date
+            called["ids"] = entry_ids
+            return FakeResult()
+
+    monkeypatch.setattr(sb_digest_tools, "_DigestApplier", FakeApplier, raising=False)
+    result = sb_digest_tools.sb_digest_apply({"ids": ["r01"]})
+    assert result == {"ok": True, "applied": ["r01"], "skipped": [], "failed": []}
+    assert called["ids"] == ["r01"]
+    assert called["date"] == today
+
+
+def test_sb_digest_apply_invalid_args(sb_home):
+    from app.tools.sb_digest_tools import sb_digest_apply
+
+    assert sb_digest_apply({"ids": []})["ok"] is False

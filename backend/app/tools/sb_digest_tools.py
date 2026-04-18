@@ -156,3 +156,36 @@ def sb_digest_show(args: dict[str, Any]) -> dict[str, Any]:
         "markdown": md_path.read_text(),
         "entries": shaped,
     }
+
+
+def _load_applier():  # seam for tests
+    from second_brain.digest.applier import DigestApplier
+
+    return DigestApplier
+
+
+_DigestApplier = None  # late-bound; tests may monkeypatch
+
+
+def sb_digest_apply(args: dict[str, Any]) -> dict[str, Any]:
+    if not config.SECOND_BRAIN_ENABLED:
+        return _disabled()
+    raw_ids = args.get("ids")
+    if raw_ids != "all" and not (isinstance(raw_ids, list) and raw_ids):
+        return {"ok": False, "error": "ids required (list or 'all')"}
+    date_str = args.get("date")
+    day = _parse_date(date_str) if date_str else date_t.today()
+    cfg = _cfg()
+    if raw_ids == "all":
+        ids = [e.get("id", "") for e in _entries_for(cfg, day)]
+        ids = [i for i in ids if i]
+    else:
+        ids = [str(x) for x in raw_ids]
+    applier_cls = _DigestApplier or _load_applier()
+    result = applier_cls(cfg).apply(digest_date=day, entry_ids=ids)
+    return {
+        "ok": True,
+        "applied": list(result.applied),
+        "skipped": list(result.skipped),
+        "failed": list(result.failed),
+    }
