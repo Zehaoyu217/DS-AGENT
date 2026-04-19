@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { Message } from '@/lib/store'
 import { extractTextContent } from '@/lib/utils'
-import { MessageBubble } from './MessageBubble'
+import { Message as MessageView } from './message/Message'
 
 /**
  * Estimated heights used for initial layout. The virtualizer measures actual
@@ -43,7 +43,6 @@ export function VirtualMessageList({
   messages,
   isStreaming,
   onScrollStateChange,
-  onRegenerate,
 }: VirtualMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
@@ -125,10 +124,7 @@ export function VirtualMessageList({
               }}
               className="px-2 pb-5"
             >
-              <MessageBubble
-                message={message}
-                onRegenerate={onRegenerate ? () => onRegenerate(message.id) : undefined}
-              />
+              <MessageView message={message} />
             </div>
           )
         })}
