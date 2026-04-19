@@ -1,30 +1,43 @@
-import { Download, Upload } from 'lucide-react'
+import { Download, Network, Upload } from 'lucide-react'
 import { SurfacePage } from '@/components/surface/SurfacePage'
 import { DrawerSlot } from '@/components/surface/DrawerSlot'
+import { WikiTree } from '@/components/wiki/WikiTree'
+import { WikiArticle } from '@/components/wiki/WikiArticle'
 import { GraphPanel } from '@/components/graph/GraphPanel'
 import { IngestPanel } from '@/components/ingest/IngestPanel'
 import { DigestPanel } from '@/components/digest/DigestPanel'
-import { useSurfacesStore } from '@/lib/surfaces-store'
+import { useSurfacesStore, type KnowledgeDrawer } from '@/lib/surfaces-store'
 import { cn } from '@/lib/utils'
 
 export function KnowledgeSurface() {
   const drawer = useSurfacesStore((s) => s.knowledgeDrawer)
   const setDrawer = useSurfacesStore((s) => s.setKnowledgeDrawer)
+  const selected = useSurfacesStore((s) => s.selectedWikiPath)
+  const setSelected = useSurfacesStore((s) => s.setSelectedWikiPath)
   const closeDrawer = () => setDrawer(null)
+
+  const toggle = (next: NonNullable<KnowledgeDrawer>) =>
+    setDrawer(drawer === next ? null : next)
 
   const toolbar = (
     <>
       <ToolbarButton
         active={drawer === 'ingest'}
-        onClick={() => setDrawer(drawer === 'ingest' ? null : 'ingest')}
+        onClick={() => toggle('ingest')}
         icon={<Upload size={13} aria-hidden />}
         label="Ingest"
       />
       <ToolbarButton
         active={drawer === 'digest'}
-        onClick={() => setDrawer(drawer === 'digest' ? null : 'digest')}
+        onClick={() => toggle('digest')}
         icon={<Download size={13} aria-hidden />}
         label="Digest"
+      />
+      <ToolbarButton
+        active={drawer === 'graph'}
+        onClick={() => toggle('graph')}
+        icon={<Network size={13} aria-hidden />}
+        label="Graph"
       />
     </>
   )
@@ -38,6 +51,10 @@ export function KnowledgeSurface() {
       <DrawerSlot eyebrow="KNOWLEDGE" title="Digest" onClose={closeDrawer}>
         <DigestPanel open onClose={closeDrawer} embedded />
       </DrawerSlot>
+    ) : drawer === 'graph' ? (
+      <DrawerSlot eyebrow="KNOWLEDGE" title="Second-Brain Graph" onClose={closeDrawer}>
+        <GraphPanel open onClose={closeDrawer} embedded />
+      </DrawerSlot>
     ) : undefined
 
   return (
@@ -47,8 +64,16 @@ export function KnowledgeSurface() {
       toolbar={toolbar}
       drawer={drawerContent}
       drawerOpen={drawer !== null}
+      bodyClassName="!overflow-hidden"
     >
-      <GraphPanel open onClose={closeDrawer} embedded />
+      <div className="grid h-full grid-cols-[260px_1fr] overflow-hidden">
+        <div className="overflow-hidden border-r border-line">
+          <WikiTree selectedPath={selected} onSelect={setSelected} />
+        </div>
+        <div className="overflow-hidden">
+          <WikiArticle path={selected} onNavigate={setSelected} />
+        </div>
+      </div>
     </SurfacePage>
   )
 }

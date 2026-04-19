@@ -12,7 +12,7 @@ export type SettingsSection =
   | 'hooks'
 
 export type MemoryFilter = 'all' | 'user' | 'feedback' | 'project' | 'reference'
-export type KnowledgeDrawer = 'ingest' | 'digest' | null
+export type KnowledgeDrawer = 'ingest' | 'digest' | 'graph' | null
 
 interface SurfacesStore {
   // Knowledge

@@ -1,4 +1,5 @@
 import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -25,13 +26,14 @@ from app.api.settings_api import router as settings_router
 from app.api.skills_api import router as skills_router
 from app.api.skills_telemetry_api import router as skills_telemetry_router
 from app.api.slash_api import router as slash_router
+from app.api.wiki_api import router as wiki_router
 from app.api.sop_api import router as sop_router
 from app.api.todos_api import router as todos_router
 from app.api.trace_api import router as trace_router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):  # type: ignore[type-arg]
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Start the cron engine on startup and shut it down gracefully on exit."""
     from app.harness.wiring import get_cron_engine  # noqa: PLC0415
 
@@ -106,5 +108,6 @@ def create_app() -> FastAPI:
     app.include_router(config_router)
     app.include_router(sb_router)
     app.include_router(skills_telemetry_router)
+    app.include_router(wiki_router)
 
     return app
