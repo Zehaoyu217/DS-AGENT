@@ -18,7 +18,7 @@ import {
   selectDockOpen,
 } from "@/lib/ui-store";
 import { ThreadList } from "./ThreadList";
-import { Dock } from "./Dock";
+import { Dock } from "@/components/dock/Dock";
 
 interface AppShellProps {
   children: ReactNode;
