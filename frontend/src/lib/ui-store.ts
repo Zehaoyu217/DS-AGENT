@@ -72,6 +72,10 @@ export interface UiStore extends UiPersisted {
   threadsOverridden: boolean;
   /** User intentionally overrode auto-collapse for the dock. */
   dockOverridden: boolean;
+  /** Tweaks panel open state — transient. */
+  tweaksOpen: boolean;
+  setTweaksOpen: (open: boolean) => void;
+  toggleTweaks: () => void;
 
   setThreadW: (w: number) => void;
   setDockW: (w: number) => void;
@@ -226,6 +230,9 @@ export const useUiStore = create<UiStore>()(
 
       threadsOverridden: false,
       dockOverridden: false,
+      tweaksOpen: false,
+      setTweaksOpen: (open) => set({ tweaksOpen: open }),
+      toggleTweaks: () => set((s) => ({ tweaksOpen: !s.tweaksOpen })),
 
       setThreadW: (w) =>
         set({ threadW: clamp(Math.round(w), THREAD_W_MIN, THREAD_W_MAX) }),
