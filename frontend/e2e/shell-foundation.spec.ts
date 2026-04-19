@@ -31,8 +31,9 @@ test.describe('Shell Foundation', () => {
   test('renders the four-pane shell with IconRail + main region', async ({
     page,
   }) => {
-    await resetTheme(page)
     await loadApp(page)
+    await resetTheme(page)
+    await page.reload({ waitUntil: 'domcontentloaded' })
 
     const shell = page.locator('[data-app-shell]')
     await expect(shell).toBeVisible({ timeout: 10_000 })
@@ -60,6 +61,7 @@ test.describe('Shell Foundation', () => {
       'Graph',
       'Digest',
       'Ingest',
+      'Tweaks',
       'Settings',
     ]
     for (const label of labels) {
@@ -72,8 +74,9 @@ test.describe('Shell Foundation', () => {
   test('theme toggle flips data-theme attribute + persists ds:theme', async ({
     page,
   }) => {
-    await resetTheme(page)
     await loadApp(page)
+    await resetTheme(page)
+    await page.reload({ waitUntil: 'domcontentloaded' })
 
     const html = page.locator('html')
     // Default is light — absence of data-theme or explicit "light"
