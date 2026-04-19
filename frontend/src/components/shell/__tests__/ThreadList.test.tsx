@@ -116,4 +116,52 @@ describe("ThreadList", () => {
     render(<ThreadList />);
     expect(screen.getByText(/no chats yet/i)).toBeInTheDocument();
   });
+
+  it("filters conversations by title (case-insensitive substring)", () => {
+    resetStores([
+      makeConv("a", "Pipeline debug", 10 * 60_000),
+      makeConv("b", "Quarterly report", 20 * 60_000),
+      makeConv("c", "Pipeline rewrite", 30 * 60_000),
+    ]);
+    render(<ThreadList />);
+    fireEvent.change(screen.getByLabelText(/filter conversations/i), {
+      target: { value: "pipe" },
+    });
+    expect(screen.getByText("Pipeline debug")).toBeInTheDocument();
+    expect(screen.getByText("Pipeline rewrite")).toBeInTheDocument();
+    expect(screen.queryByText("Quarterly report")).not.toBeInTheDocument();
+  });
+
+  it("shows Checkpoints section for frozen conversations and hides them from active sections", () => {
+    const frozen = makeConv("f", "Frozen ref", 60 * 60_000);
+    frozen.frozenAt = Date.now() - 30 * 60_000;
+    const active = makeConv("a", "Active chat", 5 * 60_000);
+    resetStores([frozen, active]);
+    render(<ThreadList />);
+    expect(screen.getByText("Checkpoints")).toBeInTheDocument();
+    expect(screen.getByText("Frozen ref")).toBeInTheDocument();
+    expect(screen.getByText("Active chat")).toBeInTheDocument();
+    expect(screen.getByLabelText("Frozen")).toBeInTheDocument();
+  });
+
+  it("Pinned section appears for pinned (non-frozen) conversations", () => {
+    const pinned = makeConv("p", "Pinned chat", 10 * 60_000);
+    pinned.pinned = true;
+    resetStores([pinned, makeConv("o", "Other", 20 * 60_000)]);
+    render(<ThreadList />);
+    expect(screen.getByText("Pinned")).toBeInTheDocument();
+    expect(screen.getByLabelText("Pinned")).toBeInTheDocument();
+  });
+
+  it("MoreMenu opens and triggers setConversationPinned action", async () => {
+    resetStores([makeConv("a", "Target", 10 * 60_000)]);
+    const setConversationPinned = vi
+      .fn<(id: string, pinned: boolean) => Promise<void>>()
+      .mockResolvedValue();
+    useChatStore.setState({ setConversationPinned });
+    render(<ThreadList />);
+    fireEvent.click(screen.getByLabelText(/more options for target/i));
+    fireEvent.click(screen.getByRole("menuitem", { name: /^pin$/i }));
+    expect(setConversationPinned).toHaveBeenCalledWith("a", true);
+  });
 });

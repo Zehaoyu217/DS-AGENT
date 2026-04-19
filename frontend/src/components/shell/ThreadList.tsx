@@ -1,17 +1,31 @@
 /**
- * ThreadList — the 160–360px secondary column between the IconRail and the
- * Conversation pane. Lists conversations grouped by recency (Pinned / Today /
- * This week / Older), with an active-row indicator, a "+ new" button that
- * calls the backend `createConversationRemote`, and a right-edge drag handle
- * (Resizer) that binds to `ui-store.threadW`.
+ * ThreadList — secondary column listing conversations grouped by recency.
  *
- * Reads conversations from `useChatStore`. Reads width / visibility controls
- * from `useUiStore`. Keeps its own UI-only local state (the errorless toast
- * after a failed remote create → falls back to local `createConversation`).
+ * Sections (each hidden when empty):
+ *   - Pinned (pinned and not frozen)
+ *   - Today / This week / Older (active conversations)
+ *   - Checkpoints (frozen conversations, sorted by frozenAt desc)
+ *
+ * Row affordances: title-only filter input at top, per-row MoreMenu
+ * (Pin/Unpin, Freeze, Rename, Duplicate, Delete, Export). Pin and frozen
+ * state are persisted on the backend via the store actions.
  */
 
-import { useMemo, useState, type KeyboardEvent } from "react";
-import { ChevronLeft, Pin, Plus, Archive } from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
+import {
+  ChevronLeft,
+  Lock,
+  MoreHorizontal,
+  Pin,
+  Plus,
+} from "lucide-react";
 import { useChatStore, type Conversation } from "@/lib/store";
 import { extractTextContent } from "@/lib/utils";
 import {
@@ -24,7 +38,7 @@ import { cn } from "@/lib/utils";
 import { Resizer } from "./Resizer";
 
 interface ThreadSection {
-  id: "pinned" | "today" | "week" | "older";
+  id: "pinned" | "today" | "week" | "older" | "checkpoints";
   label: string;
   items: Conversation[];
 }
@@ -52,13 +66,12 @@ function relativeTime(ts: number, now: number): string {
   });
 }
 
-interface PinnedMap {
-  [id: string]: boolean;
+function isFrozen(c: Conversation): boolean {
+  return typeof c.frozenAt === "number" && c.frozenAt > 0;
 }
 
 function groupConversations(
   conversations: Conversation[],
-  pinned: PinnedMap,
   now: number,
 ): ThreadSection[] {
   const sod = startOfDay(now);
@@ -69,10 +82,15 @@ function groupConversations(
     today: [],
     week: [],
     older: [],
+    checkpoints: [],
   };
 
   for (const c of conversations) {
-    if (pinned[c.id]) {
+    if (isFrozen(c)) {
+      buckets.checkpoints.push(c);
+      continue;
+    }
+    if (c.pinned) {
       buckets.pinned.push(c);
       continue;
     }
@@ -84,16 +102,21 @@ function groupConversations(
 
   const sortDesc = (a: Conversation, b: Conversation): number =>
     b.updatedAt - a.updatedAt;
+  const sortFrozenDesc = (a: Conversation, b: Conversation): number =>
+    (b.frozenAt ?? 0) - (a.frozenAt ?? 0);
+
   buckets.pinned.sort(sortDesc);
   buckets.today.sort(sortDesc);
   buckets.week.sort(sortDesc);
   buckets.older.sort(sortDesc);
+  buckets.checkpoints.sort(sortFrozenDesc);
 
   return [
     { id: "pinned", label: "Pinned", items: buckets.pinned },
     { id: "today", label: "Today", items: buckets.today },
     { id: "week", label: "This week", items: buckets.week },
     { id: "older", label: "Older", items: buckets.older },
+    { id: "checkpoints", label: "Checkpoints", items: buckets.checkpoints },
   ];
 }
 
@@ -102,6 +125,127 @@ function previewOf(conv: Conversation): string {
   if (!last) return "no messages yet";
   const text = extractTextContent(last.content).trim().replace(/\s+/g, " ");
   return text.length > 0 ? text : `${last.role} · ${last.status}`;
+}
+
+interface MoreMenuProps {
+  conversation: Conversation;
+  onClose: () => void;
+}
+
+function MoreMenu({ conversation, onClose }: MoreMenuProps) {
+  const setPinned = useChatStore((s) => s.setConversationPinned);
+  const freeze = useChatStore((s) => s.freezeConversation);
+  const rename = useChatStore((s) => s.renameConversation);
+  const duplicate = useChatStore((s) => s.duplicateConversation);
+  const remove = useChatStore((s) => s.deleteConversationRemote);
+
+  const frozen = isFrozen(conversation);
+
+  function safe(fn: () => Promise<unknown>): void {
+    fn()
+      .catch((err: unknown) => {
+        // eslint-disable-next-line no-console
+        console.error("ThreadList action failed", err);
+      })
+      .finally(onClose);
+  }
+
+  return (
+    <div
+      role="menu"
+      className={cn(
+        "absolute right-2 top-7 z-20 min-w-[140px] rounded border border-line-2",
+        "bg-bg-1 shadow-lg py-1 text-[12px]",
+      )}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        role="menuitem"
+        className="block w-full px-3 py-1 text-left hover:bg-bg-2"
+        onClick={() => safe(() => setPinned(conversation.id, !conversation.pinned))}
+        disabled={frozen}
+      >
+        {conversation.pinned ? "Unpin" : "Pin"}
+      </button>
+      {!frozen && (
+        <button
+          type="button"
+          role="menuitem"
+          className="block w-full px-3 py-1 text-left hover:bg-bg-2"
+          onClick={() => {
+            const ok = window.confirm(
+              "Freeze this conversation? You won't be able to add new turns. To continue, duplicate it.",
+            );
+            if (!ok) {
+              onClose();
+              return;
+            }
+            safe(() => freeze(conversation.id));
+          }}
+        >
+          Freeze
+        </button>
+      )}
+      <button
+        type="button"
+        role="menuitem"
+        className="block w-full px-3 py-1 text-left hover:bg-bg-2"
+        onClick={() => {
+          const next = window.prompt("Rename conversation", conversation.title);
+          if (!next || next === conversation.title) {
+            onClose();
+            return;
+          }
+          safe(() => rename(conversation.id, next));
+        }}
+      >
+        Rename
+      </button>
+      <button
+        type="button"
+        role="menuitem"
+        className="block w-full px-3 py-1 text-left hover:bg-bg-2"
+        onClick={() => safe(() => duplicate(conversation.id))}
+      >
+        Duplicate
+      </button>
+      <button
+        type="button"
+        role="menuitem"
+        className="block w-full px-3 py-1 text-left hover:bg-bg-2"
+        onClick={() => {
+          const blob = new Blob([JSON.stringify(conversation, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${conversation.title || conversation.id}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          onClose();
+        }}
+      >
+        Export
+      </button>
+      <button
+        type="button"
+        role="menuitem"
+        className="block w-full px-3 py-1 text-left text-danger hover:bg-bg-2"
+        onClick={() => {
+          const ok = window.confirm(`Delete "${conversation.title}"?`);
+          if (!ok) {
+            onClose();
+            return;
+          }
+          safe(() => remove(conversation.id));
+        }}
+      >
+        Delete
+      </button>
+    </div>
+  );
 }
 
 export function ThreadList() {
@@ -115,13 +259,36 @@ export function ThreadList() {
   const setThreadW = useUiStore((s) => s.setThreadW);
   const toggleThreads = useUiStore((s) => s.toggleThreads);
 
-  // Pinned state is UI-only for step 1 — not persisted to backend yet.
-  const [pinned] = useState<PinnedMap>({});
+  const [filter, setFilter] = useState("");
   const [creating, setCreating] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  const menuContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Close the menu on outside click.
+  useEffect(() => {
+    if (!openMenuId) return;
+    function onDocClick(ev: globalThis.MouseEvent) {
+      if (
+        menuContainerRef.current &&
+        !menuContainerRef.current.contains(ev.target as Node)
+      ) {
+        setOpenMenuId(null);
+      }
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [openMenuId]);
+
+  const filtered = useMemo(() => {
+    const q = filter.trim().toLowerCase();
+    if (!q) return conversations;
+    return conversations.filter((c) => c.title.toLowerCase().includes(q));
+  }, [conversations, filter]);
 
   const sections = useMemo(
-    () => groupConversations(conversations, pinned, Date.now()),
-    [conversations, pinned],
+    () => groupConversations(filtered, Date.now()),
+    [filtered],
   );
 
   async function handleCreate() {
@@ -130,8 +297,6 @@ export function ThreadList() {
     try {
       await createRemote("New chat");
     } catch {
-      // Offline or backend is down — fall back to a local-only conversation
-      // so the user can keep working. The backend will pick it up on next sync.
       createLocal();
     } finally {
       setCreating(false);
@@ -143,6 +308,11 @@ export function ThreadList() {
       event.preventDefault();
       setActive(id);
     }
+  }
+
+  function handleMoreClick(event: MouseEvent<HTMLButtonElement>, id: string) {
+    event.stopPropagation();
+    setOpenMenuId((prev) => (prev === id ? null : id));
   }
 
   return (
@@ -180,19 +350,31 @@ export function ThreadList() {
         </button>
       </div>
 
+      {/* Filter */}
+      <div className="px-3 pb-2">
+        <input
+          type="text"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Filter titles…"
+          aria-label="Filter conversations by title"
+          className={cn(
+            "w-full rounded border border-line-2 bg-bg-2 px-2 py-1",
+            "text-[12px] text-fg-1 placeholder:text-fg-3",
+            "focus-ring focus:border-acc",
+          )}
+        />
+      </div>
+
       {/* Body */}
       <div
-        className="flex-1 overflow-y-auto"
+        ref={menuContainerRef}
+        className="relative flex-1 overflow-y-auto"
         role="list"
         aria-label="Conversations"
       >
         {sections.map((section) => {
-          // Pinned stays hidden when empty; the other three always render so
-          // the user learns the structure. Empty groups render a single muted
-          // line rather than a blank band.
-          if (section.id === "pinned" && section.items.length === 0) {
-            return null;
-          }
+          if (section.items.length === 0) return null;
           return (
             <div key={section.id} className="pb-1">
               <div className="flex items-center justify-between px-3 pt-2 pb-1">
@@ -201,17 +383,13 @@ export function ThreadList() {
                   {section.items.length}
                 </span>
               </div>
-              {section.items.length === 0 ? (
-                <div className="px-3 pb-1 text-[11.5px] text-fg-3 italic">
-                  empty
-                </div>
-              ) : (
-                section.items.map((conv) => {
-                  const isActive = conv.id === activeId;
-                  const isPinned = Boolean(pinned[conv.id]);
-                  return (
+              {section.items.map((conv) => {
+                const isActive = conv.id === activeId;
+                const frozen = isFrozen(conv);
+                const isMenuOpen = openMenuId === conv.id;
+                return (
+                  <div key={conv.id} className="relative">
                     <button
-                      key={conv.id}
                       type="button"
                       role="listitem"
                       aria-current={isActive ? "true" : undefined}
@@ -223,6 +401,7 @@ export function ThreadList() {
                         isActive
                           ? "bg-acc-dim text-fg-0"
                           : "text-fg-1 hover:bg-bg-2",
+                        frozen && !isActive && "text-fg-2",
                       )}
                     >
                       {isActive && (
@@ -231,11 +410,17 @@ export function ThreadList() {
                           className="pointer-events-none absolute inset-y-1.5 left-0 w-0.5 bg-acc"
                         />
                       )}
-                      <div className="flex items-center gap-1.5">
-                        {isPinned && (
+                      <div className="flex items-center gap-1.5 pr-6">
+                        {conv.pinned && !frozen && (
                           <Pin
                             className="h-2.5 w-2.5 shrink-0 text-acc"
                             aria-label="Pinned"
+                          />
+                        )}
+                        {frozen && (
+                          <Lock
+                            className="h-2.5 w-2.5 shrink-0 text-fg-3"
+                            aria-label="Frozen"
                           />
                         )}
                         <span
@@ -250,13 +435,33 @@ export function ThreadList() {
                           {relativeTime(conv.updatedAt, Date.now())}
                         </span>
                       </div>
-                      <div className="mt-0.5 truncate text-[11.5px] text-fg-3">
+                      <div className="mt-0.5 truncate pr-6 text-[11.5px] text-fg-3">
                         {previewOf(conv)}
                       </div>
                     </button>
-                  );
-                })
-              )}
+                    <button
+                      type="button"
+                      onClick={(e) => handleMoreClick(e, conv.id)}
+                      aria-label={`More options for ${conv.title}`}
+                      aria-haspopup="menu"
+                      aria-expanded={isMenuOpen}
+                      className={cn(
+                        "absolute right-1 top-1.5 inline-flex h-5 w-5",
+                        "items-center justify-center rounded text-fg-3",
+                        "hover:text-fg-0 hover:bg-bg-2 focus-ring",
+                      )}
+                    >
+                      <MoreHorizontal className="h-3 w-3" aria-hidden />
+                    </button>
+                    {isMenuOpen && (
+                      <MoreMenu
+                        conversation={conv}
+                        onClose={() => setOpenMenuId(null)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           );
         })}
@@ -266,21 +471,11 @@ export function ThreadList() {
             <div className="mono text-[10.5px]">⌘N to start</div>
           </div>
         )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex h-10 items-center gap-2 border-t border-line-2 px-3">
-        <button
-          type="button"
-          className={cn(
-            "inline-flex items-center gap-1.5 text-[11.5px] text-fg-2",
-            "hover:text-fg-0 focus-ring rounded",
-          )}
-          aria-label="Archive"
-        >
-          <Archive className="h-2.5 w-2.5" aria-hidden />
-          <span>Archive</span>
-        </button>
+        {conversations.length > 0 && filtered.length === 0 && (
+          <div className="px-3 py-6 text-center text-[12px] text-fg-3">
+            No matching titles
+          </div>
+        )}
       </div>
 
       {/* Right-edge resizer */}
