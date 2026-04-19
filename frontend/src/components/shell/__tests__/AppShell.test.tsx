@@ -12,7 +12,7 @@ vi.mock("@/components/layout/IconRail", () => ({
 vi.mock("../ThreadList", () => ({
   ThreadList: () => <aside data-testid="thread-list">ThreadList</aside>,
 }));
-vi.mock("../Dock", () => ({
+vi.mock("@/components/dock/Dock", () => ({
   Dock: () => <aside data-testid="dock">Dock</aside>,
 }));
 

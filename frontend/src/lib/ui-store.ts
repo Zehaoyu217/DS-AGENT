@@ -24,8 +24,18 @@ export const DOCK_BREAKPOINT = 900;
 const clamp = (n: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, n));
 
+export const ACCENT_SWATCHES = [
+  "#e0733a", // orange (default — Claude brand)
+  "#a3e635", // lime
+  "#22d3ee", // cyan
+  "#c084fc", // violet
+  "#f472b6", // pink
+] as const;
+export type AccentColor = (typeof ACCENT_SWATCHES)[number];
+const ACCENT_DEFAULT: AccentColor = "#e0733a";
+
 export const UiPersistedSchema = z.object({
-  v: z.literal(2).default(2),
+  v: z.literal(3).default(3),
   threadW: z.number().int().min(THREAD_W_MIN).max(THREAD_W_MAX).default(200),
   dockW: z.number().int().min(DOCK_W_MIN).max(DOCK_W_MAX).default(320),
   threadsOpen: z.boolean().default(true),
@@ -36,6 +46,14 @@ export const UiPersistedSchema = z.object({
   artifactView: z.enum(["grid", "list"]).default("grid"),
   recentCommandIds: z.array(z.string()).default([]),
   traceTab: z.enum(["timeline", "context", "raw"]).default("timeline"),
+  // v3 additions — Tweaks panel knobs
+  accent: z.enum(ACCENT_SWATCHES).default(ACCENT_DEFAULT),
+  dockPosition: z.enum(["right", "bottom", "off"]).default("right"),
+  msgStyle: z.enum(["flat", "bordered"]).default("flat"),
+  thinkMode: z.enum(["tab", "inline"]).default("tab"),
+  uiFont: z.enum(["mono", "sans"]).default("mono"),
+  railMode: z.enum(["icon", "expand"]).default("icon"),
+  agentRunning: z.boolean().default(true),
 });
 
 export type UiPersisted = z.infer<typeof UiPersistedSchema>;
@@ -43,6 +61,11 @@ export type DockTab = UiPersisted["dockTab"];
 export type Density = UiPersisted["density"];
 export type ArtifactView = UiPersisted["artifactView"];
 export type TraceTab = UiPersisted["traceTab"];
+export type DockPosition = UiPersisted["dockPosition"];
+export type MsgStyle = UiPersisted["msgStyle"];
+export type ThinkMode = UiPersisted["thinkMode"];
+export type UiFont = UiPersisted["uiFont"];
+export type RailMode = UiPersisted["railMode"];
 
 export interface UiStore extends UiPersisted {
   /** User intentionally overrode auto-collapse for the thread list. */
@@ -63,6 +86,15 @@ export interface UiStore extends UiPersisted {
   setArtifactView: (view: ArtifactView) => void;
   pushRecentCommand: (id: string) => void;
   setTraceTab: (tab: TraceTab) => void;
+
+  // Tweaks panel setters
+  setAccent: (c: AccentColor) => void;
+  setDockPosition: (p: DockPosition) => void;
+  setMsgStyle: (s: MsgStyle) => void;
+  setThinkMode: (m: ThinkMode) => void;
+  setUiFont: (f: UiFont) => void;
+  setRailMode: (r: RailMode) => void;
+  setAgentRunning: (running: boolean) => void;
 
   /** Auto-collapse hook: set without flipping the override bit. */
   setAutoThreads: (open: boolean) => void;
@@ -102,15 +134,15 @@ function createZodStorage(): PersistStorage<UiPersisted> {
           if (legacyThread === null && legacyDock === null) return null;
 
           const migrated = UiPersistedSchema.parse({
-            v: 2,
+            v: 3,
             threadW: legacyThread ?? undefined,
             dockW: legacyDock ?? undefined,
           });
-          return { state: migrated, version: 2 };
+          return { state: migrated, version: 3 };
         }
 
         const parsed = JSON.parse(raw) as RawPersistEnvelope;
-        // Backfill v2 fields onto v1 payloads before zod validates.
+        // Backfill v2/v3 fields onto older payloads before zod validates.
         const stateCandidate =
           parsed?.state && typeof parsed.state === "object"
             ? {
@@ -118,13 +150,20 @@ function createZodStorage(): PersistStorage<UiPersisted> {
                 artifactView: "grid",
                 recentCommandIds: [],
                 traceTab: "timeline",
+                accent: ACCENT_DEFAULT,
+                dockPosition: "right",
+                msgStyle: "flat",
+                thinkMode: "tab",
+                uiFont: "mono",
+                railMode: "icon",
+                agentRunning: true,
                 ...(parsed.state as Record<string, unknown>),
-                v: 2,
+                v: 3,
               }
             : parsed?.state;
         const state = UiPersistedSchema.safeParse(stateCandidate);
         if (!state.success) return null;
-        return { state: state.data, version: 2 };
+        return { state: state.data, version: 3 };
       } catch {
         return null;
       }
@@ -166,7 +205,7 @@ function readIntKey(key: string): number | null {
 export const useUiStore = create<UiStore>()(
   persist(
     (set) => ({
-      v: 2,
+      v: 3,
       threadW: 200,
       dockW: 320,
       threadsOpen: true,
@@ -177,6 +216,13 @@ export const useUiStore = create<UiStore>()(
       artifactView: "grid",
       recentCommandIds: [],
       traceTab: "timeline",
+      accent: ACCENT_DEFAULT,
+      dockPosition: "right",
+      msgStyle: "flat",
+      thinkMode: "tab",
+      uiFont: "mono",
+      railMode: "icon",
+      agentRunning: true,
 
       threadsOverridden: false,
       dockOverridden: false,
@@ -228,6 +274,14 @@ export const useUiStore = create<UiStore>()(
         }),
       setTraceTab: (tab) => set({ traceTab: tab }),
 
+      setAccent: (c) => set({ accent: c }),
+      setDockPosition: (p) => set({ dockPosition: p }),
+      setMsgStyle: (s) => set({ msgStyle: s }),
+      setThinkMode: (m) => set({ thinkMode: m }),
+      setUiFont: (f) => set({ uiFont: f }),
+      setRailMode: (r) => set({ railMode: r }),
+      setAgentRunning: (running) => set({ agentRunning: running }),
+
       setAutoThreads: (open) => set({ threadsOpen: open }),
       setAutoDock: (open) => set({ dockOpen: open }),
 
@@ -236,10 +290,10 @@ export const useUiStore = create<UiStore>()(
     }),
     {
       name: PERSIST_KEY,
-      version: 2,
+      version: 3,
       storage: createZodStorage(),
       partialize: (s): UiPersisted => ({
-        v: 2,
+        v: 3,
         threadW: s.threadW,
         dockW: s.dockW,
         threadsOpen: s.threadsOpen,
@@ -250,16 +304,30 @@ export const useUiStore = create<UiStore>()(
         artifactView: s.artifactView,
         recentCommandIds: s.recentCommandIds,
         traceTab: s.traceTab,
+        accent: s.accent,
+        dockPosition: s.dockPosition,
+        msgStyle: s.msgStyle,
+        thinkMode: s.thinkMode,
+        uiFont: s.uiFont,
+        railMode: s.railMode,
+        agentRunning: s.agentRunning,
       }),
       migrate: (persisted, fromVersion) => {
-        if (fromVersion < 2 && persisted && typeof persisted === "object") {
+        if (fromVersion < 3 && persisted && typeof persisted === "object") {
           const merged = {
             progressExpanded: [],
             artifactView: "grid",
             recentCommandIds: [],
             traceTab: "timeline",
+            accent: ACCENT_DEFAULT,
+            dockPosition: "right",
+            msgStyle: "flat",
+            thinkMode: "tab",
+            uiFont: "mono",
+            railMode: "icon",
+            agentRunning: true,
             ...(persisted as Record<string, unknown>),
-            v: 2,
+            v: 3,
           };
           return merged as unknown as UiPersisted;
         }
@@ -280,3 +348,10 @@ export const selectArtifactView = (s: UiStore): ArtifactView => s.artifactView;
 export const selectProgressExpanded = (s: UiStore): string[] => s.progressExpanded;
 export const selectTraceTab = (s: UiStore): TraceTab => s.traceTab;
 export const selectRecentCommandIds = (s: UiStore): string[] => s.recentCommandIds;
+export const selectAccent = (s: UiStore): AccentColor => s.accent;
+export const selectDockPosition = (s: UiStore): DockPosition => s.dockPosition;
+export const selectMsgStyle = (s: UiStore): MsgStyle => s.msgStyle;
+export const selectThinkMode = (s: UiStore): ThinkMode => s.thinkMode;
+export const selectUiFont = (s: UiStore): UiFont => s.uiFont;
+export const selectRailMode = (s: UiStore): RailMode => s.railMode;
+export const selectAgentRunning = (s: UiStore): boolean => s.agentRunning;
