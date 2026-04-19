@@ -97,13 +97,13 @@ Replace the current Cockpit shell with the handoff's four-pane `AppShell` (IconR
 **Owner:** main Claude session
 
 ## Phases
-- [ ] Phase 1 — Store additions
-- [ ] Phase 2 — Composer extraction
-- [ ] Phase 3 — Composer parity surfaces
-- [ ] Phase 4 — Message parity surfaces
-- [ ] Phase 5 — Header toolbar
-- [ ] Phase 6 — ChatPane integration + retirement
-- [ ] Phase 7 — Shortcuts + verification
+- [x] Phase 1 — Store additions
+- [x] Phase 2 — Composer extraction
+- [x] Phase 3 — Composer parity surfaces
+- [x] Phase 4 — Message parity surfaces
+- [x] Phase 5 — Header toolbar
+- [x] Phase 6 — ChatPane integration + retirement
+- [x] Phase 7 — Shortcuts + verification
 
 ## Errors Encountered
 
