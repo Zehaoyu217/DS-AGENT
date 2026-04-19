@@ -207,6 +207,32 @@ export function ShortcutWiring() {
         global: true,
         icon: 'PanelRight',
       }),
+      registerCommand({
+        id: CMD.CYCLE_MODEL,
+        keys: ['mod+shift+m'],
+        label: 'Cycle model',
+        description: 'Advance the active conversation to the next model',
+        category: 'Model',
+        action: () => {
+          const w = window as Window & { __dsAgentCycleModel?: (dir: 1 | -1) => void }
+          w.__dsAgentCycleModel?.(1)
+        },
+        global: true,
+      }),
+      registerCommand({
+        id: CMD.TOGGLE_EXTENDED,
+        keys: ['mod+shift+e'],
+        label: 'Toggle extended thinking',
+        description: 'Enable or disable extended thinking for the active conversation',
+        category: 'Model',
+        action: () => {
+          const state = useChatStore.getState()
+          const conv = state.conversations.find((c) => c.id === state.activeConversationId)
+          if (!conv) return
+          state.setConversationExtendedThinking(conv.id, !conv.extendedThinking)
+        },
+        global: true,
+      }),
       ...SECTION_SHORTCUTS.map(({ id, key, section, label }) =>
         registerCommand({
           id,

@@ -71,6 +71,8 @@ export const CMD = {
   SWITCH_7: 'switch-conversation-7',
   SWITCH_8: 'switch-conversation-8',
   SWITCH_9: 'switch-conversation-9',
+  CYCLE_MODEL: 'cycle-model',
+  TOGGLE_EXTENDED: 'toggle-extended',
 } as const
 
 export type CommandId = (typeof CMD)[keyof typeof CMD]
