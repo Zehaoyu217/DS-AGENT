@@ -1209,6 +1209,29 @@ def _stream_agent_loop(
                 else:
                     yield event.to_sse()
 
+                # Emit a context_snapshot frame after each turn_start and after
+                # each micro_compact so the Dock Context panel can stay live
+                # without polling. Source of truth: ContextManager.snapshot().
+                if event.type in ("turn_start", "micro_compact"):
+                    snap = ctx.snapshot()
+                    yield sse_line(
+                        "context_snapshot",
+                        {
+                            "layers": [
+                                {
+                                    "id": str(i),
+                                    "label": str(layer.get("name", "")),
+                                    "tokens": int(layer.get("tokens", 0)),
+                                    "max_tokens": int(snap["max_tokens"]),
+                                }
+                                for i, layer in enumerate(snap.get("layers", []))
+                            ],
+                            "loaded_files": [],
+                            "total_tokens": int(snap.get("total_tokens", 0)),
+                            "budget_tokens": int(snap.get("max_tokens", 0)),
+                        },
+                    )
+
             final_outcome_state = captured_state
     except Exception as exc:
         logger.error("stream_agent_loop failed: %s", exc, exc_info=True)
