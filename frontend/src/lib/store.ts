@@ -152,6 +152,8 @@ interface ChatState {
   addMessage: (conversationId: string, msg: Omit<Message, 'id' | 'timestamp'>) => string
   updateMessage: (conversationId: string, messageId: string, patch: Partial<Message>) => void
   setConversationSessionId: (conversationId: string, sessionId: string) => void
+  setConversationContext: (conversationId: string, context: ContextShape) => void
+  unloadFile: (conversationId: string, fileId: string) => void
   loadConversation: (id: string) => Promise<void>
   createConversationRemote: (title: string) => Promise<string>
   toggleSidebar: () => void
@@ -370,6 +372,27 @@ export const useChatStore = create<ChatState>()(
           ),
         }))
       },
+
+      setConversationContext: (conversationId, context) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c.id === conversationId ? { ...c, context } : c,
+          ),
+        })),
+
+      unloadFile: (conversationId, fileId) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId || !c.context) return c
+            return {
+              ...c,
+              context: {
+                ...c.context,
+                loadedFiles: c.context.loadedFiles.filter((f) => f.id !== fileId),
+              },
+            }
+          }),
+        })),
 
       loadConversation: async (id: string) => {
         const conv = await backend.conversations.get(id)
