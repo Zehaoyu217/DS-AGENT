@@ -70,6 +70,7 @@ Entry shape:
 
 ### Changed
 
+- **shell**: rebuilt the frontend app shell to the four-pane DS-Agent handoff (IconRail + ThreadList + Conversation + Dock). Retired `Cockpit`/`TopHUD`/`RightRail`/`SessionDropdown`/`cockpit.css` and trimmed `right-rail-store` to its persisted `traceTab` only. Theme default flipped to light with `[data-theme="dark"]` opt-in and legacy-`.light`-class migration. Summon modes promoted to first-class sections (`graph`/`digest`/`ingest`) on the IconRail. New keyboard shortcuts: `mod+j` toggles the dock, `mod+shift+1..9` jumps to each rail section; dropped `CYCLE_RAIL`. (`frontend/src/App.tsx`, `frontend/src/components/shell/`, `frontend/src/components/layout/`, `frontend/src/lib/right-rail-store.ts`, `frontend/src/lib/shortcuts.ts`)
 - **`scripts/verify_orphans.py`** — rewrote oracle for split (backend/frontend) FP measurement: scoped per-side path search, code-only file types, generic-name skip list, file-stem inference, and deterministic 60+40 sample. Replaces the v1 combined-only `git grep -lw` oracle that conflated name collisions with real usage. (`scripts/verify_orphans.py`)
 - **Plugin A spec gate recalibrated**: original target (<15% backend / <30% frontend) was empirically unattainable with AST-only extraction. Bands moved to <40% per side. Rationale and methodology added to spec § 1 + § 9. (`docs/superpowers/specs/2026-04-16-integrity-plugin-a-design.md`)
 

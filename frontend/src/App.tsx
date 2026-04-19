@@ -13,12 +13,12 @@ import {
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CMD } from '@/lib/shortcuts'
 import { MonitorPage } from '@/pages/MonitorPage'
-import { Cockpit } from '@/components/cockpit/Cockpit'
-import { IconRail } from '@/components/layout/IconRail'
-import { useChatStore } from '@/lib/store'
+import { ChatMain } from '@/components/cockpit/ChatMain'
+import { AppShell } from '@/components/shell/AppShell'
+import { useChatStore, type SectionId } from '@/lib/store'
+import { useUiStore } from '@/lib/ui-store'
 import { useDigestStore } from '@/lib/digest-store'
 import { useSkillsStore } from '@/lib/skills-store'
-import { useRightRailStore } from '@/lib/right-rail-store'
 import { AgentsSection } from '@/sections/AgentsSection'
 import { SkillsSection } from '@/sections/SkillsSection'
 import { PromptsSection } from '@/sections/PromptsSection'
@@ -30,6 +30,28 @@ import { DigestPanel } from '@/components/digest/DigestPanel'
 import { IngestPanel } from '@/components/ingest/IngestPanel'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
+interface SectionShortcut {
+  id: string
+  key: string
+  section: SectionId
+  label: string
+}
+
+// Keep this in IconRail order (9 sections) so the digits map to the visual
+// rail 1..9 top-to-bottom. `mod+shift+N` is global — the conversation-scoped
+// `mod+N` digit shortcut continues to switch conversation slots.
+export const SECTION_SHORTCUTS: readonly SectionShortcut[] = [
+  { id: CMD.OPEN_SECTION_CHAT, key: 'mod+shift+1', section: 'chat', label: 'Open Chat' },
+  { id: CMD.OPEN_SECTION_AGENTS, key: 'mod+shift+2', section: 'agents', label: 'Open Agents' },
+  { id: CMD.OPEN_SECTION_SKILLS, key: 'mod+shift+3', section: 'skills', label: 'Open Skills' },
+  { id: CMD.OPEN_SECTION_PROMPTS, key: 'mod+shift+4', section: 'prompts', label: 'Open Prompts' },
+  { id: CMD.OPEN_SECTION_CONTEXT, key: 'mod+shift+5', section: 'context', label: 'Open Context' },
+  { id: CMD.OPEN_SECTION_HEALTH, key: 'mod+shift+6', section: 'health', label: 'Open Health' },
+  { id: CMD.OPEN_SECTION_GRAPH, key: 'mod+shift+7', section: 'graph', label: 'Open Graph' },
+  { id: CMD.OPEN_SECTION_DIGEST, key: 'mod+shift+8', section: 'digest', label: 'Open Digest' },
+  { id: CMD.OPEN_SECTION_INGEST, key: 'mod+shift+9', section: 'ingest', label: 'Open Ingest' },
+]
+
 function useHashRoute(): string {
   const [hash, setHash] = useState(window.location.hash)
   useEffect(() => {
@@ -40,7 +62,7 @@ function useHashRoute(): string {
   return hash
 }
 
-function ShortcutWiring() {
+export function ShortcutWiring() {
   const { registerCommand, openPalette, openHelp } = useCommandRegistry()
   const { theme, setTheme } = useTheme()
   const conversations = useChatStore((s) => s.conversations)
@@ -127,16 +149,6 @@ function ShortcutWiring() {
         icon: 'HelpCircle',
       }),
       registerCommand({
-        id: CMD.CYCLE_RAIL,
-        keys: ['mod+\\'],
-        label: 'Cycle right rail',
-        description: 'Cycle right rail mode between trace, graph, digest, ingest',
-        category: 'View',
-        action: () => useRightRailStore.getState().cycleMode(),
-        global: true,
-        icon: 'Columns',
-      }),
-      registerCommand({
         id: CMD.PREV_CONVERSATION,
         keys: ['mod+shift+['],
         label: 'Previous conversation',
@@ -185,6 +197,27 @@ function ShortcutWiring() {
           },
         })
       ),
+      registerCommand({
+        id: CMD.TOGGLE_DOCK,
+        keys: ['mod+j'],
+        label: 'Toggle dock',
+        description: 'Show or hide the right dock (progress / context / raw)',
+        category: 'View',
+        action: () => useUiStore.getState().toggleDock(),
+        global: true,
+        icon: 'PanelRight',
+      }),
+      ...SECTION_SHORTCUTS.map(({ id, key, section, label }) =>
+        registerCommand({
+          id,
+          keys: [key],
+          label,
+          description: `Jump to the ${section} section`,
+          category: 'Navigation',
+          action: () => setActiveSection(section),
+          global: true,
+        }),
+      ),
     ]
     return () => {
       for (const dispose of disposers) dispose()
@@ -206,7 +239,7 @@ function SectionContent() {
 
   switch (activeSection) {
     case 'chat':
-      return <Cockpit />
+      return <ChatMain />
     case 'agents':
       return <AgentsSection />
     case 'skills':
@@ -226,7 +259,7 @@ function SectionContent() {
     case 'settings':
       return <SettingsSection />
     default:
-      return <Cockpit />
+      return <ChatMain />
   }
 }
 
@@ -267,14 +300,11 @@ export default function App() {
           <CommandRegistryProvider>
             <SkipToContent />
             <ShortcutWiring />
-            <div className="flex h-dvh overflow-hidden bg-canvas text-surface-100">
-              <IconRail />
-              <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
-                <ErrorBoundary name="SectionContent">
-                  <SectionContent />
-                </ErrorBoundary>
-              </div>
-            </div>
+            <AppShell>
+              <ErrorBoundary name="SectionContent">
+                <SectionContent />
+              </ErrorBoundary>
+            </AppShell>
             <CommandPalette />
             <GlobalSearchPanel />
             <ShortcutsHelp />

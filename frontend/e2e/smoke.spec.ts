@@ -91,7 +91,7 @@ test('icon rail renders with navigation buttons', async ({ page }) => {
   await expect(nav).toBeVisible({ timeout: 10_000 })
 
   // Expect core nav buttons to exist
-  const expectedLabels = ['Chat', 'Agents', 'Skills', 'DevTools', 'Settings']
+  const expectedLabels = ['Chat', 'Agents', 'Skills', 'Context', 'Health', 'Settings']
   for (const label of expectedLabels) {
     const btn = nav.locator(`button[aria-label="${label}"]`)
     await expect(btn).toBeVisible({ timeout: 5_000 })
@@ -113,34 +113,28 @@ test('theme toggle switches between dark and light', async ({ page }) => {
 
   const html = page.locator('html')
 
-  // App defaults to dark (no .light class on <html>)
-  const initialClasses = await html.getAttribute('class') ?? ''
-  const startsDark = !initialClasses.includes('light')
-  // Accept either dark or light as valid initial state
-  expect(typeof startsDark).toBe('boolean')
+  // App defaults to light (no data-theme attr on <html>)
+  const initialTheme = await html.getAttribute('data-theme')
+  const startsDark = initialTheme === 'dark'
 
-  // Theme is toggled via the ThemeProvider — trigger it through localStorage + reload
-  // This simulates the user flipping the theme via settings or command palette
+  // Toggle via the `ds:theme` storage key (ThemeProvider reads this on mount)
   await page.evaluate(() => {
-    const current = localStorage.getItem('theme') ?? 'dark'
-    localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark')
+    const current = localStorage.getItem('ds:theme') ?? 'light'
+    localStorage.setItem('ds:theme', current === 'dark' ? 'light' : 'dark')
   })
   await page.reload({ waitUntil: 'domcontentloaded' })
 
-  const afterClasses = await html.getAttribute('class') ?? ''
-  const nowLight = afterClasses.includes('light')
+  const afterTheme = await html.getAttribute('data-theme')
+  const nowDark = afterTheme === 'dark'
 
-  // Toggling from dark → light should add .light class; from light → dark removes it
-  if (startsDark) {
-    expect(nowLight).toBe(true)
-  } else {
-    expect(nowLight).toBe(false)
-  }
+  // Flipping inverts the mode
+  expect(nowDark).toBe(!startsDark)
 
   // Restore original theme
-  await page.evaluate(() => {
-    localStorage.setItem('theme', 'dark')
-  })
+  await page.evaluate((t) => {
+    if (t) localStorage.setItem('ds:theme', t)
+    else localStorage.removeItem('ds:theme')
+  }, initialTheme)
 
   await page.screenshot({ path: 'e2e-smoke-theme-toggle.png' })
 })
@@ -155,13 +149,12 @@ test('clicking icon rail buttons switches active section', async ({ page }) => {
   const nav = page.locator('nav[aria-label="Main navigation"]')
   await expect(nav).toBeVisible({ timeout: 10_000 })
 
-  // Navigate to DevTools section
-  const devtoolsBtn = nav.locator('button[aria-label="DevTools"]')
-  await expect(devtoolsBtn).toBeVisible()
-  await devtoolsBtn.click()
+  // Navigate to the Context section (replaces the retired DevTools rail button)
+  const contextBtn = nav.locator('button[aria-label="Context"]')
+  await expect(contextBtn).toBeVisible()
+  await contextBtn.click()
 
-  // The DevTools button should become active
-  await expect(devtoolsBtn).toHaveAttribute('aria-current', 'page', { timeout: 3_000 })
+  await expect(contextBtn).toHaveAttribute('aria-current', 'page', { timeout: 3_000 })
 
   // Navigate back to Chat
   const chatBtn = nav.locator('button[aria-label="Chat"]')
