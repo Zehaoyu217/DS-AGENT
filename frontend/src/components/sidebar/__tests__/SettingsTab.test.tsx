@@ -106,18 +106,11 @@ describe('<SettingsTab>', () => {
     const modelInput = screen.getByLabelText('Model') as HTMLInputElement
     expect(modelInput.value).toBe('claude-sonnet-4-6')
 
-    // Theme radios reflect current.
-    const darkRadio = screen.getByLabelText('Dark') as HTMLInputElement
-    expect(darkRadio.checked).toBe(true)
+    // Theme moved to Tweaks panel — only the hint should remain here.
+    expect(screen.getByTestId('tweaks-hint')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Dark')).toBeNull()
 
-    // Change theme to light.
-    const lightRadio = screen.getByLabelText('Light') as HTMLInputElement
-    await act(async () => {
-      fireEvent.click(lightRadio)
-    })
-    expect(lightRadio.checked).toBe(true)
-
-    // Click Save.
+    // Click Save (theme is no longer edited from this panel).
     const saveBtn = screen.getByRole('button', { name: /^save$/i })
     await act(async () => {
       saveBtn.click()
@@ -126,10 +119,10 @@ describe('<SettingsTab>', () => {
       await Promise.resolve()
     })
 
-    // Verify PUT was called with updated theme.
+    // Verify PUT was called and persisted the loaded theme.
     const putCall = calls.find((c) => c.method === 'PUT')
     expect(putCall).toBeDefined()
-    expect((putCall?.body as { theme: string }).theme).toBe('light')
+    expect((putCall?.body as { theme: string }).theme).toBe('dark')
 
     // Saved toast should render.
     expect(screen.getByRole('status').textContent).toMatch(/Saved/)

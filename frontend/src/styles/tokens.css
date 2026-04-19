@@ -112,6 +112,39 @@ html[data-density="cozy"] {
   --pad-y: 12px;
 }
 
+/* ── Tweaks-driven hooks ──────────────────────────────────────────────── */
+/* uiFont: 'mono' (default) keeps system labels in JetBrains Mono.
+ * 'sans' switches the UI body font to Inter. The mono token is preserved
+ * so code blocks and explicit font-mono utilities stay monospace. */
+html[data-font="sans"] {
+  --font-ui: var(--font-sans);
+}
+html[data-font="mono"] {
+  --font-ui: var(--font-mono);
+}
+html[data-font="sans"] body {
+  font-family: var(--font-sans);
+}
+
+/* msgStyle: 'flat' (default) is borderless; 'bordered' adds a subtle
+ * 1px line + radius around message bubbles via the [data-msg] hook. */
+html[data-msg-style="bordered"] [data-msg] {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+/* thinkMode: 'tab' (default) keeps thinking in the dock tab; 'inline'
+ * surfaces it as collapsible blocks under each turn. The actual swap is
+ * handled by the renderer; this token exposes the current mode for CSS
+ * scoping. */
+html[data-think-mode="inline"] [data-think-block] {
+  display: block;
+}
+html[data-think-mode="tab"] [data-think-block] {
+  display: none;
+}
+
 /* ── Signature keyframes ──────────────────────────────────────────────── */
 @keyframes march {
   to {

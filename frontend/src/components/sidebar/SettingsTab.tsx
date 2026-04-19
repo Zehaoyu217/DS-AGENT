@@ -1,20 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { backend, type UserSettings, type ThemePreference, type ModelGroup } from '@/lib/api-backend'
-import { useTheme } from '@/components/layout/ThemeProvider'
+import { backend, type UserSettings, type ModelGroup } from '@/lib/api-backend'
+import { useUiStore } from '@/lib/ui-store'
 import { cn } from '@/lib/utils'
-
-const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'system', label: 'System' },
-]
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 const SAVED_MESSAGE_MS = 2000
 
 export function SettingsTab() {
-  const { setTheme } = useTheme()
   const [settings, setSettings] = useState<UserSettings | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saveState, setSaveState] = useState<SaveState>('idle')
@@ -51,14 +44,6 @@ export function SettingsTab() {
     const id = window.setTimeout(() => setSaveState('idle'), SAVED_MESSAGE_MS)
     return () => window.clearTimeout(id)
   }, [saveState])
-
-  const handleThemeChange = useCallback(
-    (value: ThemePreference) => {
-      setSettings((prev) => (prev ? { ...prev, theme: value } : prev))
-      setTheme(value)
-    },
-    [setTheme],
-  )
 
   const handleModelChange = useCallback((value: string) => {
     setSettings((prev) => (prev ? { ...prev, model: value } : prev))
@@ -107,32 +92,29 @@ export function SettingsTab() {
 
         {settings && (
           <>
-            <fieldset>
-              <legend className="text-xs font-semibold text-surface-300 mb-2">
-                Theme
-              </legend>
-              <div className="space-y-1.5">
-                {THEME_OPTIONS.map((opt) => (
-                  <label
-                    key={opt.value}
-                    className={cn(
-                      'flex items-center gap-2 cursor-pointer text-sm',
-                      'text-surface-300 hover:text-surface-100',
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="theme"
-                      value={opt.value}
-                      checked={settings.theme === opt.value}
-                      onChange={() => handleThemeChange(opt.value)}
-                      className="accent-brand-500"
-                    />
-                    <span>{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+            <div
+              className="rounded-md border px-3 py-2 text-xs"
+              style={{
+                background: 'var(--bg-1)',
+                borderColor: 'var(--line)',
+                color: 'var(--fg-2)',
+              }}
+              data-testid="tweaks-hint"
+            >
+              <span className="font-mono uppercase tracking-wider" style={{ color: 'var(--fg-1)' }}>
+                Tip
+              </span>
+              {' — Theme, accent, density, and other UI knobs live in '}
+              <button
+                type="button"
+                onClick={() => useUiStore.getState().setTweaksOpen(true)}
+                className="font-mono underline-offset-2 hover:underline"
+                style={{ color: 'var(--acc)' }}
+              >
+                Tweaks (⌘,)
+              </button>
+              .
+            </div>
 
             <div>
               <label
