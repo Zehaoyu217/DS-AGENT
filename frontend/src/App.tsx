@@ -21,15 +21,20 @@ import { useChatStore, type SectionId } from '@/lib/store'
 import { useUiStore } from '@/lib/ui-store'
 import { useDigestStore } from '@/lib/digest-store'
 import { useSkillsStore } from '@/lib/skills-store'
-import { AgentsSection } from '@/sections/AgentsSection'
-import { SkillsSection } from '@/sections/SkillsSection'
-import { PromptsSection } from '@/sections/PromptsSection'
 import { ContextSection } from '@/sections/ContextSection'
 import { HealthSection } from '@/sections/HealthSection'
 import { SettingsSection } from '@/sections/SettingsSection'
 import { GraphPanel } from '@/components/graph/GraphPanel'
 import { DigestPanel } from '@/components/digest/DigestPanel'
 import { IngestPanel } from '@/components/ingest/IngestPanel'
+import { KnowledgeSurface } from '@/sections/KnowledgeSurface'
+import { MemorySurface } from '@/sections/MemorySurface'
+import { IntegritySurface } from '@/sections/IntegritySurface'
+import {
+  AgentsSurface,
+  SkillsSurface,
+  PromptsSurface,
+} from '@/sections/LibrarySurfaces'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { ArtifactViewer } from '@/components/artifact/ArtifactViewer'
 import { SettingsOverlay } from '@/components/settings/SettingsOverlay'
@@ -280,17 +285,17 @@ function SectionContent() {
     case 'chat':
       return <ChatPane />
     case 'knowledge':
-      return <GraphPanel open onClose={backToChat} embedded={false} />
+      return <KnowledgeSurface />
     case 'memory':
-      return <ContextSection />
+      return <MemorySurface />
     case 'agents':
-      return <AgentsSection />
+      return <AgentsSurface />
     case 'skills':
-      return <SkillsSection />
+      return <SkillsSurface />
     case 'prompts':
-      return <PromptsSection />
+      return <PromptsSurface />
     case 'integrity':
-      return <HealthSection />
+      return <IntegritySurface />
     case 'settings':
       return <SettingsSection />
     // Legacy IDs — store aliases redirect these, but keep arms for safety.
