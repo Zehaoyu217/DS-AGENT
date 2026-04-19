@@ -13,7 +13,7 @@ import {
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CMD } from '@/lib/shortcuts'
 import { MonitorPage } from '@/pages/MonitorPage'
-import { ChatMain } from '@/components/cockpit/ChatMain'
+import { ChatPane } from '@/components/chat/ChatPane'
 import { AppShell } from '@/components/shell/AppShell'
 import { useChatStore, type SectionId } from '@/lib/store'
 import { useUiStore } from '@/lib/ui-store'
@@ -239,7 +239,7 @@ function SectionContent() {
 
   switch (activeSection) {
     case 'chat':
-      return <ChatMain />
+      return <ChatPane />
     case 'agents':
       return <AgentsSection />
     case 'skills':
@@ -259,7 +259,7 @@ function SectionContent() {
     case 'settings':
       return <SettingsSection />
     default:
-      return <ChatMain />
+      return <ChatPane />
   }
 }
 
