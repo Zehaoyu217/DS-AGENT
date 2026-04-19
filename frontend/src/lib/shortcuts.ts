@@ -45,6 +45,7 @@ export const CMD = {
   NEW_CONVERSATION: 'new-conversation',
   TOGGLE_SIDEBAR: 'toggle-sidebar',
   OPEN_SETTINGS: 'open-settings',
+  OPEN_TWEAKS: 'open-tweaks',
   TOGGLE_THEME: 'toggle-theme',
   FOCUS_CHAT: 'focus-chat',
   SHOW_HELP: 'show-help',
