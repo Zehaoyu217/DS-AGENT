@@ -125,6 +125,7 @@ interface ChatState {
   clearAttachedFiles: (conversationId: string) => void
   updateConversationTitle: (id: string, title: string) => void
   forkConversation: (conversationId: string, throughMessageId?: string) => string
+  deleteConversation: (id: string) => void
   addMessage: (conversationId: string, msg: Omit<Message, 'id' | 'timestamp'>) => string
   updateMessage: (conversationId: string, messageId: string, patch: Partial<Message>) => void
   setConversationSessionId: (conversationId: string, sessionId: string) => void
@@ -279,6 +280,13 @@ export const useChatStore = create<ChatState>()(
         }))
         return newId
       },
+
+      deleteConversation: (id) =>
+        set((state) => ({
+          conversations: state.conversations.filter((c) => c.id !== id),
+          activeConversationId:
+            state.activeConversationId === id ? null : state.activeConversationId,
+        })),
 
       clearActiveConversation: () =>
         set((state) => {
