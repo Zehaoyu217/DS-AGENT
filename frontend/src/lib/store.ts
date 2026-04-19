@@ -14,12 +14,16 @@ export interface TodoItem {
   status: TodoStatus
 }
 
+export type ArtifactSource = 'sandbox' | 'memory'
+
 export interface Artifact {
   id: string
   type: 'chart' | 'table' | 'diagram' | 'profile' | 'analysis' | 'file'
   title: string
+  description?: string
   content: string  // JSON string for vega-lite/table-json, raw HTML for html, mermaid code for mermaid, raw text for csv/text
   format: 'vega-lite' | 'mermaid' | 'table-json' | 'html' | 'csv' | 'text'
+  source?: ArtifactSource  // 'sandbox' = produced by save_artifact in this turn; 'memory' = recalled from agent memory
   session_id: string
   created_at: number
   metadata: Record<string, unknown>
@@ -85,15 +89,27 @@ export type SidebarTab = 'chats' | 'agents' | 'skills' | 'history' | 'files' | '
 export type RightPanelTab = 'artifacts' | 'scratchpad' | 'tools'
 export type SectionId =
   | 'chat'
+  | 'knowledge'
+  | 'memory'
   | 'agents'
   | 'skills'
   | 'prompts'
+  | 'integrity'
+  // legacy aliases — kept for one release; setActiveSection redirects them.
   | 'context'
   | 'health'
   | 'graph'
   | 'digest'
   | 'ingest'
   | 'settings'
+
+const SECTION_ALIASES: Partial<Record<SectionId, SectionId>> = {
+  graph: 'knowledge',
+  digest: 'knowledge',
+  ingest: 'knowledge',
+  health: 'integrity',
+  context: 'chat',
+}
 
 export interface Settings {
   model: string
@@ -626,7 +642,10 @@ export const useChatStore = create<ChatState>()(
       openSearch: () => set({ searchPanelOpen: true }),
       closeSearch: () => set({ searchPanelOpen: false }),
 
-      setActiveSection: (section) => set({ activeSection: section }),
+      setActiveSection: (section) => {
+        const resolved = SECTION_ALIASES[section] ?? section
+        set({ activeSection: resolved })
+      },
 
       addArtifact: (artifact) =>
         set((state) => {

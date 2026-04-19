@@ -1,16 +1,14 @@
 import type { ComponentType, SVGProps } from "react";
 import {
-  ClipboardList,
-  Download,
+  Brain,
+  BookOpen,
   FileText,
-  Gauge,
-  Layers,
   MessageSquare,
   Monitor,
   Moon,
-  Network,
   Puzzle,
   Settings,
+  ShieldCheck,
   SlidersHorizontal,
   Sun,
 } from "lucide-react";
@@ -18,6 +16,7 @@ import { useChatStore, type SectionId } from "@/lib/store";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { FlyoutTooltip } from "@/components/layout/FlyoutTooltip";
 import { useUiStore, selectRailMode } from "@/lib/ui-store";
+import { useSurfacesStore } from "@/lib/surfaces-store";
 import { cn } from "@/lib/utils";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
@@ -31,14 +30,12 @@ interface SectionDef {
 
 const SECTIONS: SectionDef[] = [
   { id: "chat", icon: MessageSquare, label: "Chat", hint: "⌘⇧1" },
-  { id: "agents", icon: Monitor, label: "Agents", hint: "⌘⇧2" },
-  { id: "skills", icon: Puzzle, label: "Skills", hint: "⌘⇧3" },
-  { id: "prompts", icon: FileText, label: "Prompts", hint: "⌘⇧4" },
-  { id: "context", icon: Layers, label: "Context", hint: "⌘⇧5" },
-  { id: "health", icon: Gauge, label: "Health", hint: "⌘⇧6" },
-  { id: "graph", icon: Network, label: "Graph", hint: "⌘⇧7" },
-  { id: "digest", icon: ClipboardList, label: "Digest", hint: "⌘⇧8" },
-  { id: "ingest", icon: Download, label: "Ingest", hint: "⌘⇧9" },
+  { id: "knowledge", icon: BookOpen, label: "Knowledge", hint: "⌘⇧2" },
+  { id: "memory", icon: Brain, label: "Memory", hint: "⌘⇧3" },
+  { id: "agents", icon: Monitor, label: "Agents", hint: "⌘⇧4" },
+  { id: "skills", icon: Puzzle, label: "Skills", hint: "⌘⇧5" },
+  { id: "prompts", icon: FileText, label: "Prompts", hint: "⌘⇧6" },
+  { id: "integrity", icon: ShieldCheck, label: "Integrity", hint: "⌘⇧7" },
 ];
 
 // Small presentational piece — used for the nine sections and the bottom
@@ -127,6 +124,7 @@ export function IconRail() {
   const { theme, setTheme } = useTheme();
   const railMode = useUiStore(selectRailMode);
   const setTweaksOpen = useUiStore((s) => s.setTweaksOpen);
+  const setSettingsOverlayOpen = useSurfacesStore((s) => s.openSettings);
   const isDark = theme === "dark";
   const expanded = railMode === "expand";
 
@@ -183,9 +181,9 @@ export function IconRail() {
         <RailButton
           icon={Settings}
           label="Settings"
+          hint="⌘,"
           expanded={expanded}
-          active={activeSection === "settings"}
-          onClick={() => setActiveSection("settings")}
+          onClick={() => setSettingsOverlayOpen()}
         />
         <BrandMark />
       </div>

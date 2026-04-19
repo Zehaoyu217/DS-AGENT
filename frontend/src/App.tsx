@@ -32,6 +32,7 @@ import { DigestPanel } from '@/components/digest/DigestPanel'
 import { IngestPanel } from '@/components/ingest/IngestPanel'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { ArtifactViewer } from '@/components/artifact/ArtifactViewer'
+import { SettingsOverlay } from '@/components/settings/SettingsOverlay'
 import { ArtifactPage } from '@/routes/ArtifactPage'
 
 interface SectionShortcut {
@@ -46,14 +47,12 @@ interface SectionShortcut {
 // `mod+N` digit shortcut continues to switch conversation slots.
 export const SECTION_SHORTCUTS: readonly SectionShortcut[] = [
   { id: CMD.OPEN_SECTION_CHAT, key: 'mod+shift+1', section: 'chat', label: 'Open Chat' },
-  { id: CMD.OPEN_SECTION_AGENTS, key: 'mod+shift+2', section: 'agents', label: 'Open Agents' },
-  { id: CMD.OPEN_SECTION_SKILLS, key: 'mod+shift+3', section: 'skills', label: 'Open Skills' },
-  { id: CMD.OPEN_SECTION_PROMPTS, key: 'mod+shift+4', section: 'prompts', label: 'Open Prompts' },
-  { id: CMD.OPEN_SECTION_CONTEXT, key: 'mod+shift+5', section: 'context', label: 'Open Context' },
-  { id: CMD.OPEN_SECTION_HEALTH, key: 'mod+shift+6', section: 'health', label: 'Open Health' },
-  { id: CMD.OPEN_SECTION_GRAPH, key: 'mod+shift+7', section: 'graph', label: 'Open Graph' },
-  { id: CMD.OPEN_SECTION_DIGEST, key: 'mod+shift+8', section: 'digest', label: 'Open Digest' },
-  { id: CMD.OPEN_SECTION_INGEST, key: 'mod+shift+9', section: 'ingest', label: 'Open Ingest' },
+  { id: CMD.OPEN_SECTION_KNOWLEDGE, key: 'mod+shift+2', section: 'knowledge', label: 'Open Knowledge' },
+  { id: CMD.OPEN_SECTION_MEMORY, key: 'mod+shift+3', section: 'memory', label: 'Open Memory' },
+  { id: CMD.OPEN_SECTION_AGENTS, key: 'mod+shift+4', section: 'agents', label: 'Open Agents' },
+  { id: CMD.OPEN_SECTION_SKILLS, key: 'mod+shift+5', section: 'skills', label: 'Open Skills' },
+  { id: CMD.OPEN_SECTION_PROMPTS, key: 'mod+shift+6', section: 'prompts', label: 'Open Prompts' },
+  { id: CMD.OPEN_SECTION_INTEGRITY, key: 'mod+shift+7', section: 'integrity', label: 'Open Integrity' },
 ]
 
 function useHashRoute(): string {
@@ -280,12 +279,21 @@ function SectionContent() {
   switch (activeSection) {
     case 'chat':
       return <ChatPane />
+    case 'knowledge':
+      return <GraphPanel open onClose={backToChat} embedded={false} />
+    case 'memory':
+      return <ContextSection />
     case 'agents':
       return <AgentsSection />
     case 'skills':
       return <SkillsSection />
     case 'prompts':
       return <PromptsSection />
+    case 'integrity':
+      return <HealthSection />
+    case 'settings':
+      return <SettingsSection />
+    // Legacy IDs — store aliases redirect these, but keep arms for safety.
     case 'context':
       return <ContextSection />
     case 'health':
@@ -296,8 +304,6 @@ function SectionContent() {
       return <DigestPanel open onClose={backToChat} embedded={false} />
     case 'ingest':
       return <IngestPanel open onClose={backToChat} embedded={false} />
-    case 'settings':
-      return <SettingsSection />
     default:
       return <ChatPane />
   }
@@ -362,6 +368,7 @@ export default function App() {
             <GlobalSearchPanel />
             <ShortcutsHelp />
             <ArtifactViewer />
+            <SettingsOverlay />
           </CommandRegistryProvider>
         </AnnouncerProvider>
       </ThemeProvider>
