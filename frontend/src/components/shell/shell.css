@@ -1,0 +1,8 @@
+/* shell.css — intentionally minimal.
+ *
+ * The four shell panes are styled entirely through Tailwind utilities + the
+ * design-token layer in `tokens.css` / `globals.css`. This file exists as the
+ * escape hatch for details that truly can't be expressed as utilities (custom
+ * scroll shadows, mask-image effects, subpixel border tricks). Leave empty
+ * until a real need arises.
+ */
