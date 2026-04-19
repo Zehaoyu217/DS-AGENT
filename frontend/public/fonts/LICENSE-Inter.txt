@@ -1,0 +1,7 @@
+Inter — Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)
+
+Licensed under the SIL Open Font License, Version 1.1.
+https://scripts.sil.org/OFL
+
+The fonts shipped in this directory are a Latin + Latin-Extended subset of the
+upstream release. No glyph data has been modified.

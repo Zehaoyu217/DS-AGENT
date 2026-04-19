@@ -1,0 +1,269 @@
+/**
+ * tokens.css — DS-Agent design tokens
+ *
+ * Theme model: light-default in `:root`; dark overrides via
+ * `html[data-theme="dark"]`. Density variants via `html[data-density="…"]`.
+ *
+ * Ported from design_handoff_ds_agent/tokens.css with two additions:
+ *   1. Legacy `--color-*` aliases at file end so pre-existing components
+ *      reading dark-era tokens keep rendering.
+ *   2. `prefers-reduced-motion` override block.
+ */
+
+:root {
+  /* ── Typography stacks ────────────────────────────────────────────────── */
+  --font-sans: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "Helvetica Neue", sans-serif;
+  --font-serif: "Charter", "Iowan Old Style", "Palatino", ui-serif, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-2: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 140ms;
+  --t-base: 220ms;
+  --t-slow: 360ms;
+
+  /* ── LIGHT (default) ──────────────────────────────────────────────────── */
+  --bg-0: oklch(0.985 0.004 75);
+  --bg-1: oklch(0.965 0.006 75);
+  --bg-2: oklch(0.945 0.008 75);
+  --bg-3: oklch(0.915 0.010 75);
+  --line: oklch(0.875 0.010 75);
+  --line-2: oklch(0.925 0.008 75);
+
+  --fg-0: oklch(0.225 0.012 55);
+  --fg-1: oklch(0.435 0.010 60);
+  --fg-2: oklch(0.585 0.008 65);
+  --fg-3: oklch(0.700 0.008 70);
+
+  --acc: oklch(0.645 0.145 48);
+  --acc-fg: #ffffff;
+  --acc-dim: oklch(0.645 0.145 48 / 0.10);
+  --acc-line: oklch(0.645 0.145 48 / 0.35);
+
+  --ok: oklch(0.62 0.12 155);
+  --warn: oklch(0.72 0.14 75);
+  --err: oklch(0.58 0.17 28);
+  --info: oklch(0.58 0.09 240);
+
+  --radius-xs: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-1: 0 1px 2px rgba(20, 18, 14, 0.04),
+    0 1px 1px rgba(20, 18, 14, 0.03);
+  --shadow-2: 0 1px 2px rgba(20, 18, 14, 0.05),
+    0 4px 12px rgba(20, 18, 14, 0.05);
+  --shadow: 0 1px 2px rgba(20, 18, 14, 0.06),
+    0 12px 32px rgba(20, 18, 14, 0.08);
+
+  --row-h: 30px;
+  --pad-x: 16px;
+  --pad-y: 10px;
+}
+
+/* ── DARK overrides ───────────────────────────────────────────────────── */
+html[data-theme="dark"] {
+  --bg-0: oklch(0.165 0.008 60);
+  --bg-1: oklch(0.195 0.009 60);
+  --bg-2: oklch(0.235 0.010 60);
+  --bg-3: oklch(0.285 0.011 60);
+  --line: oklch(0.315 0.012 60);
+  --line-2: oklch(0.255 0.010 60);
+
+  --fg-0: oklch(0.965 0.008 75);
+  --fg-1: oklch(0.780 0.010 70);
+  --fg-2: oklch(0.620 0.010 65);
+  --fg-3: oklch(0.490 0.010 60);
+
+  --acc: oklch(0.725 0.140 52);
+  --acc-fg: oklch(0.20 0.02 55);
+  --acc-dim: oklch(0.725 0.140 52 / 0.14);
+  --acc-line: oklch(0.725 0.140 52 / 0.40);
+
+  --ok: oklch(0.76 0.14 155);
+  --warn: oklch(0.82 0.14 80);
+  --err: oklch(0.72 0.16 28);
+  --info: oklch(0.74 0.10 240);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.32),
+    0 1px 1px rgba(0, 0, 0, 0.24);
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.36),
+    0 4px 14px rgba(0, 0, 0, 0.36);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.40),
+    0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Density variants ─────────────────────────────────────────────────── */
+html[data-density="compact"] {
+  --row-h: 26px;
+  --pad-x: 12px;
+  --pad-y: 7px;
+}
+
+html[data-density="cozy"] {
+  --row-h: 34px;
+  --pad-x: 18px;
+  --pad-y: 12px;
+}
+
+/* ── Signature keyframes ──────────────────────────────────────────────── */
+@keyframes march {
+  to {
+    background-position: 16px 0;
+  }
+}
+
+@keyframes pulse-ds {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes blink-ds {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes drawCheck {
+  from {
+    stroke-dashoffset: 22;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scaleInDs {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDs {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInR {
+  from {
+    transform: translateX(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sheen {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Legacy `--color-*` aliases ───────────────────────────────────────── */
+/**
+ * Pre-existing components read hex-era tokens. Map them onto the new
+ * oklch-based system so untouched components keep rendering.
+ */
+:root {
+  --color-bg-primary: var(--bg-0);
+  --color-bg-secondary: var(--bg-1);
+  --color-bg-elevated: var(--bg-2);
+
+  --color-text-primary: var(--fg-0);
+  --color-text-secondary: var(--fg-1);
+  --color-text-muted: var(--fg-2);
+
+  --color-accent: var(--acc);
+  --color-accent-hover: color-mix(in oklab, var(--acc) 92%, black);
+  --color-accent-active: color-mix(in oklab, var(--acc) 82%, black);
+  --color-accent-foreground: var(--acc-fg);
+
+  --color-border: var(--line-2);
+  --color-border-hover: var(--line);
+
+  --color-success: var(--ok);
+  --color-success-bg: color-mix(in oklab, var(--ok) 12%, transparent);
+  --color-warning: var(--warn);
+  --color-warning-bg: color-mix(in oklab, var(--warn) 12%, transparent);
+  --color-error: var(--err);
+  --color-error-bg: color-mix(in oklab, var(--err) 12%, transparent);
+  --color-info: var(--info);
+  --color-info-bg: color-mix(in oklab, var(--info) 12%, transparent);
+
+  --color-code-bg: var(--bg-2);
+  --color-code-text: var(--acc);
+
+  --shadow-sm: var(--shadow-1);
+  --shadow-md: var(--shadow-2);
+  --shadow-lg: var(--shadow);
+
+  --radius-sm: var(--radius-xs);
+  --radius-md: var(--radius);
+  /* --radius-lg already defined above */
+  /* --radius-xl already defined above */
+
+  --transition-fast: var(--t-fast) var(--ease-out);
+  --transition-normal: var(--t-base) var(--ease-out);
+  --transition-slow: var(--t-slow) var(--ease-out);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

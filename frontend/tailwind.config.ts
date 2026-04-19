@@ -1,16 +1,26 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // Dark is the default; light mode activates when `.light` is NOT absent (i.e. dark when no `.light` class)
-  darkMode: ["selector", ":root:not(.light)"],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  /**
+   * Dark theme activates when <html data-theme="dark"> is set.
+   * Light is the default.
+   */
+  darkMode: ["selector", '[data-theme="dark"]'],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  safelist: [
+    "animate-march",
+    "animate-pulse-ring",
+    "animate-pulse-ds",
+    "animate-draw-check",
+    "animate-scale-in-ds",
+    "animate-fade-in-ds",
+    "animate-slide-in-r",
+    "animate-sheen",
   ],
   theme: {
     extend: {
       colors: {
-        // Semantic tokens — reference CSS custom properties
+        // ── Shadcn semantic tokens (HSL via CSS vars) ─────────────────────
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -45,7 +55,28 @@ const config: Config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
 
-        // Direct CSS var tokens (non-HSL)
+        // ── DS-Agent handoff tokens ───────────────────────────────────────
+        "bg-0": "var(--bg-0)",
+        "bg-1": "var(--bg-1)",
+        "bg-2": "var(--bg-2)",
+        "bg-3": "var(--bg-3)",
+        "fg-0": "var(--fg-0)",
+        "fg-1": "var(--fg-1)",
+        "fg-2": "var(--fg-2)",
+        "fg-3": "var(--fg-3)",
+        line: "var(--line)",
+        "line-2": "var(--line-2)",
+        acc: {
+          DEFAULT: "var(--acc)",
+          fg: "var(--acc-fg)",
+          dim: "var(--acc-dim)",
+          line: "var(--acc-line)",
+        },
+        ok: "var(--ok)",
+        warn: "var(--warn)",
+        err: "var(--err)",
+
+        // ── Legacy-compat direct var tokens (kept for untouched code) ─────
         canvas: {
           DEFAULT: "var(--color-bg-primary)",
           secondary: "var(--color-bg-secondary)",
@@ -87,7 +118,7 @@ const config: Config = {
           text: "var(--color-code-text)",
         },
 
-        // Brand palette — Claude orange
+        // ── Brand palette (Claude orange) ─────────────────────────────────
         brand: {
           50: "#fff7ed",
           100: "#ffedd5",
@@ -102,7 +133,7 @@ const config: Config = {
           950: "#431407",
         },
 
-        // Surface (neutral) palette
+        // ── Surface neutral palette ───────────────────────────────────────
         surface: {
           50: "#fafafa",
           100: "#f4f4f5",
@@ -120,23 +151,64 @@ const config: Config = {
       },
 
       fontFamily: {
-        sans: ["system-ui", "-apple-system", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+        sans: [
+          "Inter",
+          "ui-sans-serif",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "Helvetica Neue",
+          "sans-serif",
+        ],
+        serif: [
+          "Charter",
+          "Iowan Old Style",
+          "Palatino",
+          "ui-serif",
+          "serif",
+        ],
+        mono: [
+          "JetBrains Mono",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Consolas",
+          "monospace",
+        ],
       },
 
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xs: "var(--radius-xs)",
+        DEFAULT: "var(--radius)",
+        sm: "var(--radius-xs)",
+        md: "var(--radius)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
       },
 
       transitionDuration: {
-        fast: "100ms",
-        normal: "200ms",
-        slow: "300ms",
+        fast: "140ms",
+        base: "220ms",
+        slow: "360ms",
+        // Legacy aliases
+        normal: "220ms",
+      },
+
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "out-2": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "in-out": "cubic-bezier(0.65, 0, 0.35, 1)",
+        spring: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      },
+
+      boxShadow: {
+        "ds-1": "var(--shadow-1)",
+        "ds-2": "var(--shadow-2)",
+        ds: "var(--shadow)",
       },
 
       animation: {
+        // Legacy
         "fade-in": "fadeIn 200ms ease forwards",
         "fade-out": "fadeOut 200ms ease forwards",
         "slide-up": "slideUp 300ms ease forwards",
@@ -144,13 +216,28 @@ const config: Config = {
         "slide-down-out": "slideDownOut 300ms ease forwards",
         "scale-in": "scaleIn 200ms ease forwards",
         "scale-out": "scaleOut 200ms ease forwards",
-        shimmer: "shimmer 2s linear infinite",
+        shimmer: "shimmerLegacy 2s linear infinite",
         spin: "spin 1s linear infinite",
         "pulse-soft": "pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "progress-bar": "progress linear forwards",
+
+        // DS handoff
+        march: "march 1s linear infinite",
+        "pulse-ds":
+          "pulse-ds 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite",
+        "pulse-ring":
+          "pulseRing 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite",
+        "draw-check":
+          "drawCheck 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "scale-in-ds":
+          "scaleInDs 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both",
+        "fade-in-ds": "fadeInDs 280ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        "slide-in-r": "slideInR 260ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        sheen: "sheen 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite",
       },
 
       keyframes: {
+        // Legacy (unchanged names preserved where existing components depend on them)
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -179,7 +266,7 @@ const config: Config = {
           "0%": { transform: "scale(1)", opacity: "1" },
           "100%": { transform: "scale(0.95)", opacity: "0" },
         },
-        shimmer: {
+        shimmerLegacy: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
@@ -190,6 +277,40 @@ const config: Config = {
         progress: {
           from: { transform: "scaleX(1)" },
           to: { transform: "scaleX(0)" },
+        },
+
+        // DS handoff
+        march: {
+          to: { backgroundPosition: "16px 0" },
+        },
+        "pulse-ds": {
+          "0%, 100%": { opacity: "0.35", transform: "scale(0.9)" },
+          "50%": { opacity: "1", transform: "scale(1.15)" },
+        },
+        pulseRing: {
+          "0%": { transform: "scale(1)", opacity: "0.55" },
+          "80%": { transform: "scale(2.2)", opacity: "0" },
+          "100%": { transform: "scale(2.2)", opacity: "0" },
+        },
+        drawCheck: {
+          from: { strokeDashoffset: "22" },
+          to: { strokeDashoffset: "0" },
+        },
+        scaleInDs: {
+          from: { transform: "scale(0.6)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" },
+        },
+        fadeInDs: {
+          from: { opacity: "0", transform: "translateY(3px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        slideInR: {
+          from: { transform: "translateX(8px)", opacity: "0" },
+          to: { transform: "translateX(0)", opacity: "1" },
+        },
+        sheen: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
     },
