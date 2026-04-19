@@ -5,6 +5,7 @@ import { useCommandRegistry } from '@/hooks/useCommandRegistry'
 import { CommandPaletteItem } from './CommandPaletteItem'
 import { SHORTCUT_CATEGORIES } from '@/lib/shortcuts'
 import type { Command, ShortcutCategory } from '@/lib/shortcuts'
+import { useChatStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
 /** Fuzzy match: every character of query must appear in order in target */
@@ -36,9 +37,135 @@ interface GroupedResults {
   commands: Command[]
 }
 
+const MAX_CONVERSATION_ITEMS = 50
+
 export function CommandPalette() {
   const { paletteOpen, closePalette, commands, runCommand, recentCommandIds, openHelp } =
     useCommandRegistry()
+
+  const conversations = useChatStore((s) => s.conversations)
+  const activeConversationId = useChatStore((s) => s.activeConversationId)
+  const setActiveConversation = useChatStore((s) => s.setActiveConversation)
+  const setConversationPinned = useChatStore((s) => s.setConversationPinned)
+  const freezeConversation = useChatStore((s) => s.freezeConversation)
+  const renameConversation = useChatStore((s) => s.renameConversation)
+  const duplicateConversation = useChatStore((s) => s.duplicateConversation)
+  const deleteConversationRemote = useChatStore((s) => s.deleteConversationRemote)
+
+  const activeConv = useMemo(
+    () => conversations.find((c) => c.id === activeConversationId) ?? null,
+    [conversations, activeConversationId],
+  )
+  const activeFrozen =
+    activeConv && typeof activeConv.frozenAt === 'number' && activeConv.frozenAt > 0
+
+  const dynamicConversationCommands = useMemo<Command[]>(() => {
+    return conversations
+      .filter((c) => !(typeof c.frozenAt === 'number' && c.frozenAt > 0))
+      .slice()
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, MAX_CONVERSATION_ITEMS)
+      .map((c) => ({
+        id: `goto-conversation:${c.id}`,
+        keys: [],
+        label: c.title || 'Untitled',
+        description: 'Open conversation',
+        category: 'Navigation' as ShortcutCategory,
+        action: () => setActiveConversation(c.id),
+      }))
+  }, [conversations, setActiveConversation])
+
+  const dynamicActiveConvCommands = useMemo<Command[]>(() => {
+    if (!activeConv) return []
+    const list: Command[] = []
+    list.push({
+      id: 'active-conv:pin',
+      keys: [],
+      label: activeConv.pinned ? 'Unpin conversation' : 'Pin conversation',
+      description: 'Toggle pin on the active conversation',
+      category: 'Chat',
+      action: () => {
+        void setConversationPinned(activeConv.id, !activeConv.pinned).catch(() => {})
+      },
+    })
+    if (!activeFrozen) {
+      list.push({
+        id: 'active-conv:freeze',
+        keys: [],
+        label: 'Freeze conversation',
+        description: 'Lock the conversation as a checkpoint',
+        category: 'Chat',
+        action: () => {
+          const ok = window.confirm(
+            "Freeze this conversation? You won't be able to add new turns.",
+          )
+          if (!ok) return
+          void freezeConversation(activeConv.id).catch(() => {})
+        },
+      })
+    }
+    list.push({
+      id: 'active-conv:rename',
+      keys: [],
+      label: 'Rename conversation',
+      description: 'Change the title',
+      category: 'Chat',
+      action: () => {
+        const next = window.prompt('Rename conversation', activeConv.title)
+        if (!next || next === activeConv.title) return
+        void renameConversation(activeConv.id, next).catch(() => {})
+      },
+    })
+    list.push({
+      id: 'active-conv:duplicate',
+      keys: [],
+      label: 'Duplicate conversation',
+      description: 'Fork into a new conversation',
+      category: 'Chat',
+      action: () => {
+        void duplicateConversation(activeConv.id).catch(() => {})
+      },
+    })
+    list.push({
+      id: 'active-conv:delete',
+      keys: [],
+      label: 'Delete conversation',
+      description: 'Permanently remove this conversation',
+      category: 'Chat',
+      action: () => {
+        const ok = window.confirm(`Delete "${activeConv.title}"?`)
+        if (!ok) return
+        void deleteConversationRemote(activeConv.id).catch(() => {})
+      },
+    })
+    list.push({
+      id: 'active-conv:export',
+      keys: [],
+      label: 'Export conversation',
+      description: 'Download as JSON',
+      category: 'Chat',
+      action: () => {
+        const blob = new Blob([JSON.stringify(activeConv, null, 2)], {
+          type: 'application/json',
+        })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${activeConv.title || activeConv.id}.json`
+        a.click()
+        URL.revokeObjectURL(url)
+      },
+    })
+    return list
+  }, [
+    activeConv,
+    activeFrozen,
+    setConversationPinned,
+    freezeConversation,
+    renameConversation,
+    duplicateConversation,
+    deleteConversationRemote,
+  ])
 
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
@@ -57,7 +184,7 @@ export function CommandPalette() {
 
   const filteredGroups = useMemo<GroupedResults[]>(() => {
     if (!query.trim()) {
-      // Show recents first, then all categories
+      // Show recents first, then all categories, then dynamic groups.
       const recentCmds = recentCommandIds
         .map((id) => commands.find((c) => c.id === id))
         .filter((c): c is Command => !!c)
@@ -72,17 +199,22 @@ export function CommandPalette() {
           groups.push({ label: cat, commands: catCmds })
         }
       }
+      if (dynamicActiveConvCommands.length > 0) {
+        groups.push({ label: 'This conversation', commands: dynamicActiveConvCommands })
+      }
+      if (dynamicConversationCommands.length > 0) {
+        groups.push({ label: 'Conversations', commands: dynamicConversationCommands })
+      }
       return groups
     }
 
-    // Search mode: flat scored list, re-grouped by category
+    // Search mode: flat scored list, re-grouped by category for static commands;
+    // dynamic groups are scored against the query and shown as their own groups.
     const scored = commands
       .map((cmd) => ({ cmd, s: score(cmd, query) }))
       .filter(({ s }) => s > 0)
       .sort((a, b) => b.s - a.s)
       .map(({ cmd }) => cmd)
-
-    if (scored.length === 0) return []
 
     const byCategory: Partial<Record<ShortcutCategory, Command[]>> = {}
     for (const cmd of scored) {
@@ -90,11 +222,39 @@ export function CommandPalette() {
       byCategory[cmd.category]!.push(cmd)
     }
 
-    return SHORTCUT_CATEGORIES.filter((c) => byCategory[c]?.length).map((c) => ({
+    const groups: GroupedResults[] = SHORTCUT_CATEGORIES.filter(
+      (c) => byCategory[c]?.length,
+    ).map((c) => ({
       label: c,
       commands: byCategory[c]!,
     }))
-  }, [query, commands, recentCommandIds])
+
+    const matchedActive = dynamicActiveConvCommands
+      .map((cmd) => ({ cmd, s: score(cmd, query) }))
+      .filter(({ s }) => s > 0)
+      .sort((a, b) => b.s - a.s)
+      .map(({ cmd }) => cmd)
+    if (matchedActive.length > 0) {
+      groups.push({ label: 'This conversation', commands: matchedActive })
+    }
+
+    const matchedConvs = dynamicConversationCommands
+      .map((cmd) => ({ cmd, s: score(cmd, query) }))
+      .filter(({ s }) => s > 0)
+      .sort((a, b) => b.s - a.s)
+      .map(({ cmd }) => cmd)
+    if (matchedConvs.length > 0) {
+      groups.push({ label: 'Conversations', commands: matchedConvs })
+    }
+
+    return groups
+  }, [
+    query,
+    commands,
+    recentCommandIds,
+    dynamicConversationCommands,
+    dynamicActiveConvCommands,
+  ])
 
   const flatResults = useMemo(
     () => filteredGroups.flatMap((g) => g.commands),
@@ -124,14 +284,26 @@ export function CommandPalette() {
       const cmd = flatResults[activeIndex]
       if (cmd) {
         closePalette()
-        runCommand(cmd.id)
+        executeCommand(cmd)
       }
+    }
+  }
+
+  const executeCommand = (cmd: Command) => {
+    // Registered (static) commands: run via the registry to update recents +
+    // honor `when()` guards. Dynamic commands aren't in the registry, so we
+    // invoke their action directly.
+    const isRegistered = commands.some((c) => c.id === cmd.id)
+    if (isRegistered) {
+      runCommand(cmd.id)
+    } else {
+      cmd.action()
     }
   }
 
   const handleSelect = (cmd: Command) => {
     closePalette()
-    runCommand(cmd.id)
+    executeCommand(cmd)
   }
 
   let flatIdx = 0

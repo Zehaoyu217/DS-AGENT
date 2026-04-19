@@ -1,11 +1,32 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useEffect } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CommandRegistryProvider,
   useCommandRegistry,
 } from '@/hooks/useCommandRegistry'
 import { CommandPalette } from '../CommandPalette'
+import { useChatStore, type Conversation } from '@/lib/store'
+
+function makeConv(id: string, title: string, frozenAt: number | null = null): Conversation {
+  const t = Date.now()
+  return {
+    id,
+    title,
+    messages: [],
+    createdAt: t,
+    updatedAt: t,
+    pinned: false,
+    frozenAt,
+  }
+}
+
+beforeEach(() => {
+  useChatStore.setState({
+    conversations: [],
+    activeConversationId: null,
+  })
+})
 
 interface HarnessProps {
   action: () => void
@@ -71,5 +92,66 @@ describe('<CommandPalette>', () => {
     })
 
     expect(action).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows Conversations group with non-frozen conversations only', async () => {
+    useChatStore.setState({
+      conversations: [
+        makeConv('a', 'Alpha'),
+        makeConv('b', 'Bravo', Date.now()),
+        makeConv('c', 'Charlie'),
+      ],
+      activeConversationId: null,
+    })
+
+    render(
+      <CommandRegistryProvider>
+        <Harness action={vi.fn()} />
+        <CommandPalette />
+      </CommandRegistryProvider>,
+    )
+    await act(async () => {
+      await Promise.resolve()
+    })
+    act(() => {
+      screen.getByText('open palette').click()
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(document.body.textContent).toContain('Conversations')
+    expect(document.body.textContent).toContain('Alpha')
+    expect(document.body.textContent).toContain('Charlie')
+    expect(document.body.textContent).not.toContain('Bravo')
+  })
+
+  it('shows This conversation group only when a conversation is active; hides Freeze when frozen', async () => {
+    useChatStore.setState({
+      conversations: [makeConv('a', 'Alpha', Date.now())],
+      activeConversationId: 'a',
+    })
+
+    render(
+      <CommandRegistryProvider>
+        <Harness action={vi.fn()} />
+        <CommandPalette />
+      </CommandRegistryProvider>,
+    )
+    await act(async () => {
+      await Promise.resolve()
+    })
+    act(() => {
+      screen.getByText('open palette').click()
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(document.body.textContent).toContain('This conversation')
+    expect(document.body.textContent).toContain('Pin conversation')
+    // Freeze hidden when already frozen.
+    expect(document.body.textContent).not.toContain('Freeze conversation')
+    expect(document.body.textContent).toContain('Duplicate conversation')
   })
 })
