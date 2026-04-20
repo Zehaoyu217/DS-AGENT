@@ -1,4 +1,4 @@
-import { Download, Network, Upload } from 'lucide-react'
+import { Network } from 'lucide-react'
 import { SurfacePage } from '@/components/surface/SurfacePage'
 import { DrawerSlot } from '@/components/surface/DrawerSlot'
 import { WikiTree } from '@/components/wiki/WikiTree'
@@ -6,7 +6,8 @@ import { WikiArticle } from '@/components/wiki/WikiArticle'
 import { GraphPanel } from '@/components/graph/GraphPanel'
 import { IngestPanel } from '@/components/ingest/IngestPanel'
 import { DigestPanel } from '@/components/digest/DigestPanel'
-import { useSurfacesStore, type KnowledgeDrawer } from '@/lib/surfaces-store'
+import { PipelineBar } from '@/components/pipeline/PipelineBar'
+import { useSurfacesStore } from '@/lib/surfaces-store'
 import { cn } from '@/lib/utils'
 
 export function KnowledgeSurface() {
@@ -16,30 +17,13 @@ export function KnowledgeSurface() {
   const setSelected = useSurfacesStore((s) => s.setSelectedWikiPath)
   const closeDrawer = () => setDrawer(null)
 
-  const toggle = (next: NonNullable<KnowledgeDrawer>) =>
-    setDrawer(drawer === next ? null : next)
-
   const toolbar = (
-    <>
-      <ToolbarButton
-        active={drawer === 'ingest'}
-        onClick={() => toggle('ingest')}
-        icon={<Upload size={13} aria-hidden />}
-        label="Ingest"
-      />
-      <ToolbarButton
-        active={drawer === 'digest'}
-        onClick={() => toggle('digest')}
-        icon={<Download size={13} aria-hidden />}
-        label="Digest"
-      />
-      <ToolbarButton
-        active={drawer === 'graph'}
-        onClick={() => toggle('graph')}
-        icon={<Network size={13} aria-hidden />}
-        label="Graph"
-      />
-    </>
+    <ToolbarButton
+      active={drawer === 'graph'}
+      onClick={() => setDrawer(drawer === 'graph' ? null : 'graph')}
+      icon={<Network size={13} aria-hidden />}
+      label="Graph"
+    />
   )
 
   const drawerContent =
@@ -66,13 +50,21 @@ export function KnowledgeSurface() {
       drawerOpen={drawer !== null}
       bodyClassName="!overflow-hidden"
     >
-      <div className="grid h-full grid-cols-[260px_1fr] overflow-hidden">
-        <div className="overflow-hidden border-r border-line">
-          <WikiTree selectedPath={selected} onSelect={setSelected} />
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="grid flex-1 grid-cols-[260px_1fr] overflow-hidden">
+          <div className="overflow-hidden border-r border-line">
+            <WikiTree selectedPath={selected} onSelect={setSelected} />
+          </div>
+          <div className="overflow-hidden">
+            <WikiArticle path={selected} onNavigate={setSelected} />
+          </div>
         </div>
-        <div className="overflow-hidden">
-          <WikiArticle path={selected} onNavigate={setSelected} />
-        </div>
+        <PipelineBar
+          onOpenIngest={() => setDrawer('ingest')}
+          onDigestComplete={(entries) => {
+            if (entries > 0) setDrawer('digest')
+          }}
+        />
       </div>
     </SurfacePage>
   )
