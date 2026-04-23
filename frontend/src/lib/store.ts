@@ -69,6 +69,15 @@ export interface AttachedFile {
   contextRefId?: string
 }
 
+export interface UploadedDataset {
+  tableName: string
+  filename: string
+  columns: Array<{ name: string; type: string }>
+  rowCount: number
+  sizeBytes: number
+  uploadedAt: number // ms
+}
+
 export interface Conversation {
   id: string
   title: string
@@ -79,6 +88,7 @@ export interface Conversation {
   model?: string
   extendedThinking?: boolean
   attachedFiles?: AttachedFile[]
+  datasets?: UploadedDataset[]
   context?: ContextShape
   pinned?: boolean
   // Epoch milliseconds. Presence = frozen (immutable checkpoint). One-way.
@@ -186,6 +196,8 @@ interface ChatState {
     includePinned?: boolean
     includeFrozen?: boolean
   }) => Promise<{ deletedCount: number; preservedCount: number }>
+  uploadDataset: (conversationId: string, file: File) => Promise<UploadedDataset>
+  deleteDataset: (conversationId: string, tableName: string) => Promise<void>
   toggleSidebar: () => void
   setSidebarWidth: (w: number) => void
   setSidebarTab: (t: SidebarTab) => void
@@ -555,6 +567,45 @@ export const useChatStore = create<ChatState>()(
         })
       },
 
+      uploadDataset: async (conversationId, file) => {
+        const resp = await backend.conversations.uploadDataset(conversationId, file)
+        const dataset: UploadedDataset = {
+          tableName: resp.table_name,
+          filename: resp.filename,
+          columns: resp.columns,
+          rowCount: resp.row_count,
+          sizeBytes: resp.size_bytes,
+          uploadedAt: Math.round(resp.uploaded_at * 1000),
+        }
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c.id === conversationId
+              ? {
+                  ...c,
+                  datasets: [...(c.datasets ?? []), dataset],
+                  updatedAt: Date.now(),
+                }
+              : c,
+          ),
+        }))
+        return dataset
+      },
+
+      deleteDataset: async (conversationId, tableName) => {
+        await backend.conversations.deleteDataset(conversationId, tableName)
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c.id === conversationId
+              ? {
+                  ...c,
+                  datasets: (c.datasets ?? []).filter((d) => d.tableName !== tableName),
+                  updatedAt: Date.now(),
+                }
+              : c,
+          ),
+        }))
+      },
+
       bulkDeleteConversations: async ({
         olderThanMs,
         includePinned = false,
@@ -758,5 +809,13 @@ function backendConversationToStore(conv: BackendConversation): Conversation {
     pinned: conv.pinned ?? false,
     frozenAt:
       typeof conv.frozen_at === 'number' ? Math.round(conv.frozen_at * 1000) : null,
+    datasets: (conv.datasets ?? []).map((d) => ({
+      tableName: d.table_name,
+      filename: d.filename,
+      columns: d.columns,
+      rowCount: d.row_count,
+      sizeBytes: d.size_bytes,
+      uploadedAt: Math.round(d.uploaded_at * 1000),
+    })),
   }
 }

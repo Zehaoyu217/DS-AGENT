@@ -11,6 +11,7 @@ from app.api.chat_api import router as chat_router
 from app.api.config_api import router as config_router
 from app.api.context_api import router as context_router
 from app.api.conversations_api import router as conversations_router
+from app.api.uploads_api import router as uploads_router
 from app.api.data_status_api import router as data_status_router
 from app.api.datasets_api import router as datasets_router
 from app.api.files_api import router as files_router
@@ -94,6 +95,7 @@ def create_app() -> FastAPI:
     app.include_router(trace_router)
     app.include_router(chat_router)
     app.include_router(conversations_router)
+    app.include_router(uploads_router)
     app.include_router(settings_router)
     app.include_router(models_router)
     app.include_router(files_router)

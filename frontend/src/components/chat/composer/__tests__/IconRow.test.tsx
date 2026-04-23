@@ -8,10 +8,10 @@ describe('IconRow', () => {
     useChatStore.setState({ conversations: [], activeConversationId: null })
   })
 
-  it('renders only the attach button (mention/skill/voice were removed)', () => {
+  it('renders only the upload button (mention/skill/voice were removed)', () => {
     const id = useChatStore.getState().createConversation()
     render(<IconRow conversationId={id} />)
-    expect(screen.getByRole('button', { name: /attach/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /upload/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /mention/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /skill/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /voice/i })).not.toBeInTheDocument()

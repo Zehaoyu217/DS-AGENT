@@ -31,6 +31,20 @@ export interface ConversationTurn {
   timestamp: number
 }
 
+export interface ColumnInfo {
+  name: string
+  type: string
+}
+
+export interface UploadedDataset {
+  table_name: string
+  filename: string
+  columns: ColumnInfo[]
+  row_count: number
+  size_bytes: number
+  uploaded_at: number
+}
+
 export interface Conversation {
   id: string
   title: string
@@ -39,6 +53,7 @@ export interface Conversation {
   turns: ConversationTurn[]
   pinned?: boolean
   frozen_at?: number | null
+  datasets?: UploadedDataset[]
 }
 
 export interface ConversationPatchPayload {
@@ -198,6 +213,27 @@ export const backend = {
         'POST',
         '/api/conversations/bulk-delete',
         payload,
+      ),
+    uploadDataset: async (
+      id: string,
+      file: File,
+    ): Promise<UploadedDataset> => {
+      const form = new FormData()
+      form.append('file', file)
+      const res = await fetch(
+        `${BASE_URL}/api/conversations/${encodeURIComponent(id)}/uploads`,
+        { method: 'POST', body: form },
+      )
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`upload failed (${res.status}): ${text}`)
+      }
+      return (await res.json()) as UploadedDataset
+    },
+    deleteDataset: (id: string, tableName: string): Promise<void> =>
+      request<void>(
+        'DELETE',
+        `/api/conversations/${encodeURIComponent(id)}/datasets/${encodeURIComponent(tableName)}`,
       ),
     patch: (id: string, payload: ConversationPatchPayload): Promise<Conversation> =>
       request<Conversation>(

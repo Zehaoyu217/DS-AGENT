@@ -28,6 +28,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from app.api.uploads_api import user_data_db_path as _user_data_db_path_for_conv
 from app.artifacts.events import get_event_bus
 from app.config import get_config
 from app.context.manager import ContextLayer, session_registry
@@ -44,7 +45,7 @@ from app.harness.clients.openrouter_client import OpenRouterClient
 from app.harness.config import ModelProfile
 from app.harness.dispatcher import ToolDispatcher
 from app.harness.hooks import HookRunner
-from app.harness.injector import InjectorInputs, TokenBudget
+from app.harness.injector import DatasetSummary, InjectorInputs, TokenBudget
 from app.harness.loop import AgentLoop
 from app.harness.sandbox import SandboxExecutor
 from app.harness.sandbox_bootstrap import build_duckdb_globals
@@ -73,6 +74,18 @@ logger = logging.getLogger(__name__)
 
 _MESSAGE_MAX_CHARS = 8000
 _CONVERSATION_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+
+
+def _user_data_db_if_exists(conv_id: str | None) -> str | None:
+    """Return the user_data DuckDB path for *conv_id* iff it exists on disk.
+
+    Returning ``None`` means the sandbox won't ATTACH anything — harmless for
+    conversations where the user never uploaded a file.
+    """
+    if not conv_id:
+        return None
+    path = _user_data_db_path_for_conv(conv_id)
+    return str(path) if path.exists() else None
 _DEFAULT_MAX_STEPS = 20
 
 # ── chart capture suffix (run after every sandbox call) ──────────────────────
@@ -636,11 +649,37 @@ def filter_tools_for_plan_mode(
 # ── prompt assembly ───────────────────────────────────────────────────────────
 
 
+def _load_conversation_datasets(conv_id: str | None) -> tuple[DatasetSummary, ...]:
+    """Read datasets[] from the conversation JSON and shape them for the injector.
+
+    Returns an empty tuple when the conversation id is missing, the file
+    doesn't exist, or the conversation has no uploads — a silent empty path so
+    chats without uploads emit no dataset block.
+    """
+    if not conv_id:
+        return ()
+    try:
+        from app.api.conversations_api import _load_or_404  # noqa: PLC0415
+        conv = _load_or_404(conv_id)
+    except Exception:  # noqa: BLE001
+        return ()
+    return tuple(
+        DatasetSummary(
+            table_name=ds.table_name,
+            filename=ds.filename,
+            row_count=ds.row_count,
+            columns=tuple(f"{c.name} ({c.type})" for c in ds.columns),
+        )
+        for ds in conv.datasets
+    )
+
+
 def _build_system_prompt(
     active_profile_summary: str | None = None,
     plan_mode: bool = False,
     session_id: str = "",
     latest_user_prompt: str = "",
+    conversation_id: str | None = None,
 ) -> str:
     """Assemble the full data-scientist system prompt for this turn."""
     from app.hooks.sb_digest_hook import build_digest_summary
@@ -657,6 +696,7 @@ def _build_system_prompt(
         plan_mode=plan_mode,
         session_id=session_id,
         latest_user_prompt=latest_user_prompt,
+        datasets=_load_conversation_datasets(conversation_id),
     )
     base = injector.build(inputs)
     data_ctx = get_data_context()
@@ -677,12 +717,14 @@ def _get_system_prompt(
     plan_mode: bool = False,
     session_id: str = "",
     latest_user_prompt: str = "",
+    conversation_id: str | None = None,
 ) -> str:
     """Build a fresh system prompt for each turn (wiki state changes)."""
     return _build_system_prompt(
         plan_mode=plan_mode,
         session_id=session_id,
         latest_user_prompt=latest_user_prompt,
+        conversation_id=conversation_id,
     )
 
 
@@ -964,7 +1006,11 @@ def _agent_loop_sync(
     saved_artifacts: list[dict[str, Any]] = []
     usage: dict[str, int] = {}
     tools = filter_tools_for_plan_mode(_CHAT_TOOLS) if plan_mode else _CHAT_TOOLS
-    system_prompt = _get_system_prompt(plan_mode=plan_mode, latest_user_prompt=message)
+    system_prompt = _get_system_prompt(
+        plan_mode=plan_mode,
+        latest_user_prompt=message,
+        conversation_id=session_id,
+    )
 
     with httpx.Client(timeout=300) as http:
         client = _make_client(model_id, http)
@@ -1025,7 +1071,10 @@ def _stream_agent_loop(
     # ── per-session context layers ───────────────────────────────────────────
     ctx = session_registry.get_or_create(session_id)
     sys_prompt = _get_system_prompt(
-        plan_mode=plan_mode, session_id=session_id, latest_user_prompt=message,
+        plan_mode=plan_mode,
+        session_id=session_id,
+        latest_user_prompt=message,
+        conversation_id=session_id,
     )
     sp_tokens = _estimate_tokens(sys_prompt)
     ctx.add_layer(ContextLayer(
@@ -1339,13 +1388,19 @@ def chat_endpoint(payload: ChatRequest) -> ChatResponse:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     started = time.monotonic()
+    ud_db_path = _user_data_db_if_exists(conversation_id)
     with TraceSession(
         session_id=trace_id, level=1, level_label="chat",
         input_query=payload.message, trace_mode="always", output_dir=output_dir,
         session_db=get_session_db(),
     ):
         try:
-            session_bootstrap = build_duckdb_globals(trace_id, payload.dataset_path, registry=get_skill_registry())  # noqa: E501
+            session_bootstrap = build_duckdb_globals(
+                trace_id,
+                payload.dataset_path,
+                registry=get_skill_registry(),
+                user_data_db_path=ud_db_path,
+            )
             response_text, charts, usage = _agent_loop_sync(
                 model_id=model_id,
                 message=payload.message,
@@ -1394,7 +1449,13 @@ def chat_stream_endpoint(payload: ChatRequest) -> StreamingResponse:
     settings = get_settings()
     model_id = settings.model
     trace_id = _make_trace_id(conversation_id)
-    session_bootstrap = build_duckdb_globals(trace_id, payload.dataset_path, registry=get_skill_registry())  # noqa: E501
+    ud_db_path = _user_data_db_if_exists(conversation_id)
+    session_bootstrap = build_duckdb_globals(
+        trace_id,
+        payload.dataset_path,
+        registry=get_skill_registry(),
+        user_data_db_path=ud_db_path,
+    )
     output_dir = _traces_dir()
     output_dir.mkdir(parents=True, exist_ok=True)
 

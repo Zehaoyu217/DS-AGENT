@@ -1,9 +1,9 @@
-import { useRef } from 'react'
-import { nanoid } from 'nanoid'
-import { Paperclip } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Loader2, Paperclip } from 'lucide-react'
 import { useChatStore } from '@/lib/store'
 
 const ICON_BTN = 'flex h-7 w-7 items-center justify-center rounded-md transition-colors'
+const ACCEPTED = '.csv,.parquet,.json,.jsonl,.ndjson'
 
 interface AttachButtonProps {
   conversationId: string
@@ -11,32 +11,53 @@ interface AttachButtonProps {
 
 export function AttachButton({ conversationId }: AttachButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const addAttachedFile = useChatStore((s) => s.addAttachedFile)
+  const uploadDataset = useChatStore((s) => s.uploadDataset)
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    e.target.value = '' // always clear so the same file can be picked again
     if (!file) return
-    addAttachedFile(conversationId, {
-      id: nanoid(),
-      name: file.name,
-      size: file.size,
-      mimeType: file.type || 'application/octet-stream',
-    })
-    e.target.value = ''
+    setError(null)
+    setUploading(true)
+    try {
+      await uploadDataset(conversationId, file)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setError(msg)
+      // Surface loudly — the paperclip looking "done" after a failure would
+      // leave the user thinking the file is available to the agent when it
+      // isn't. Alert is blunt but honest.
+      window.alert(`Upload failed: ${msg}`)
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
     <>
-      <input ref={inputRef} type="file" className="hidden" onChange={onPick} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept={ACCEPTED}
+        className="hidden"
+        onChange={onPick}
+      />
       <button
         type="button"
-        title="Attach file"
-        aria-label="Attach file"
+        title={error ? `Last upload failed: ${error}` : 'Upload dataset (CSV, Parquet, JSON)'}
+        aria-label="Upload dataset"
         onClick={() => inputRef.current?.click()}
+        disabled={uploading}
         className={ICON_BTN}
-        style={{ color: 'var(--fg-2)' }}
+        style={{ color: uploading ? 'var(--acc)' : 'var(--fg-2)' }}
       >
-        <Paperclip size={14} />
+        {uploading ? (
+          <Loader2 size={14} className="animate-spin" />
+        ) : (
+          <Paperclip size={14} />
+        )}
       </button>
     </>
   )

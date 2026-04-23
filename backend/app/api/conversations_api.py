@@ -59,6 +59,30 @@ class TurnCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=_CONTENT_MAX)
 
 
+class ColumnInfo(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    name: str
+    type: str
+
+
+class UploadedDataset(BaseModel):
+    """A user-uploaded file ingested into the conversation's user_data DuckDB.
+
+    Stored on the Conversation so the pre-turn injector can render a system
+    prompt block telling the agent which tables it can SELECT from.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    table_name: str
+    filename: str
+    columns: list[ColumnInfo]
+    row_count: int
+    size_bytes: int
+    uploaded_at: float
+
+
 class Conversation(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -69,6 +93,7 @@ class Conversation(BaseModel):
     turns: list[ConversationTurn]
     pinned: bool = False
     frozen_at: float | None = None
+    datasets: list[UploadedDataset] = Field(default_factory=list)
 
 
 class ConversationSummary(BaseModel):

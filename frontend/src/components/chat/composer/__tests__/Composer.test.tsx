@@ -47,7 +47,7 @@ describe('Composer', () => {
     render(<Composer conversationId={id} />)
     expect(screen.getByRole('button', { name: /model/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /extended/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /attach/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /upload/i })).toBeInTheDocument()
   })
 
   it('renders frozen banner instead of textarea when conversation frozen', () => {

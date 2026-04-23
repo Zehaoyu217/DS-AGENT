@@ -76,6 +76,7 @@ def build_duckdb_globals(
     dataset_path: str | Path | None = None,
     db_path: str = _MAIN_DB_PATH,
     registry: Any = None,  # SkillRegistry | None — injected by chat_api
+    user_data_db_path: str | Path | None = None,
 ) -> str:
     """Build a Python preamble for the sandbox that wires up DuckDB access.
 
@@ -85,6 +86,10 @@ def build_duckdb_globals(
 
     When *dataset_path* is provided (user uploaded a file), also reads it
     into ``df`` for direct pandas access.
+
+    When *user_data_db_path* is provided (conversation has uploaded datasets),
+    the per-conversation DuckDB is ATTACHed read-only as schema ``user_data``.
+    The agent can then query ``SELECT * FROM user_data.my_table``.
 
     Exposes:
     * ``conn``   – read-only DuckDB connection to the shared database
@@ -107,6 +112,19 @@ def build_duckdb_globals(
         "conn = duckdb.connect(_DB_PATH, read_only=True)",
         "",
     ]
+
+    # ATTACH the per-conversation user-data DB (read-only) so the agent can
+    # SELECT from tables the user uploaded via the chat UI.
+    if user_data_db_path:
+        ud_path = str(Path(user_data_db_path))
+        parts += [
+            f"_USER_DATA_DB_PATH = {ud_path!r}",
+            "if _pathlib.Path(_USER_DATA_DB_PATH).exists():",
+            "    conn.execute(",
+            "        f\"ATTACH '{_USER_DATA_DB_PATH}' AS user_data (READ_ONLY)\"",
+            "    )",
+            "",
+        ]
 
     if dataset_path:
         path = str(Path(dataset_path))

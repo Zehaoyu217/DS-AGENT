@@ -26,6 +26,21 @@ class TokenBudget:
 
 
 @dataclass(frozen=True, slots=True)
+class DatasetSummary:
+    """Compact view of a user-uploaded dataset used to render the prompt block.
+
+    Decoupled from the API-layer ``UploadedDataset`` so the injector has no
+    dependency on FastAPI or pydantic.
+    """
+
+    table_name: str
+    filename: str
+    row_count: int
+    # List of "col_name (TYPE)" strings, pre-rendered by the caller.
+    columns: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class InjectorInputs:
     active_profile_summary: str | None = None
     extras: dict[str, str] = field(default_factory=dict)
@@ -33,6 +48,7 @@ class InjectorInputs:
     plan_mode: bool = False
     session_id: str = ""
     latest_user_prompt: str = ""
+    datasets: tuple[DatasetSummary, ...] = ()
 
 
 class _SkillRegistry(Protocol):
@@ -223,6 +239,44 @@ class PreTurnInjector:
             return ""
         return "\n\n## Prior Session Memory\n\n" + notes.strip()
 
+    def _datasets_section(self, datasets: tuple[DatasetSummary, ...]) -> str:
+        """Render the user-uploaded datasets block for the system prompt.
+
+        The agent sees each dataset as an attached DuckDB table in the
+        ``user_data`` schema — query via ``conn.execute("SELECT ... FROM
+        user_data.TABLE")``. Column lists are truncated to keep the prompt
+        short; full schema is discoverable with ``DESCRIBE user_data.TABLE``.
+        """
+        if not datasets:
+            return ""
+        max_cols_inline = 12
+        lines: list[str] = [
+            "## User-Uploaded Datasets",
+            "",
+            (
+                "The user uploaded these datasets via the chat UI. Each is "
+                "available as a DuckDB table in the `user_data` schema — query "
+                'via `conn.execute("SELECT ... FROM user_data.<table>").df()`. '
+                "Use `DESCRIBE user_data.<table>` for full schema if column "
+                "lists are truncated below."
+            ),
+            "",
+        ]
+        for ds in datasets:
+            lines.append(
+                f"### `{ds.table_name}` — {ds.row_count:,} rows "
+                f"(from `{ds.filename}`)"
+            )
+            cols = list(ds.columns)
+            if len(cols) > max_cols_inline:
+                shown = ", ".join(cols[:max_cols_inline])
+                remaining = len(cols) - max_cols_inline
+                lines.append(f"- Columns: {shown}, … ({remaining} more)")
+            elif cols:
+                lines.append(f"- Columns: {', '.join(cols)}")
+            lines.append("")
+        return "\n\n" + "\n".join(lines).rstrip()
+
     def _token_budget_section(self, budget: TokenBudget | None) -> str:
         if budget is None:
             return ""
@@ -290,6 +344,9 @@ class PreTurnInjector:
         knowledge = self._knowledge_section(inputs.latest_user_prompt)
         if knowledge:
             parts.append(knowledge)
+        datasets = self._datasets_section(inputs.datasets)
+        if datasets:
+            parts.append(datasets)
         profile = self._profile_section(inputs.active_profile_summary)
         if profile:
             parts.append(profile)
@@ -314,6 +371,7 @@ class PreTurnInjector:
             self._operational_state(),
             self._session_memory_section(inputs.session_id),
             self._knowledge_section(inputs.latest_user_prompt),
+            self._datasets_section(inputs.datasets),
             self._skill_menu(),
             self._gotchas_section(),
             self._profile_section(inputs.active_profile_summary),

@@ -1,34 +1,49 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { AttachedFilesPreview } from '../AttachedFilesPreview'
-import { useChatStore } from '@/lib/store'
+import { useChatStore, type UploadedDataset } from '@/lib/store'
+
+function seed(conversationId: string, datasets: UploadedDataset[]) {
+  useChatStore.setState((state) => ({
+    conversations: state.conversations.map((c) =>
+      c.id === conversationId ? { ...c, datasets } : c,
+    ),
+  }))
+}
 
 describe('AttachedFilesPreview', () => {
   beforeEach(() => {
     useChatStore.setState({ conversations: [], activeConversationId: null })
   })
 
-  it('renders a chip per attached file', () => {
+  it('renders a chip per uploaded dataset', () => {
     const id = useChatStore.getState().createConversation()
-    useChatStore
-      .getState()
-      .addAttachedFile(id, { id: 'a', name: 'q.csv', size: 1024, mimeType: 'text/csv' })
-    useChatStore
-      .getState()
-      .addAttachedFile(id, { id: 'b', name: 'r.md', size: 512, mimeType: 'text/markdown' })
+    seed(id, [
+      {
+        tableName: 'sales',
+        filename: 'sales.csv',
+        columns: [{ name: 'x', type: 'BIGINT' }],
+        rowCount: 1234,
+        sizeBytes: 999,
+        uploadedAt: Date.now(),
+      },
+      {
+        tableName: 'inventory',
+        filename: 'inventory.parquet',
+        columns: [{ name: 'sku', type: 'VARCHAR' }],
+        rowCount: 50,
+        sizeBytes: 1_200,
+        uploadedAt: Date.now(),
+      },
+    ])
     render(<AttachedFilesPreview conversationId={id} />)
-    expect(screen.getByText('q.csv')).toBeInTheDocument()
-    expect(screen.getByText('r.md')).toBeInTheDocument()
+    expect(screen.getByText('user_data.sales')).toBeInTheDocument()
+    expect(screen.getByText('user_data.inventory')).toBeInTheDocument()
   })
 
-  it('removes on X click', () => {
+  it('renders nothing when the conversation has no datasets', () => {
     const id = useChatStore.getState().createConversation()
-    useChatStore
-      .getState()
-      .addAttachedFile(id, { id: 'a', name: 'q.csv', size: 1024, mimeType: 'text/csv' })
-    render(<AttachedFilesPreview conversationId={id} />)
-    fireEvent.click(screen.getByRole('button', { name: /remove q\.csv/i }))
-    const conv = useChatStore.getState().conversations.find((c) => c.id === id)!
-    expect(conv.attachedFiles).toEqual([])
+    const { container } = render(<AttachedFilesPreview conversationId={id} />)
+    expect(container).toBeEmptyDOMElement()
   })
 })
