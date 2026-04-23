@@ -1,9 +1,8 @@
 """REST endpoint for listing available models grouped by provider.
 
 GET /api/models — returns models available based on configured API keys:
-  - MLX: shown when mlx-lm is installed; lists cached and recommended local models
-  - Ollama: fetched live from local daemon, filtered to tool-capable models only
   - OpenRouter: shown if OPENROUTER_API_KEY is set (free models that support tools)
+  - MLX: shown when mlx-lm is installed; lists only locally-cached models
 """
 from __future__ import annotations
 
@@ -11,7 +10,6 @@ import importlib.util
 import logging
 import os
 
-import httpx
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -52,14 +50,6 @@ _OPENROUTER_MODELS = [
     },
 ]
 
-# Ollama model families known to support native tool calling.
-# Used as fallback when /api/show doesn't report capabilities (older Ollama versions).
-_KNOWN_TOOL_CAPABLE_PREFIXES = (
-    "qwen", "gemma", "llama3", "mistral", "command-r", "phi3", "phi4",
-    "deepseek-v3", "hermes", "nous-hermes", "nexusraven",
-)
-
-
 class ModelEntry(BaseModel):
     id: str
     label: str
@@ -78,30 +68,6 @@ class ModelsResponse(BaseModel):
     groups: list[ModelGroup]
 
 
-_KNOWN_MLX_MODELS = [
-    ModelEntry(
-        id="mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit",
-        label="Gemma 4 E2B",
-        description="MLX local · recommended small",
-    ),
-    ModelEntry(
-        id="mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit",
-        label="Gemma 4 E4B",
-        description="MLX local · recommended default",
-    ),
-    ModelEntry(
-        id="mlx/NexVeridian/gemma-4-26B-A4b-it-4bit",
-        label="Gemma 4 26B A4B",
-        description="MLX local · recommended large",
-    ),
-    ModelEntry(
-        id="mlx/mlx-community/Qwen3.5-9B-OptiQ-4bit",
-        label="Qwen3.5 9B",
-        description="MLX local · recommended alternate",
-    ),
-]
-
-
 def _mlx_runtime_available() -> bool:
     return importlib.util.find_spec("mlx_lm") is not None
 
@@ -114,63 +80,21 @@ def _humanize_mlx_id(model_id: str) -> str:
 
 
 def _fetch_mlx_models() -> list[ModelEntry]:
-    entries: dict[str, ModelEntry] = {
-        entry.id: entry for entry in _KNOWN_MLX_MODELS
-    }
-    for model_id in cached_model_ids():
-        entries[model_id] = ModelEntry(
+    """Return only MLX models that are actually cached on-disk.
+
+    We deliberately do not surface an aspirational "recommended" list — if a
+    model isn't downloaded, picking it from a dropdown would stall on a
+    multi-gigabyte fetch. Users who want new MLX models should download them
+    explicitly via ``hf download`` or ``mlx_lm.generate`` first.
+    """
+    return [
+        ModelEntry(
             id=model_id,
             label=_humanize_mlx_id(model_id),
             description="MLX local · cached",
         )
-    return [entries[key] for key in sorted(entries)]
-
-
-def _has_tool_capability(base_url: str, model_name: str) -> bool:
-    """Return True if the Ollama model supports native tool calling.
-
-    Checks /api/show capabilities first; falls back to known-capable prefix
-    list so models aren't excluded when Ollama is older or the request times out.
-    """
-    try:
-        resp = httpx.post(
-            f"{base_url.rstrip('/')}/api/show",
-            json={"name": model_name},
-            timeout=5.0,
-        )
-        resp.raise_for_status()
-        capabilities = resp.json().get("capabilities", [])
-        if capabilities:
-            return "tools" in capabilities
-        # Older Ollama: no capabilities field — fall through to prefix check
-    except Exception:
-        logger.debug("Ollama capability check failed for %s", model_name, exc_info=True)
-
-    name_lower = model_name.lower()
-    return any(name_lower.startswith(p) for p in _KNOWN_TOOL_CAPABLE_PREFIXES)
-
-
-def _fetch_ollama_models(base_url: str) -> list[ModelEntry]:
-    """Fetch installed Ollama models, keeping only tool-capable ones."""
-    try:
-        resp = httpx.get(f"{base_url.rstrip('/')}/api/tags", timeout=3.0)
-        if resp.status_code != 200:
-            return []
-        out: list[ModelEntry] = []
-        for m in resp.json().get("models") or []:
-            name = str(m.get("name", ""))
-            if not name:
-                continue
-            if not _has_tool_capability(base_url, name):
-                logger.debug("ollama: skipping %s (no tool capability)", name)
-                continue
-            size = str((m.get("details") or {}).get("parameter_size") or "")
-            desc = f"Local · {size}" if size else "Local"
-            out.append(ModelEntry(id=name, label=name, description=desc))
-        return out
-    except Exception as exc:
-        logger.debug("ollama unavailable: %s", exc)
-        return []
+        for model_id in sorted(cached_model_ids())
+    ]
 
 
 @router.get("")
@@ -207,18 +131,6 @@ def list_models() -> ModelsResponse:
                 if has_mlx
                 else "Install backend[mlx] on Apple Silicon to enable local MLX models"
             ),
-        )
-    )
-
-    # Ollama local models (tool-capable only)
-    ollama_models = _fetch_ollama_models(config.ollama_base_url)
-    groups.append(
-        ModelGroup(
-            provider="ollama",
-            label="Ollama (Local)",
-            models=ollama_models,
-            available=True,
-            note="" if ollama_models else "No tool-capable models installed",
         )
     )
 

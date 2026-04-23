@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-import os
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -33,9 +32,15 @@ _BUDGET_WARNING = (
 _MODULE_ESTIMATE_S = {"papers": 30, "code": 15, "web": 10}
 
 
-def _build_anthropic_client() -> Any:
-    import anthropic
-    return anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+def _build_http() -> Any:
+    """Return the shared httpx module — used by router/synthesis sub-agents.
+
+    httpx.post is a module-level function, so the module *is* the 'client'.
+    Tests replace this with a MagicMock to capture requests without hitting
+    the network.
+    """
+    import httpx
+    return httpx
 
 
 RESEARCH_SCHEMAS: tuple[ToolSchema, ...] = (
@@ -121,9 +126,9 @@ class ResearchTool:
     """Orchestrates RoutingAgent → module execution → SynthesisAgent."""
 
     def __init__(self) -> None:
-        api = _build_anthropic_client()
-        self._routing_agent = RoutingAgent(api_client=api)
-        self._synthesis_agent = SynthesisAgent(api_client=api)
+        http = _build_http()
+        self._routing_agent = RoutingAgent(http=http)
+        self._synthesis_agent = SynthesisAgent(http=http)
         self._papers_module = PapersModule()
         self._code_module = CodeModule()
         self._web_module = WebModule()

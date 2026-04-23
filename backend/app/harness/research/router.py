@@ -4,11 +4,11 @@ import json
 import logging
 from typing import Any
 
+from app.harness.research.llm import openrouter_chat, strip_json_fence
 from app.harness.research.types import RoutePlan
 
 logger = logging.getLogger(__name__)
 
-_MODEL = "claude-haiku-4-5-20251001"
 _MAX_TOKENS = 512
 
 _SYSTEM_PROMPT = """\
@@ -81,8 +81,10 @@ def _fallback_plan(sources: list[str], budget_tokens: int, query: str) -> RouteP
 
 
 class RoutingAgent:
-    def __init__(self, api_client: Any) -> None:
-        self._api = api_client
+    """Chooses modules + budgets via OpenRouter chat-completions."""
+
+    def __init__(self, http: Any) -> None:
+        self._http = http
 
     def route(
         self,
@@ -98,17 +100,13 @@ class RoutingAgent:
             budget_tokens=budget_tokens,
         )
         try:
-            resp = self._api.messages.create(
-                model=_MODEL,
+            text = openrouter_chat(
+                self._http,
                 system=_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user_msg}],
+                user=user_msg,
                 max_tokens=_MAX_TOKENS,
             )
-            text = ""
-            for block in resp.content:
-                if getattr(block, "type", None) == "text":
-                    text += block.text
-            data = json.loads(text.strip())
+            data = json.loads(strip_json_fence(text))
             return RoutePlan(
                 modules=tuple(data["modules"]),
                 sub_queries=data["sub_queries"],

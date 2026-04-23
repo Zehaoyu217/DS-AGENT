@@ -35,8 +35,8 @@ from app.harness.clients.fallback_client import FallbackModelClient
 class _RecordingClient:
     """Minimal ModelClient that records calls and can raise on demand.
 
-    Used in lieu of real Anthropic / OpenRouter / Ollama clients so these
-    tests don't depend on HTTP, API keys, or provider-specific payloads.
+    Used in lieu of real OpenRouter / MLX clients so these tests don't
+    depend on HTTP, API keys, or provider-specific payloads.
     """
 
     name: str

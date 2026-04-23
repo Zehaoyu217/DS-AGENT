@@ -23,7 +23,6 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-import anthropic
 import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -35,14 +34,12 @@ from app.context.manager import ContextLayer, session_registry
 from app.core.home import traces_path
 from app.data.db_init import get_data_context
 from app.harness.a2a import register_delegate_tool
-from app.harness.clients.anthropic_client import AnthropicClient
 from app.harness.clients.base import (
     ModelClient,
     ToolSchema,
 )
 from app.harness.clients.fallback_client import FallbackModelClient
 from app.harness.clients.mlx_client import MLXClient
-from app.harness.clients.ollama_client import OllamaClient
 from app.harness.clients.openrouter_client import OpenRouterClient
 from app.harness.config import ModelProfile
 from app.harness.dispatcher import ToolDispatcher
@@ -706,11 +703,6 @@ def _openrouter_fallback_models() -> list[str]:
 
 def _make_client(model_id: str, http: httpx.Client) -> ModelClient:
     config = get_config()
-    if model_id.startswith("claude-"):
-        profile = ModelProfile(
-            name=model_id, provider="anthropic", model_id=model_id, tier="advisory",
-        )
-        return AnthropicClient(profile, anthropic.Anthropic())  # type: ignore[return-value]
     if model_id.startswith("mlx/"):
         profile = ModelProfile(
             name=model_id,
@@ -719,23 +711,19 @@ def _make_client(model_id: str, http: httpx.Client) -> ModelClient:
             tier="advisory",
         )
         return MLXClient(profile)  # type: ignore[return-value]
-    if "/" in model_id:
-        primary = _make_openrouter_client(model_id, config.openrouter_api_key, http)
-        fallback_ids = [
-            fid for fid in _openrouter_fallback_models() if fid != model_id
-        ]
-        if not fallback_ids:
-            return primary
-        fallbacks = [
-            _make_openrouter_client(fid, config.openrouter_api_key, http)
-            for fid in fallback_ids
-        ]
-        return FallbackModelClient(primary, fallbacks)  # type: ignore[return-value]
-    profile = ModelProfile(
-        name=model_id, provider="ollama", model_id=model_id,
-        tier="advisory", host=config.ollama_base_url,
-    )
-    return OllamaClient(profile, http)  # type: ignore[return-value]
+    # Default: OpenRouter. A "/" in the id still works (e.g. "openai/gpt-oss-120b:free");
+    # a bare id like "gpt-4" gets passed through as-is.
+    primary = _make_openrouter_client(model_id, config.openrouter_api_key, http)
+    fallback_ids = [
+        fid for fid in _openrouter_fallback_models() if fid != model_id
+    ]
+    if not fallback_ids:
+        return primary
+    fallbacks = [
+        _make_openrouter_client(fid, config.openrouter_api_key, http)
+        for fid in fallback_ids
+    ]
+    return FallbackModelClient(primary, fallbacks)  # type: ignore[return-value]
 
 
 def _make_openrouter_client(

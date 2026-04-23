@@ -1,43 +1,14 @@
 mode: config   # config | auto
 
 models:
-  claude_opus:
-    provider: anthropic
-    model_id: claude-opus-4-6
-    thinking_budget: 16000
+  gpt_oss_120b:
+    provider: openrouter
+    model_id: openai/gpt-oss-120b:free
     tier: observatory
-  claude_sonnet:
-    provider: anthropic
-    model_id: claude-sonnet-4-6
-    thinking_budget: 8000
-    tier: observatory
-  claude_haiku:
-    provider: anthropic
-    model_id: claude-haiku-4-5-20251001
+  llama_70b:
+    provider: openrouter
+    model_id: meta-llama/llama-3.3-70b-instruct:free
     tier: advisory
-  gemma_thinking:
-    provider: ollama
-    model_id: gemma4:26b
-    host: http://localhost:11434
-    keep_alive: 30m
-    num_ctx: 32768
-    options: {temperature: 0.3, num_predict: 4096}
-    tier: strict
-  gemma_fast:
-    provider: ollama
-    model_id: bjoernb/gemma4-26b-fast
-    host: http://localhost:11434
-    keep_alive: 30m
-    num_ctx: 16384
-    options: {temperature: 0.3}
-    tier: strict
-  qwen_small:
-    provider: ollama
-    model_id: qwen2.5:7b-instruct
-    host: http://localhost:11434
-    num_ctx: 8192
-    tier: strict
-
   llama4_scout:
     provider: openrouter
     model_id: meta-llama/llama-4-scout:free
@@ -47,17 +18,24 @@ models:
     model_id: meta-llama/llama-4-maverick:free
     tier: observatory
 
-roles:
-  think: gemma_thinking
-  execute: gemma_fast
-  summarize: gemma_fast
-  evaluate: claude_sonnet
-  skill_pick: qwen_small
-  embed: qwen_small
+  gemma_mlx:
+    provider: mlx
+    model_id: mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit
+    tier: strict
+  qwen_mlx:
+    provider: mlx
+    model_id: mlx/mlx-community/Qwen3.5-9B-OptiQ-4bit
+    tier: strict
 
-warmup:
-  - gemma_thinking
-  - gemma_fast
+roles:
+  think: gpt_oss_120b
+  execute: gpt_oss_120b
+  summarize: llama_70b
+  evaluate: gpt_oss_120b
+  skill_pick: llama_70b
+  embed: llama_70b
+
+warmup: []
 
 guardrails:
   mode: per_tier

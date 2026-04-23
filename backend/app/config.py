@@ -34,9 +34,7 @@ class AppConfig(BaseSettings):
     debug: bool = False
 
     # Model
-    default_model: str = "qwen3.5:9b"
-    ollama_base_url: str = "http://localhost:11434"
-    litellm_base_url: str = "http://localhost:4000"
+    default_model: str = "openai/gpt-oss-120b:free"
     openrouter_api_key: str = ""
 
     # Sandbox

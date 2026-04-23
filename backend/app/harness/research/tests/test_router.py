@@ -7,15 +7,20 @@ from app.harness.research.router import RoutingAgent
 from app.harness.research.types import RoutePlan
 
 
-def _mock_api(json_content: dict) -> MagicMock:
-    mock_api = MagicMock()
-    mock_msg = MagicMock()
-    mock_block = MagicMock()
-    mock_block.type = "text"
-    mock_block.text = json.dumps(json_content)
-    mock_msg.content = [mock_block]
-    mock_api.messages.create.return_value = mock_msg
-    return mock_api
+def _mock_http(content_text: str) -> MagicMock:
+    """Mimic httpx module with .post returning an openrouter-shaped response."""
+    mock_http = MagicMock()
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {
+        "choices": [{"message": {"content": content_text}}],
+    }
+    mock_resp.raise_for_status = MagicMock()
+    mock_http.post.return_value = mock_resp
+    return mock_http
+
+
+def _mock_http_json(json_content: dict) -> MagicMock:
+    return _mock_http(json.dumps(json_content))
 
 
 def test_route_parallel_query():
@@ -26,7 +31,7 @@ def test_route_parallel_query():
         "parallel_ok": True,
         "rationale": "independent queries",
     }
-    router = RoutingAgent(api_client=_mock_api(plan_json))
+    router = RoutingAgent(http=_mock_http_json(plan_json))
     plan = router.route(
         query="isotonic calibration LightGBM",
         context="",
@@ -39,16 +44,23 @@ def test_route_parallel_query():
     assert plan.budgets["papers"] == 90_000
 
 
-def test_route_falls_back_on_invalid_json():
-    mock_api = MagicMock()
-    mock_msg = MagicMock()
-    mock_block = MagicMock()
-    mock_block.type = "text"
-    mock_block.text = "not valid json at all"
-    mock_msg.content = [mock_block]
-    mock_api.messages.create.return_value = mock_msg
+def test_route_strips_markdown_json_fence():
+    """Reasoning models (GPT-OSS, Llama) often wrap JSON in ```json fences."""
+    plan_json = {
+        "modules": ["papers"],
+        "sub_queries": {"papers": "q"},
+        "budgets": {"papers": 100_000},
+        "parallel_ok": True,
+        "rationale": "test",
+    }
+    wrapped = "```json\n" + json.dumps(plan_json) + "\n```"
+    router = RoutingAgent(http=_mock_http(wrapped))
+    plan = router.route("q", "", ["papers"], 100_000)
+    assert plan.modules == ("papers",)
 
-    router = RoutingAgent(api_client=mock_api)
+
+def test_route_falls_back_on_invalid_json():
+    router = RoutingAgent(http=_mock_http("not valid json at all"))
     plan = router.route(
         query="test", context="", sources=["papers", "code"], budget_tokens=100_000,
     )
@@ -58,10 +70,10 @@ def test_route_falls_back_on_invalid_json():
 
 
 def test_route_falls_back_on_api_error():
-    mock_api = MagicMock()
-    mock_api.messages.create.side_effect = Exception("API error")
+    mock_http = MagicMock()
+    mock_http.post.side_effect = Exception("API error")
 
-    router = RoutingAgent(api_client=mock_api)
+    router = RoutingAgent(http=mock_http)
     plan = router.route(
         query="test", context="", sources=["papers"], budget_tokens=50_000,
     )
@@ -77,7 +89,7 @@ def test_budget_not_allocated_to_unselected_modules():
         "parallel_ok": True,
         "rationale": "papers only",
     }
-    router = RoutingAgent(api_client=_mock_api(plan_json))
+    router = RoutingAgent(http=_mock_http_json(plan_json))
     plan = router.route("finance", "", ["papers", "code", "web"], 150_000)
     assert "code" not in plan.modules
     assert "web" not in plan.modules
@@ -91,6 +103,6 @@ def test_route_plan_modules_is_tuple():
         "parallel_ok": True,
         "rationale": "test",
     }
-    router = RoutingAgent(api_client=_mock_api(plan_json))
+    router = RoutingAgent(http=_mock_http_json(plan_json))
     plan = router.route("q", "", ["papers", "code"], 150_000)
     assert isinstance(plan.modules, tuple)

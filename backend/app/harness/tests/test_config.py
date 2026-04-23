@@ -11,21 +11,18 @@ def test_load_config_parses_models_yaml(tmp_path) -> None:
         """
 mode: config
 models:
-  claude_sonnet:
-    provider: anthropic
-    model_id: claude-sonnet-4-6
-    thinking_budget: 8000
+  gpt_oss_120b:
+    provider: openrouter
+    model_id: openai/gpt-oss-120b:free
     tier: observatory
-  gemma_fast:
-    provider: ollama
-    model_id: gemma4:26b
-    host: http://localhost:11434
-    num_ctx: 16384
+  gemma_mlx:
+    provider: mlx
+    model_id: mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit
     tier: strict
 roles:
-  think: gemma_fast
-  evaluate: claude_sonnet
-warmup: [gemma_fast]
+  think: gpt_oss_120b
+  evaluate: gemma_mlx
+warmup: [gemma_mlx]
 guardrails:
   mode: per_tier
   retry_on_gate_block: null
@@ -35,13 +32,12 @@ guardrails:
     cfg = load_config(config_path)
     assert isinstance(cfg, HarnessConfig)
     assert cfg.mode == "config"
-    assert cfg.roles["think"] == "gemma_fast"
-    profile = cfg.models["gemma_fast"]
+    assert cfg.roles["think"] == "gpt_oss_120b"
+    profile = cfg.models["gemma_mlx"]
     assert isinstance(profile, ModelProfile)
-    assert profile.provider == "ollama"
+    assert profile.provider == "mlx"
     assert profile.tier == "strict"
-    assert profile.num_ctx == 16384
-    assert "gemma_fast" in cfg.warmup
+    assert "gemma_mlx" in cfg.warmup
 
 
 def test_load_config_rejects_unknown_role_target(tmp_path) -> None:
@@ -66,7 +62,7 @@ def test_load_config_rejects_unknown_tier(tmp_path) -> None:
         """
 mode: config
 models:
-  x: {provider: anthropic, model_id: x, tier: mystery}
+  x: {provider: openrouter, model_id: x, tier: mystery}
 roles: {think: x}
 warmup: []
 guardrails: {mode: per_tier, retry_on_gate_block: null}
@@ -75,6 +71,25 @@ guardrails: {mode: per_tier, retry_on_gate_block: null}
     )
     with pytest.raises(ValueError, match="tier"):
         load_config(path)
+
+
+def test_load_config_rejects_removed_providers(tmp_path) -> None:
+    """anthropic and ollama are no longer valid providers."""
+    for bad_provider in ("anthropic", "ollama"):
+        path = tmp_path / f"{bad_provider}.yaml"
+        path.write_text(
+            f"""
+mode: config
+models:
+  x: {{provider: {bad_provider}, model_id: x, tier: advisory}}
+roles: {{think: x}}
+warmup: []
+guardrails: {{mode: per_tier, retry_on_gate_block: null}}
+""",
+            encoding="utf-8",
+        )
+        with pytest.raises(ValueError, match="provider"):
+            load_config(path)
 
 
 def test_load_config_accepts_mlx_provider(tmp_path) -> None:

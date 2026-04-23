@@ -205,18 +205,23 @@ class BatchRunner:
     # ── Private ────────────────────────────────────────────────────────────
 
     def _build_client(self) -> Any:
-        import anthropic  # noqa: PLC0415
+        import os  # noqa: PLC0415
 
-        from app.harness.clients.anthropic_client import AnthropicClient  # noqa: PLC0415
+        import httpx  # noqa: PLC0415
+
+        from app.config import get_config  # noqa: PLC0415
+        from app.harness.clients.openrouter_client import OpenRouterClient  # noqa: PLC0415
         from app.harness.config import ModelProfile  # noqa: PLC0415
 
         profile = ModelProfile(
             name="batch-worker",
-            provider="anthropic",
-            model_id="claude-haiku-4-5-20251001",
-            tier="standard",
+            provider="openrouter",
+            model_id=os.environ.get("BATCH_WORKER_MODEL", "openai/gpt-oss-120b:free"),
+            tier="advisory",
+            host="https://openrouter.ai/api/v1",
+            options={"api_key": get_config().openrouter_api_key},
         )
-        return AnthropicClient(profile=profile, api_client=anthropic.Anthropic())
+        return OpenRouterClient(profile=profile, http=httpx.Client(timeout=60.0))
 
     def _build_system(self) -> str:
         try:

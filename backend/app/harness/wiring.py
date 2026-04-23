@@ -287,7 +287,7 @@ def get_toolset_resolver() -> Any:
 class _MinimalCronFactory:
     """Minimal AgentFactory for cron job execution.
 
-    Builds a bare-bones loop (no registered tools) backed by the Anthropic API.
+    Builds a bare-bones loop (no registered tools) backed by OpenRouter.
     For production use with the full data-science tool catalog, supply a custom
     factory via ``get_cron_engine(agent_factory=...)``.
     """
@@ -299,18 +299,21 @@ class _MinimalCronFactory:
         return AgentLoop(dispatcher=ToolDispatcher())
 
     def build_client(self) -> Any:
-        import anthropic  # noqa: PLC0415
+        import httpx  # noqa: PLC0415
 
-        from app.harness.clients.anthropic_client import AnthropicClient  # noqa: PLC0415
+        from app.config import get_config  # noqa: PLC0415
+        from app.harness.clients.openrouter_client import OpenRouterClient  # noqa: PLC0415
         from app.harness.config import ModelProfile  # noqa: PLC0415
 
         profile = ModelProfile(
             name="cron-worker",
-            provider="anthropic",
-            model_id="claude-haiku-4-5-20251001",
-            tier="standard",
+            provider="openrouter",
+            model_id=os.environ.get("CRON_WORKER_MODEL", "openai/gpt-oss-120b:free"),
+            tier="advisory",
+            host="https://openrouter.ai/api/v1",
+            options={"api_key": get_config().openrouter_api_key},
         )
-        return AnthropicClient(profile=profile, api_client=anthropic.Anthropic())
+        return OpenRouterClient(profile=profile, http=httpx.Client(timeout=60.0))
 
     def build_system(self) -> str:
         try:

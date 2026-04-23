@@ -4,6 +4,7 @@ import json
 import logging
 from typing import Any
 
+from app.harness.research.llm import openrouter_chat, strip_json_fence
 from app.harness.research.types import (
     CodeResult,
     PapersResult,
@@ -13,7 +14,6 @@ from app.harness.research.types import (
 
 logger = logging.getLogger(__name__)
 
-_MODEL = "claude-haiku-4-5-20251001"
 _MAX_TOKENS = 1024
 
 _SYSTEM_PROMPT = """\
@@ -34,8 +34,10 @@ Rules:
 
 
 class SynthesisAgent:
-    def __init__(self, api_client: Any) -> None:
-        self._api = api_client
+    """Merges module outputs into a ResearchResult via OpenRouter chat-completions."""
+
+    def __init__(self, http: Any) -> None:
+        self._http = http
 
     def synthesise(
         self,
@@ -54,17 +56,13 @@ class SynthesisAgent:
         follow_ups: tuple[str, ...] = ()
 
         try:
-            resp = self._api.messages.create(
-                model=_MODEL,
+            text = openrouter_chat(
+                self._http,
                 system=_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user_msg}],
+                user=user_msg,
                 max_tokens=_MAX_TOKENS,
             )
-            text = ""
-            for block in resp.content:
-                if getattr(block, "type", None) == "text":
-                    text += block.text
-            data = json.loads(text.strip())
+            data = json.loads(strip_json_fence(text))
             summary = data.get("summary", "")
             follow_ups = tuple(data.get("follow_up_questions", []))
         except Exception as exc:

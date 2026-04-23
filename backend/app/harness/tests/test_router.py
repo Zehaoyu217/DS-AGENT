@@ -12,13 +12,14 @@ def _cfg() -> HarnessConfig:
     return HarnessConfig(
         mode="config",
         models={
-            "claude": ModelProfile(name="claude", provider="anthropic",
-                                   model_id="claude-sonnet-4-6", tier="observatory"),
-            "gemma": ModelProfile(name="gemma", provider="ollama",
-                                  model_id="gemma4:26b", tier="strict",
-                                  host="http://localhost:11434"),
+            "gpt_oss": ModelProfile(name="gpt_oss", provider="openrouter",
+                                    model_id="openai/gpt-oss-120b:free",
+                                    tier="observatory"),
+            "gemma": ModelProfile(name="gemma", provider="mlx",
+                                  model_id="mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit",
+                                  tier="strict"),
         },
-        roles={"think": "gemma", "evaluate": "claude"},
+        roles={"think": "gemma", "evaluate": "gpt_oss"},
         warmup=("gemma",),
         guardrails=GuardrailConfig(mode="per_tier", retry_on_gate_block=None),
     )
@@ -61,10 +62,10 @@ def test_router_warms_up_configured_models() -> None:
 
 
 def test_router_escalate_on_gate_block_swaps_to_configured_model() -> None:
-    cfg = _cfg()
+    base = _cfg()
     cfg = HarnessConfig(
-        mode=cfg.mode, models=cfg.models, roles=cfg.roles, warmup=cfg.warmup,
-        guardrails=GuardrailConfig(mode="per_tier", retry_on_gate_block="claude"),
+        mode=base.mode, models=base.models, roles=base.roles, warmup=base.warmup,
+        guardrails=GuardrailConfig(mode="per_tier", retry_on_gate_block="gpt_oss"),
     )
 
     def _factory(profile: ModelProfile) -> MagicMock:
@@ -75,4 +76,4 @@ def test_router_escalate_on_gate_block_swaps_to_configured_model() -> None:
     router = ModelRouter(config=cfg, client_factory=_factory)
     retry = router.retry_client()
     assert retry is not None
-    assert retry.name == "claude"
+    assert retry.name == "gpt_oss"

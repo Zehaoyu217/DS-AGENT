@@ -13,18 +13,25 @@ from app.harness.research.types import (
 )
 
 
-def _mock_api(summary_text: str) -> MagicMock:
-    mock_api = MagicMock()
-    mock_msg = MagicMock()
-    mock_block = MagicMock()
-    mock_block.type = "text"
-    mock_block.text = json.dumps({
-        "summary": summary_text,
-        "follow_up_questions": ["What dataset should I use?"],
-    })
-    mock_msg.content = [mock_block]
-    mock_api.messages.create.return_value = mock_msg
-    return mock_api
+def _mock_http(summary_text: str) -> MagicMock:
+    """Mimic an httpx module with .post returning openrouter-shaped JSON."""
+    mock_http = MagicMock()
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {
+        "choices": [
+            {
+                "message": {
+                    "content": json.dumps({
+                        "summary": summary_text,
+                        "follow_up_questions": ["What dataset should I use?"],
+                    }),
+                },
+            },
+        ],
+    }
+    mock_resp.raise_for_status = MagicMock()
+    mock_http.post.return_value = mock_resp
+    return mock_http
 
 
 def test_synthesise_basic():
@@ -40,7 +47,7 @@ def test_synthesise_basic():
     ))
     web = WebResult()
 
-    agent = SynthesisAgent(api_client=_mock_api("Temperature scaling is the best approach."))
+    agent = SynthesisAgent(http=_mock_http("Temperature scaling is the best approach."))
     result = agent.synthesise(
         query="calibration methods",
         context="",
@@ -60,7 +67,7 @@ def test_synthesise_basic():
 
 
 def test_synthesise_sets_budget_warning():
-    agent = SynthesisAgent(api_client=_mock_api("summary"))
+    agent = SynthesisAgent(http=_mock_http("summary"))
     result = agent.synthesise(
         query="q", context="", papers=PapersResult(), code=CodeResult(), web=WebResult(),
         modules_ran=[],
@@ -71,9 +78,9 @@ def test_synthesise_sets_budget_warning():
 
 
 def test_synthesise_falls_back_on_api_error():
-    mock_api = MagicMock()
-    mock_api.messages.create.side_effect = Exception("API down")
-    agent = SynthesisAgent(api_client=mock_api)
+    mock_http = MagicMock()
+    mock_http.post.side_effect = Exception("API down")
+    agent = SynthesisAgent(http=mock_http)
     result = agent.synthesise(
         query="test", context="", papers=PapersResult(), code=CodeResult(), web=WebResult(),
         modules_ran=["papers"],
@@ -83,8 +90,34 @@ def test_synthesise_falls_back_on_api_error():
     assert isinstance(result.summary, str)
 
 
+def test_synthesise_strips_markdown_json_fence():
+    """Reasoning models sometimes wrap JSON in ```json fences — we must strip them."""
+    mock_http = MagicMock()
+    mock_resp = MagicMock()
+    wrapped = (
+        "```json\n"
+        + json.dumps({
+            "summary": "wrapped", "follow_up_questions": [],
+        })
+        + "\n```"
+    )
+    mock_resp.json.return_value = {
+        "choices": [{"message": {"content": wrapped}}],
+    }
+    mock_resp.raise_for_status = MagicMock()
+    mock_http.post.return_value = mock_resp
+
+    agent = SynthesisAgent(http=mock_http)
+    result = agent.synthesise(
+        query="q", context="", papers=PapersResult(), code=CodeResult(), web=WebResult(),
+        modules_ran=["papers"],
+        total_ms=0, budget_tokens_used=50_000,
+    )
+    assert result.summary == "wrapped"
+
+
 def test_result_fields_are_tuples():
-    agent = SynthesisAgent(api_client=_mock_api("done"))
+    agent = SynthesisAgent(http=_mock_http("done"))
     result = agent.synthesise(
         query="q", context="",
         papers=PapersResult(papers=(
