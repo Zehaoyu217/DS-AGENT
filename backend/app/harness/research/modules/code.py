@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import logging
 import shutil
@@ -36,9 +37,11 @@ class CodeModule:
         seen_repos: set[str] = set()
 
         for item in items:
-            if len(examples) >= _MAX_REPOS:
-                break
             repo = item.get("repo", "")
+            if repo in seen_repos:
+                continue
+            if len(seen_repos) >= _MAX_REPOS:
+                break
             seen_repos.add(repo)
 
             snippet = self._read_file_snippet(item.get("url", ""))
@@ -104,7 +107,6 @@ class CodeModule:
                 "--jq", ".content",
             ])
             if output:
-                import base64
                 content = base64.b64decode(output.strip()).decode("utf-8", errors="ignore")
                 return content[:_MAX_SNIPPET_CHARS]
         except Exception as exc:
