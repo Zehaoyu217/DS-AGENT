@@ -35,7 +35,7 @@ def _recency_query(query: str) -> bool:
 class _RawPaper:
     title: str
     arxiv_id: str | None
-    year: int | None
+    year: str | int | None   # HF path yields "2025" (str); S2/ArXiv yield int
     citation_count: int | None
     abstract: str
     source: str
@@ -66,10 +66,13 @@ class PapersModule:
                     break
                 papers.append(self._raw_to_finding(raw))
             if not papers:
-                papers.extend(self._s2_search_safe(query, budget_tokens, tokens_used))
+                found, consumed = self._s2_search_safe(query, budget_tokens, tokens_used)
+                papers.extend(found)
+                tokens_used += consumed
         else:
-            papers.extend(self._s2_search_safe(query, budget_tokens, tokens_used))
-            tokens_used = sum(_estimate_tokens(p.key_finding) for p in papers)
+            found, consumed = self._s2_search_safe(query, budget_tokens, tokens_used)
+            papers.extend(found)
+            tokens_used += consumed
 
         # Citation graph: crawl one level if budget remains
         if papers and tokens_used < budget_tokens * 0.7:
@@ -125,19 +128,24 @@ class PapersModule:
             for item in resp.json().get("data", [])
         ]
 
-    def _s2_search_safe(self, query: str, budget_tokens: int, tokens_used: int) -> list[PaperFinding]:
+    def _s2_search_safe(
+        self, query: str, budget_tokens: int, tokens_already_used: int,
+    ) -> tuple[list[PaperFinding], int]:
+        """Return (findings, tokens_consumed_by_this_call)."""
         try:
             raws = self._search_semantic_scholar(query)
         except Exception as exc:
             logger.warning("S2 search failed (%s) — falling back to ArXiv", exc)
             raws = self._search_arxiv(query)
         findings = []
+        consumed = 0
         for raw in raws[:8]:
-            tokens_used += _estimate_tokens(raw.abstract)
-            if tokens_used > budget_tokens * 0.9:
+            cost = _estimate_tokens(raw.abstract)
+            if tokens_already_used + consumed + cost > budget_tokens * 0.9:
                 break
+            consumed += cost
             findings.append(self._raw_to_finding(raw))
-        return findings
+        return findings, consumed
 
     def _citation_graph(self, arxiv_id: str, remaining_budget: int) -> list[PaperFinding]:
         if remaining_budget < 5_000:
