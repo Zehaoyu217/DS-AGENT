@@ -41,3 +41,33 @@ def test_models_api_has_no_ollama_group() -> None:
     providers = {group.provider for group in response.groups}
     assert "ollama" not in providers
     assert "anthropic" not in providers
+
+
+def test_mlx_label_uses_curated_name_when_mapped() -> None:
+    model_id = "mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit"
+    assert models_api._mlx_label(model_id) == "Gemma 4 E4B (4-bit)"
+
+
+def test_mlx_label_falls_back_to_humanizer_for_unknown_ids() -> None:
+    """Unmapped ids must still produce a readable (if imperfect) label."""
+    unknown = "mlx/some-org/new-llm-42b-it-4bit"
+    fallback = models_api._mlx_label(unknown)
+    # Humanizer strips the "mlx/" prefix and turns hyphens into spaces.
+    assert fallback == "some org/new llm 42b it 4bit"
+    # Never returns an empty string.
+    assert fallback
+
+
+def test_fetch_mlx_models_applies_label_map(monkeypatch) -> None:
+    monkeypatch.setattr(
+        models_api,
+        "cached_model_ids",
+        lambda: [
+            "mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit",
+            "mlx/unknown/brand-new-model-4bit",
+        ],
+    )
+    entries = {e.id: e for e in models_api._fetch_mlx_models()}
+    assert entries["mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit"].label == "Gemma 4 E2B (4-bit)"
+    # Unmapped id still gets a non-empty label via the humanizer fallback.
+    assert entries["mlx/unknown/brand-new-model-4bit"].label

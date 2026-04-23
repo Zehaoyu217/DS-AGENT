@@ -68,15 +68,38 @@ class ModelsResponse(BaseModel):
     groups: list[ModelGroup]
 
 
+# Curated human-readable labels for known MLX models.
+# Lookup is by full model_id (including the "mlx/" prefix). Any id not in
+# this map falls back to :func:`_humanize_mlx_id`, which strips the prefix
+# and replaces hyphens with spaces.
+_MLX_LABEL_MAP: dict[str, str] = {
+    "mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit": "Gemma 4 E2B (4-bit)",
+    "mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit": "Gemma 4 E4B (4-bit)",
+    "mlx/mlx-community/gemma-3-4b-it-4bit": "Gemma 3 4B (4-bit)",
+    "mlx/NexVeridian/gemma-4-26B-A4b-it-4bit": "Gemma 4 26B A4B (4-bit)",
+    "mlx/jorch/gemma-4-e2b-it-lm-4bit": "Gemma 4 E2B LM (4-bit)",
+    "mlx/jorch/gemma-4-e4b-it-lm-4bit": "Gemma 4 E4B LM (4-bit)",
+    "mlx/mlx-community/Qwen3-0.6B-4bit": "Qwen3 0.6B (4-bit)",
+    "mlx/mlx-community/Qwen3-4B-4bit": "Qwen3 4B (4-bit)",
+    "mlx/mlx-community/Qwen3.5-9B-OptiQ-4bit": "Qwen3.5 9B (4-bit)",
+}
+
+
 def _mlx_runtime_available() -> bool:
     return importlib.util.find_spec("mlx_lm") is not None
 
 
 def _humanize_mlx_id(model_id: str) -> str:
+    """Best-effort label for MLX ids not in ``_MLX_LABEL_MAP``."""
     bare = model_id.removeprefix("mlx/")
     if bare.startswith("mlx-community/"):
         bare = bare.removeprefix("mlx-community/")
     return bare.replace("-", " ")
+
+
+def _mlx_label(model_id: str) -> str:
+    """Return the curated label for *model_id*, or fall back to the humanizer."""
+    return _MLX_LABEL_MAP.get(model_id) or _humanize_mlx_id(model_id)
 
 
 def _fetch_mlx_models() -> list[ModelEntry]:
@@ -90,7 +113,7 @@ def _fetch_mlx_models() -> list[ModelEntry]:
     return [
         ModelEntry(
             id=model_id,
-            label=_humanize_mlx_id(model_id),
+            label=_mlx_label(model_id),
             description="MLX local · cached",
         )
         for model_id in sorted(cached_model_ids())
