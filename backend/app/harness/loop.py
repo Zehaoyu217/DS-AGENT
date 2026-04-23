@@ -41,6 +41,8 @@ PARALLEL_SAFE_TOOLS: frozenset[str] = frozenset({
     "session_search",
     "get_artifact",
     "get_context_status",
+    "research",       # sync research is read-only; safe alongside other reads
+    "research_get",   # non-blocking poll; always read-only
 })
 
 # Hard-deny set: any tool that mutates wiki, scratchpad, artifacts, sandbox

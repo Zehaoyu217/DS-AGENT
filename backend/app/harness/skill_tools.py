@@ -467,3 +467,7 @@ def register_core_tools(
         }
 
     dispatcher.register("session_search", _session_search)
+
+    # Research tools — papers, code, web — parallel-safe read-only tools
+    from app.harness.research.tool import register_research_tools  # noqa: PLC0415
+    register_research_tools(dispatcher)
