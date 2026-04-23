@@ -16,6 +16,7 @@ from app.harness.clients.base import (
 )
 from app.harness.compactor import MicroCompactor
 from app.harness.dispatcher import ToolDispatcher, ToolResult
+from app.harness.doom_loop import check_for_doom_loop
 from app.harness.guardrails.end_of_turn import end_of_turn
 from app.harness.guardrails.post_tool import post_tool
 from app.harness.guardrails.pre_tool import pre_tool_gate
@@ -475,6 +476,10 @@ class AgentLoop:
                 # BLOCK: tool_message already contains the rejection payload; skip rest.
                 if tr.status == "blocked":
                     continue
+
+            doom_msg = check_for_doom_loop(messages)
+            if doom_msg is not None:
+                messages.append(doom_msg)
         else:
             stop_reason = "max_steps"
 
@@ -708,6 +713,14 @@ class AgentLoop:
                     tr = self._dispatch_single_call(call, state, outcomes, client, session_id)
                     messages.append(tr.tool_message)
                     yield from self._emit_post_dispatch_events(tr, steps)
+
+            doom_msg = check_for_doom_loop(messages)
+            if doom_msg is not None:
+                messages.append(doom_msg)
+                yield StreamEvent(
+                    type="doom_loop",
+                    payload={"step": steps, "message": doom_msg.content[:200]},
+                )
         else:
             stop_reason = "max_steps"
             # Agent exhausted the step budget without writing a final response.
