@@ -73,15 +73,12 @@ class ModelsResponse(BaseModel):
 # this map falls back to :func:`_humanize_mlx_id`, which strips the prefix
 # and replaces hyphens with spaces.
 _MLX_LABEL_MAP: dict[str, str] = {
-    "mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit": "Gemma 4 E2B (4-bit)",
-    "mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit": "Gemma 4 E4B (4-bit)",
-    "mlx/mlx-community/gemma-3-4b-it-4bit": "Gemma 3 4B (4-bit)",
-    "mlx/NexVeridian/gemma-4-26B-A4b-it-4bit": "Gemma 4 26B A4B (4-bit)",
-    "mlx/jorch/gemma-4-e2b-it-lm-4bit": "Gemma 4 E2B LM (4-bit)",
-    "mlx/jorch/gemma-4-e4b-it-lm-4bit": "Gemma 4 E4B LM (4-bit)",
-    "mlx/mlx-community/Qwen3-0.6B-4bit": "Qwen3 0.6B (4-bit)",
-    "mlx/mlx-community/Qwen3-4B-4bit": "Qwen3 4B (4-bit)",
-    "mlx/mlx-community/Qwen3.5-9B-OptiQ-4bit": "Qwen3.5 9B (4-bit)",
+    "mlx/mlx-community/gemma-4-e2b-it-OptiQ-4bit": "Gemma 4 E2B",
+    "mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit": "Gemma 4 E4B",
+    "mlx/NexVeridian/gemma-4-26B-A4b-it-4bit": "Gemma 4 26B A4B",
+    "mlx/jorch/gemma-4-e2b-it-lm-4bit": "Gemma 4 E2B LM",
+    "mlx/jorch/gemma-4-e4b-it-lm-4bit": "Gemma 4 E4B LM",
+    "mlx/mlx-community/Qwen3.5-9B-OptiQ-4bit": "Qwen3.5 9B",
 }
 
 
