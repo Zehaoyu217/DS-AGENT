@@ -69,7 +69,7 @@ class SynthesisAgent:
             follow_ups = tuple(data.get("follow_up_questions", []))
         except Exception as exc:
             logger.warning("SynthesisAgent failed (%s) — using raw results", exc)
-            summary = f"Research completed across {modules_ran}. See papers and code below."
+            summary = f"Research completed across {', '.join(modules_ran)}. See papers and code below."
 
         return ResearchResult(
             summary=summary,

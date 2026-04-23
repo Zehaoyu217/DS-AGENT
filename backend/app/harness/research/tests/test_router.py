@@ -53,6 +53,7 @@ def test_route_falls_back_on_invalid_json():
         query="test", context="", sources=["papers", "code"], budget_tokens=100_000,
     )
     assert set(plan.modules) == {"papers", "code"}
+    assert isinstance(plan.modules, tuple)
     assert plan.parallel_ok is True
 
 
