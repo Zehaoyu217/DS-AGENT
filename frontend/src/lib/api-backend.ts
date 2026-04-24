@@ -81,6 +81,71 @@ export interface UserSettings {
   send_on_enter: boolean
 }
 
+// Response from GET /api/settings/config — every server-side tunable in one
+// blob so the Settings page can render tabs without a waterfall of fetches.
+export interface EnvEntry {
+  key: string
+  value: string
+  set: boolean
+  secret: boolean
+}
+
+export interface PromptFileEntry {
+  name: string
+  path: string
+  size: number
+  modified: number
+}
+
+export interface FullConfigResponse {
+  app: {
+    environment: string
+    host: string
+    port: number
+    debug: boolean
+    default_model: string
+    openrouter_api_key_set: boolean
+    sandbox_timeout_seconds: number
+    sandbox_max_memory_mb: number
+    context_max_tokens: number
+    context_compaction_threshold: number
+    _readonly: string[]
+  }
+  branding: {
+    agent_name: string
+    agent_persona: string
+    ui_title: string
+    ui_accent_color: string
+    _readonly: string[]
+  }
+  models_yaml: {
+    path: string
+    exists: boolean
+    editable: boolean
+    content: Record<string, unknown>
+  }
+  habits_yaml: {
+    path: string | null
+    exists: boolean
+    editable: boolean
+    enabled: boolean
+    content: Record<string, unknown>
+  }
+  env: EnvEntry[]
+  prompts: PromptFileEntry[]
+}
+
+export interface YamlPatchResponse {
+  ok: boolean
+  content: Record<string, unknown>
+}
+
+export interface PromptFileResponse {
+  name: string
+  content: string
+  size: number
+}
+
 export type FileKind = 'file' | 'dir'
 
 export interface FileNode {
@@ -246,6 +311,17 @@ export const backend = {
     get: (): Promise<UserSettings> => request<UserSettings>('GET', '/api/settings'),
     put: (payload: UserSettings): Promise<UserSettings> =>
       request<UserSettings>('PUT', '/api/settings', payload),
+    fullConfig: (): Promise<FullConfigResponse> =>
+      request<FullConfigResponse>('GET', '/api/settings/config'),
+    patchModelsYaml: (payload: Record<string, unknown>): Promise<YamlPatchResponse> =>
+      request<YamlPatchResponse>('PATCH', '/api/settings/config/models', payload),
+    patchHabitsYaml: (payload: Record<string, unknown>): Promise<YamlPatchResponse> =>
+      request<YamlPatchResponse>('PATCH', '/api/settings/config/habits', payload),
+    prompt: (name: string): Promise<PromptFileResponse> =>
+      request<PromptFileResponse>(
+        'GET',
+        `/api/settings/prompts/${encodeURIComponent(name)}`,
+      ),
   },
   files: {
     tree: (path?: string): Promise<FileTreeResponse> =>
