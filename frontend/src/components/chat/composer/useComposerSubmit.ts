@@ -74,6 +74,7 @@ export function useComposerSubmit(conversationId: string): ComposerSubmitResult 
         const stream = streamChatMessage(text, conversation?.sessionId ?? null, {
           planMode: useChatStore.getState().planMode,
           signal: controller.signal,
+          conversationId: conversationId,
           ...(conversation?.model ? { model: conversation.model } : {}),
           ...(conversation?.extendedThinking ? { extendedThinking: true } : {}),
         })

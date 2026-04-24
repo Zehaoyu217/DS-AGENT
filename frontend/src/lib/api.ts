@@ -173,6 +173,12 @@ export interface StreamChatOptions {
   planMode?: boolean
   model?: string
   extendedThinking?: boolean
+  /**
+   * Stable frontend-local conversation id (distinct from the per-turn trace
+   * id carried by `sessionId`). Needed so the backend can resolve the right
+   * user_data DuckDB and datasets list — uploads write keyed on this id.
+   */
+  conversationId?: string
   signal?: AbortSignal
 }
 
@@ -205,6 +211,7 @@ export async function* streamChatMessage(
       plan_mode: options.planMode ?? false,
       ...(options.model ? { model: options.model } : {}),
       ...(options.extendedThinking ? { extended_thinking: true } : {}),
+      ...(options.conversationId ? { conversation_id: options.conversationId } : {}),
     }),
     signal: options.signal,
   })

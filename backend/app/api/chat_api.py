@@ -1000,6 +1000,7 @@ def _agent_loop_sync(
     max_steps: int = _DEFAULT_MAX_STEPS,
     plan_mode: bool = False,
     extended_thinking: bool = False,
+    conversation_id: str | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
     """Run the wired AgentLoop synchronously and return (text, charts, usage)."""
     charts: list[dict[str, Any]] = []
@@ -1007,10 +1008,12 @@ def _agent_loop_sync(
     saved_artifacts: list[dict[str, Any]] = []
     usage: dict[str, int] = {}
     tools = filter_tools_for_plan_mode(_CHAT_TOOLS) if plan_mode else _CHAT_TOOLS
+    # The system prompt's datasets block must be keyed off the stable
+    # conversation id (where uploads land), not the per-turn trace id.
     system_prompt = _get_system_prompt(
         plan_mode=plan_mode,
         latest_user_prompt=message,
-        conversation_id=session_id,
+        conversation_id=conversation_id or session_id,
     )
 
     with httpx.Client(timeout=300) as http:
@@ -1058,6 +1061,7 @@ def _stream_agent_loop(
     max_steps: int = _DEFAULT_MAX_STEPS,
     plan_mode: bool = False,
     extended_thinking: bool = False,
+    conversation_id: str | None = None,
 ) -> Generator[str, None, None]:
     """Yield SSE lines for one chat turn through the full harness.
 
@@ -1077,7 +1081,7 @@ def _stream_agent_loop(
         plan_mode=plan_mode,
         session_id=session_id,
         latest_user_prompt=message,
-        conversation_id=session_id,
+        conversation_id=conversation_id or session_id,
     )
     sp_tokens = _estimate_tokens(sys_prompt)
     ctx.add_layer(ContextLayer(
@@ -1386,6 +1390,16 @@ class ChatRequest(BaseModel):
             "(``mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit``)."
         ),
     )
+    conversation_id: str | None = Field(
+        default=None,
+        description=(
+            "Stable frontend-local conversation id. Used to look up the "
+            "per-conversation user_data DuckDB (so uploaded datasets ATTACH "
+            "correctly) and the persisted datasets[] list on the Conversation "
+            "JSON (so the injector renders the right block). Distinct from "
+            "``session_id``, which is the per-turn trace id."
+        ),
+    )
 
 
 class ChatResponse(BaseModel):
@@ -1398,20 +1412,25 @@ class ChatResponse(BaseModel):
 def chat_endpoint(payload: ChatRequest) -> ChatResponse:
     from app.api.settings_api import get_settings
 
-    conversation_id = payload.session_id
-    if conversation_id is not None and not _CONVERSATION_ID_RE.match(conversation_id):
-        raise HTTPException(status_code=400, detail="invalid session_id")
+    # session_id carries the prior trace id; conversation_id is the stable
+    # frontend-local id used for uploads + dataset persistence. Fall back to
+    # session_id when callers haven't plumbed conversation_id yet.
+    session_id_raw = payload.session_id
+    conv_id_raw = payload.conversation_id or payload.session_id
+    for raw, label in ((session_id_raw, "session_id"), (conv_id_raw, "conversation_id")):
+        if raw is not None and not _CONVERSATION_ID_RE.match(raw):
+            raise HTTPException(status_code=400, detail=f"invalid {label}")
 
     # Per-request model override wins over the global setting so the per-
     # conversation dropdown in the UI actually routes to the chosen model.
     model_id = payload.model or get_settings().model
 
-    trace_id = _make_trace_id(conversation_id)
+    trace_id = _make_trace_id(session_id_raw)
     output_dir = _traces_dir()
     output_dir.mkdir(parents=True, exist_ok=True)
 
     started = time.monotonic()
-    ud_db_path = _user_data_db_if_exists(conversation_id)
+    ud_db_path = _user_data_db_if_exists(conv_id_raw)
     with TraceSession(
         session_id=trace_id, level=1, level_label="chat",
         input_query=payload.message, trace_mode="always", output_dir=output_dir,
@@ -1431,6 +1450,7 @@ def chat_endpoint(payload: ChatRequest) -> ChatResponse:
                 session_bootstrap=session_bootstrap,
                 plan_mode=payload.plan_mode,
                 extended_thinking=payload.extended_thinking,
+                conversation_id=conv_id_raw,
             )
         except Exception as exc:
             logger.error("agent loop failed for model %s: %s", model_id, exc, exc_info=True)
@@ -1466,14 +1486,16 @@ def chat_endpoint(payload: ChatRequest) -> ChatResponse:
 def chat_stream_endpoint(payload: ChatRequest) -> StreamingResponse:
     from app.api.settings_api import get_settings
 
-    conversation_id = payload.session_id
-    if conversation_id is not None and not _CONVERSATION_ID_RE.match(conversation_id):
-        raise HTTPException(status_code=400, detail="invalid session_id")
+    session_id_raw = payload.session_id
+    conv_id_raw = payload.conversation_id or payload.session_id
+    for raw, label in ((session_id_raw, "session_id"), (conv_id_raw, "conversation_id")):
+        if raw is not None and not _CONVERSATION_ID_RE.match(raw):
+            raise HTTPException(status_code=400, detail=f"invalid {label}")
 
     # Per-request override first; fall back to the global setting.
     model_id = payload.model or get_settings().model
-    trace_id = _make_trace_id(conversation_id)
-    ud_db_path = _user_data_db_if_exists(conversation_id)
+    trace_id = _make_trace_id(session_id_raw)
+    ud_db_path = _user_data_db_if_exists(conv_id_raw)
     session_bootstrap = build_duckdb_globals(
         trace_id,
         payload.dataset_path,
@@ -1504,6 +1526,7 @@ def chat_stream_endpoint(payload: ChatRequest) -> StreamingResponse:
                 session_bootstrap=session_bootstrap,
                 plan_mode=payload.plan_mode,
                 extended_thinking=payload.extended_thinking,
+                conversation_id=conv_id_raw,
             ):
                 # Best-effort: capture final_text from the turn_end SSE event
                 # so we can publish an llm_call record for the Prompt tab.
