@@ -78,7 +78,7 @@ def test_create_get_append_list_delete_flow(client: TestClient) -> None:
     # Delete
     r_del = client.delete(f"/api/conversations/{conv_id}")
     assert r_del.status_code == 200
-    assert r_del.json() == {"ok": True}
+    assert r_del.json() == {"ok": True, "already_gone": False}
     assert client.get(f"/api/conversations/{conv_id}").status_code == 404
 
 
@@ -104,9 +104,45 @@ def test_get_missing_returns_404(client: TestClient) -> None:
     assert r.status_code == 404
 
 
-def test_delete_missing_returns_404(client: TestClient) -> None:
+def test_delete_missing_is_idempotent(client: TestClient) -> None:
+    """DELETE on a missing conversation is a no-op, not a 404.
+
+    Frontend state is localStorage-persisted and drifts out of sync with the
+    backend (bulk-deletes, server wipes, etc.). A 404 here would strand those
+    ghost rows in the UI forever — the user can't clear them because the
+    store action throws instead of updating local state. Idempotent DELETE
+    lets the UI always reach consistency."""
     r = client.delete("/api/conversations/nonexistent")
-    assert r.status_code == 404
+    assert r.status_code == 200
+    assert r.json() == {"ok": True, "already_gone": True}
+
+
+def test_delete_existing_reports_not_already_gone(client: TestClient) -> None:
+    conv = client.post("/api/conversations", json={"title": "t"}).json()
+    r = client.delete(f"/api/conversations/{conv['id']}")
+    assert r.status_code == 200
+    assert r.json() == {"ok": True, "already_gone": False}
+
+
+def test_delete_also_removes_user_data_duckdb(
+    client: TestClient, tmp_path: Path,
+) -> None:
+    """Deleting a conversation should sweep its per-conversation DuckDB.
+
+    Leftover DuckDB files leak disk and would confuse a future conversation
+    that happens to be assigned the same id.
+    """
+    from io import BytesIO
+    conv_id = client.post("/api/conversations", json={"title": "t"}).json()["id"]
+    client.post(
+        f"/api/conversations/{conv_id}/uploads",
+        files={"file": ("x.csv", BytesIO(b"a,b\n1,2\n"), "text/csv")},
+    )
+    ud_path = tmp_path / "user_data" / f"{conv_id}.duckdb"
+    assert ud_path.exists(), "precondition: upload should have created the DB"
+
+    client.delete(f"/api/conversations/{conv_id}")
+    assert not ud_path.exists(), "DuckDB should be swept on delete"
 
 
 def test_append_to_missing_returns_404(client: TestClient) -> None:

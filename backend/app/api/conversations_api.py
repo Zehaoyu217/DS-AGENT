@@ -7,6 +7,7 @@ writes within a single process.
 """
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import secrets
@@ -316,12 +317,28 @@ def bulk_delete_conversations(payload: BulkDeleteRequest) -> BulkDeleteResponse:
 
 @router.delete("/{conv_id}")
 def delete_conversation(conv_id: str) -> dict[str, object]:
+    """Delete a conversation + its per-conversation user_data DuckDB.
+
+    Idempotent: returns 200 with ``already_gone`` = True when the JSON is
+    already absent. Frontend stores are persisted to localStorage and
+    routinely drift out of sync with the backend (e.g. after bulk-delete);
+    making DELETE idempotent lets the UI clear its local row even when the
+    backend record was already removed.
+    """
     _validate_id(conv_id)
     with _conv_lock(conv_id):
         path = _conv_path(conv_id)
-        if not path.exists():
-            raise HTTPException(status_code=404, detail="conversation not found")
-        path.unlink()
+        existed = path.exists()
+        if existed:
+            path.unlink()
+        # Always clean up the per-conversation user_data DuckDB — leftover
+        # files leak disk and confuse future conversations that reuse an id.
+        # Non-fatal on unlink failure: the JSON is the source of truth; a
+        # lingering DB file can be reaped manually if it ever hangs around.
+        ud_path = _data_dir() / "user_data" / f"{conv_id}.duckdb"
+        if ud_path.exists():
+            with contextlib.suppress(OSError):
+                ud_path.unlink()
         with _LOCK_REGISTRY_GUARD:
             _CONV_LOCKS.pop(conv_id, None)
-        return {"ok": True}
+        return {"ok": True, "already_gone": not existed}
