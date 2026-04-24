@@ -1,8 +1,15 @@
-"""Read-only REST endpoints for the wiki tree under knowledge/wiki/.
+"""Read-only REST endpoints for the Knowledge-surface file tree.
 
-Powers the Knowledge surface: file tree, page reader, backlinks. The wiki
+Powers the Knowledge surface: file tree, page reader, backlinks. Content
 is plain markdown on disk, so these endpoints are pure file-system reads
 with strict path containment to prevent traversal.
+
+Root resolution (first match wins):
+  1. ``$WIKI_ROOT`` env override (explicit)
+  2. ``SECOND_BRAIN_HOME`` when ``SECOND_BRAIN_ENABLED`` — surfaces the
+     user's KB (sources/, claims/, digests/, inbox/, log.md) on the
+     Knowledge page so they can actually see what's ingested
+  3. ``knowledge/wiki/`` repo-internal default (agent scratchpad)
 """
 from __future__ import annotations
 
@@ -23,7 +30,15 @@ _LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+\.md)(?:#[^)]*)?\)")
 
 
 def _wiki_root() -> Path:
-    return Path(os.environ.get(_WIKI_ROOT_ENV, str(_DEFAULT_WIKI_ROOT))).resolve()
+    override = os.environ.get(_WIKI_ROOT_ENV)
+    if override:
+        return Path(override).resolve()
+    # Late import — avoids a circular dependency at module load time and
+    # lets the feature flag change at runtime without a reimport.
+    from app import config as _app_config  # noqa: PLC0415
+    if getattr(_app_config, "SECOND_BRAIN_ENABLED", False):
+        return _app_config.SECOND_BRAIN_HOME.resolve()
+    return _DEFAULT_WIKI_ROOT.resolve()
 
 
 def _safe_resolve(rel_path: str) -> Path:
@@ -44,7 +59,7 @@ class WikiNode:
     kind: str  # "dir" | "file"
     size: int = 0
     modified: float = 0.0
-    children: tuple["WikiNode", ...] = ()
+    children: tuple[WikiNode, ...] = ()
     pinned: bool = False
 
 
