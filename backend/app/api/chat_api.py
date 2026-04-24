@@ -1377,6 +1377,15 @@ class ChatRequest(BaseModel):
             "support the parameter."
         ),
     )
+    model: str | None = Field(
+        default=None,
+        description=(
+            "Per-request model override. Falls back to the global setting "
+            "(``/api/settings``) when omitted. Accepts an OpenRouter id "
+            "(``openai/gpt-oss-120b:free``) or an MLX id "
+            "(``mlx/mlx-community/gemma-4-e4b-it-OptiQ-4bit``)."
+        ),
+    )
 
 
 class ChatResponse(BaseModel):
@@ -1393,8 +1402,9 @@ def chat_endpoint(payload: ChatRequest) -> ChatResponse:
     if conversation_id is not None and not _CONVERSATION_ID_RE.match(conversation_id):
         raise HTTPException(status_code=400, detail="invalid session_id")
 
-    settings = get_settings()
-    model_id = settings.model
+    # Per-request model override wins over the global setting so the per-
+    # conversation dropdown in the UI actually routes to the chosen model.
+    model_id = payload.model or get_settings().model
 
     trace_id = _make_trace_id(conversation_id)
     output_dir = _traces_dir()
@@ -1460,8 +1470,8 @@ def chat_stream_endpoint(payload: ChatRequest) -> StreamingResponse:
     if conversation_id is not None and not _CONVERSATION_ID_RE.match(conversation_id):
         raise HTTPException(status_code=400, detail="invalid session_id")
 
-    settings = get_settings()
-    model_id = settings.model
+    # Per-request override first; fall back to the global setting.
+    model_id = payload.model or get_settings().model
     trace_id = _make_trace_id(conversation_id)
     ud_db_path = _user_data_db_if_exists(conversation_id)
     session_bootstrap = build_duckdb_globals(
